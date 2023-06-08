@@ -42,6 +42,7 @@ public class VitalsSlider : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        value = minVal + Mathf.PingPong(Time.time * (maxVal - minVal) / 4, maxVal - minVal);
         UpdateSlider();
     }
 
