@@ -36,7 +36,6 @@ public class VitalsSlider : MonoBehaviour
         gameObject.GetNamedChild("SliderTrack").transform.GetChild(0).GetComponent<RawImage>().material = mat;
 
 		originalColor = mat.GetColor("_Color");
-        Debug.Log(originalColor);
 		UpdateSlider();
 	}
 
