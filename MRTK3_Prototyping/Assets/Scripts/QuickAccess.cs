@@ -1,3 +1,4 @@
+using Microsoft.MixedReality.GraphicsTools;
 using Microsoft.MixedReality.Toolkit.UX;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,5 +31,21 @@ public class QuickAccess : MonoBehaviour
 
 	public void SetOpenTime() {
 		openTime = Time.time;
+	}
+
+	public void DisableAnimator() {
+		gameObject.GetComponent<Animator>().enabled = false;
+	}
+
+	public void DisableGameObject() {
+		gameObject.SetActive(false);
+	}
+
+	public void FixGraphics() {
+		gameObject.GetComponent<CanvasElementRoundedRect>().Radius = 12.9f;
+	}
+
+	public void FixGraphics2() {
+		gameObject.GetComponent<CanvasElementRoundedRect>().Radius = 13f;
 	}
 }
