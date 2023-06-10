@@ -9,10 +9,11 @@ public class PositionMenu : MonoBehaviour
     public float angle = 0f;
 
     public bool isManipulated { get; set; } = false;
-    private float pushStrength = .01f;
+    private float pushStrength = 1f;
     private bool lockedPosFound = false;
     private bool locked = false;
     private Vector3 dir;
+	private Vector3 target;
 
     // Start is called before the first frame update
     void Start()
@@ -25,16 +26,24 @@ public class PositionMenu : MonoBehaviour
     {
 		if (!isManipulated && !locked) {
 			if (!lockedPosFound) {
+				transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
 				dir = transform.position - Camera.main.transform.position;
 				dir.y = 0;
+
+				Vector3 focus = Camera.main.transform.forward;
+				focus.y = 0;
+				target = transform.parent.TransformPoint(dir.normalized * distance);
+
 				lockedPosFound = true;
-				transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
 			}
+			transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
 
 			float dist = Vector3.Distance(transform.position, Camera.main.transform.position);
-			if (dist < distance || dist > distance + 0.1f) {
-				transform.Translate(dir.normalized * pushStrength);
+			if (Vector3.Distance(transform.position, target) > 0.001f) {
+				//transform.Translate(dir.normalized * pushStrength);
+				transform.position = Vector3.MoveTowards(transform.position, target, pushStrength * Time.deltaTime);
 			} else {
+				transform.position = target;
 				lockedPosFound = false;
 				locked = true;
 				transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
