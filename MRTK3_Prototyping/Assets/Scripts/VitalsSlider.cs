@@ -16,13 +16,13 @@ public class VitalsSlider : MonoBehaviour
 	public float errorMax { get; set; }
 	public float errorMin { get; set; }
     public Color errorColor { get; set; }
+	public float maxVal { get; set; }
+	public float minVal { get; set; }
 
 	private Material mat;
     private Color originalColor;
 
-    private float maxVal => nominalMax > errorMax ? nominalMax : errorMax;
-	private float minVal => nominalMin < errorMin ? nominalMin : errorMin;
-    private float normalizedValue;
+	private float normalizedValue;
     private Slider slider;
 
 	public float value;

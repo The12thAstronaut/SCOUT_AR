@@ -17,12 +17,12 @@ public class VitalInfoCard : MonoBehaviour
 	public string vitalName { get; set; }
 	public Color errorColor { get; set; }
 	public Color goodColor { get; set; }
+	public float maxVal { get; set; }
+	public float minVal { get; set; }
 
 	private Material fillMat;
 	private Color originalColor;
 
-	private float maxVal => nominalMax > errorMax ? nominalMax : errorMax;
-	private float minVal => nominalMin < errorMin ? nominalMin : errorMin;
 	private float normalizedValue;
 
 	public Slider slider;
@@ -50,7 +50,6 @@ public class VitalInfoCard : MonoBehaviour
 		currentText.text = value.ToString(decimalFormat);
 		valueText.text = currentText.text;
 		nameText.text = vitalName;
-
 
 		RectTransform errorRT = errorText.gameObject.GetComponent<RectTransform>();
 		if (nominalMax > errorMax) {

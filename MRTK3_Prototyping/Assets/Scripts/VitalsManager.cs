@@ -44,20 +44,26 @@ public class SuitVital {
 	private float minVal => nominalMin < errorMin ? nominalMin : errorMin;
 
 	public void SetBounds(Color errorColor, Color goodColor) {
-        slider.nominalMax = nominalMax;
+		slider.nominalMax = nominalMax;
 		slider.nominalMin = nominalMin;
 		slider.errorMax = errorMax;
 		slider.errorMin = errorMin;
 		slider.errorColor = errorColor;
+		slider.minVal = minVal;
+		slider.maxVal = maxVal;
+		slider.value = value;
 
 		vitalInfoCard.nominalMax = nominalMax;
 		vitalInfoCard.nominalMin = nominalMin;
 		vitalInfoCard.errorMax = errorMax;
 		vitalInfoCard.errorMin = errorMin;
-        vitalInfoCard.vitalName = name;
-        vitalInfoCard.decimalFormat = decimalFormat;
+		vitalInfoCard.vitalName = name;
+		vitalInfoCard.decimalFormat = decimalFormat;
 		vitalInfoCard.goodColor = goodColor;
 		vitalInfoCard.errorColor = errorColor;
+		vitalInfoCard.value = value;
+		vitalInfoCard.minVal = minVal;
+		vitalInfoCard.maxVal = maxVal;
 	}
 
     public void SetValue() {
