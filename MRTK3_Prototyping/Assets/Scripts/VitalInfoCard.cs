@@ -9,13 +9,15 @@ using Slider = Microsoft.MixedReality.Toolkit.UX.Slider;
 
 public class VitalInfoCard : MonoBehaviour
 {
-	public float nominalMax;
-	public float nominalMin;
-	public float errorMax;
-	public float errorMin;
+	public float nominalMax { get; set; }
+	public float nominalMin { get; set; }
+	public float errorMax { get; set; }
+	public float errorMin { get; set; }
+	public string decimalFormat { get; set; }
+	public string vitalName { get; set; }
+	public Color errorColor { get; set; }
+	public Color goodColor { get; set; }
 
-	public Color errorColor = new Color(188, 0, 0);
-	public Color goodColor = new Color(0, 159, 15);
 	private Material fillMat;
 	private Color originalColor;
 
@@ -30,8 +32,7 @@ public class VitalInfoCard : MonoBehaviour
 	public TextMeshProUGUI currentText;
 	public TextMeshProUGUI valueText;
 	public TextMeshProUGUI nameText;
-	public string vitalName;
-	public string decimalFormat = "0.";
+	
 
 	private float sliderWidth;
 	private RectTransform valueRT;
@@ -76,8 +77,6 @@ public class VitalInfoCard : MonoBehaviour
 
 	// Update is called once per frame
 	void Update() {
-		value = minVal + Mathf.PingPong(Time.time * (maxVal - minVal) / 4, maxVal - minVal);
-
 		valueRT.localPosition = new Vector3(((value - minVal) / (maxVal - minVal) - 0.5f) * sliderWidth, valueRT.localPosition.y, valueRT.localPosition.z);
 		currentText.text = value.ToString(decimalFormat);
 		valueText.text = currentText.text;

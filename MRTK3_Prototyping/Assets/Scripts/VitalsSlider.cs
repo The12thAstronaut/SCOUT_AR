@@ -11,14 +11,13 @@ using Slider = Microsoft.MixedReality.Toolkit.UX.Slider;
 [RequireComponent(typeof(RectTransform))]
 public class VitalsSlider : MonoBehaviour
 {
-	public float nominalMax;
-    public float nominalMin;
-    public float errorMax;
-    public float errorMin;
+	public float nominalMax { get; set; }
+    public float nominalMin { get; set; }
+	public float errorMax { get; set; }
+	public float errorMin { get; set; }
+    public Color errorColor { get; set; }
 
-    [SerializeField]
-    private Color errorColor = new Color(255, 40, 40);
-    private Material mat;
+	private Material mat;
     private Color originalColor;
 
     private float maxVal => nominalMax > errorMax ? nominalMax : errorMax;
@@ -42,7 +41,6 @@ public class VitalsSlider : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        value = minVal + Mathf.PingPong(Time.time * (maxVal - minVal) / 4, maxVal - minVal);
         UpdateSlider();
     }
 
