@@ -19,7 +19,7 @@ public class PositionMenu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -41,7 +41,6 @@ public class PositionMenu : MonoBehaviour
 
 			float dist = Vector3.Distance(transform.position, Camera.main.transform.position);
 			if (Vector3.Distance(transform.position, target) > 0.001f) {
-				//transform.Translate(dir.normalized * pushStrength);
 				transform.position = Vector3.MoveTowards(transform.position, target, pushStrength * Time.deltaTime);
 			} else {
 				transform.position = target;
@@ -56,6 +55,10 @@ public class PositionMenu : MonoBehaviour
         isManipulated = true;
         locked = false;
     }
+
+	public void ChangeDistance() {
+		locked = false;
+	}
 
 	public void OpenMenu() {
 		Vector3 focus = Camera.main.transform.forward;
