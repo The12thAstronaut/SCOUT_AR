@@ -174,12 +174,12 @@ MonoBehaviour:
   smoothing: 1
   lifetime: 0
   placementActionReference: {fileID: -6131295136447488360, guid: 18c412191cdc9274897f101c7fd5316f, type: 3}
-  autoStart: 0
+  autoStart: 1
   defaultPlacementDistance: 0.5
   maxRaycastDistance: 20
   surfaceNormalOffset: 0
   useDefaultSurfaceNormalOffset: 1
-  keepOrientationVertical: 0
+  keepOrientationVertical: 1
   rotateAccordingToSurface: 1
   magneticSurfaces:
   - serializedVersion: 2
@@ -373,7 +373,9 @@ MonoBehaviour:
     onExited:
       m_PersistentCalls:
         m_Calls: []
-  disabledInteractorTypes: []
+  disabledInteractorTypes:
+  - reference: Microsoft.MixedReality.Toolkit.IGazeInteractor, Microsoft.MixedReality.Toolkit.Core
+  - reference: Microsoft.MixedReality.Toolkit.IPokeInteractor, Microsoft.MixedReality.Toolkit.Core
   <ToggleMode>k__BackingField: 0
   <SelectThreshold>k__BackingField: 0.9
   <DeselectThreshold>k__BackingField: 0.1

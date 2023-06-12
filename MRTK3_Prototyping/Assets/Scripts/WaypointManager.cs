@@ -1,3 +1,4 @@
+using Microsoft.MixedReality.Toolkit;
 using Microsoft.MixedReality.Toolkit.Input;
 using Microsoft.MixedReality.Toolkit.SpatialManipulation;
 using System.Collections;
@@ -12,6 +13,7 @@ public class WaypointManager : MonoBehaviour
     public Transform waypointCollection;
     public MRTKRayInteractor leftRay;
     public MRTKRayInteractor rightRay;
+    public InteractionModeManager interactionModeManager;
 
     // Start is called before the first frame update
     void Start()
@@ -25,7 +27,7 @@ public class WaypointManager : MonoBehaviour
         
     }
 
-    public void CreateAnchorDrop() {
+    public void CreateAnchorPlace() {
         var instance = Instantiate(waypointPrefab, Camera.main.transform.position, Quaternion.identity, waypointCollection);
 
         if (instance.GetComponent<ARAnchor>() == null) {
@@ -36,7 +38,7 @@ public class WaypointManager : MonoBehaviour
         instance.GetComponent<SolverHandler>().RightInteractor = rightRay;
     }
 
-	public void CreateAnchorPlace() {
+	public void CreateAnchorDrop() {
 		var instance = Instantiate(waypointPrefab, Camera.main.transform.position, Quaternion.identity, waypointCollection);
 
 		if (instance.GetComponent<ARAnchor>() == null) {
@@ -46,6 +48,7 @@ public class WaypointManager : MonoBehaviour
 		instance.GetComponent<SolverHandler>().LeftInteractor = leftRay;
 		instance.GetComponent<SolverHandler>().RightInteractor = rightRay;
 
+        // This makes it not start placement for some reason, so it's used here to stop placement.
         instance.GetComponent<TapToPlace>().StartPlacement();
 	}
 }
