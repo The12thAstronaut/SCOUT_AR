@@ -1,3 +1,4 @@
+using Microsoft.MixedReality.Toolkit.SpatialManipulation;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -61,5 +62,7 @@ public class PositionMenu : MonoBehaviour
 		focus.y = 0;
 		transform.position = transform.parent.TransformPoint(focus.normalized * distance);
 		transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
+
+		transform.GetComponent<ObjectManipulator>().enabled = true;
 	}
 }

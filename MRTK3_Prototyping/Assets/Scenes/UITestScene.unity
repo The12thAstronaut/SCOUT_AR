@@ -11010,7 +11010,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &586666720
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -18824,9 +18824,9 @@ MonoBehaviour:
   layoutRowsOrColumns: 3
   cellSize: {x: 110, y: 80}
   gutter: 2
-  margin: 0
-  trailingSpace: 80
-  itemCount: 30
+  margin: 12
+  trailingSpace: 12
+  itemCount: 0
 --- !u!224 &885793505 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8376646494505211229, guid: c6b351a67ceb69140b199996bbbea156, type: 3}
@@ -19119,6 +19119,9 @@ MonoBehaviour:
   rightRay: {fileID: 567976803}
   inputName: {fileID: 769546638}
   newWaypointButton: {fileID: 1928954709}
+  waypointScrollList: {fileID: 883402570}
+  waypointInfoCard: {fileID: 3777961346460060716, guid: 93abe20ae13943b4faa5b8110758d2a1, type: 3}
+  waypoints: []
 --- !u!4 &910391018
 Transform:
   m_ObjectHideFlags: 0
@@ -43596,7 +43599,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2589716730826891961}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d9ad66e7cc9a2754d8ea989740c9f00d, type: 3}
   m_Name: 

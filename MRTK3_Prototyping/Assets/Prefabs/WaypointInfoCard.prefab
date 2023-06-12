@@ -181,7 +181,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 32
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -361,8 +361,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1525330332116736773}
+  - component: {fileID: 8837358626807128460}
   m_Layer: 0
-  m_Name: Waypoint Info Card
+  m_Name: WaypointInfoCard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -391,6 +392,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 110, y: 80}
   m_Pivot: {x: 0, y: 1}
+--- !u!114 &8837358626807128460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3777961346460060716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0916edfd703378144911b2ad09e8c5e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4158778731704414883
 GameObject:
   m_ObjectHideFlags: 0
@@ -1226,6 +1239,34 @@ PrefabInstance:
     - target: {fileID: 611918076176130036, guid: 771f2f2f1087fda47a68eeb15eecb4b3, type: 3}
       propertyPath: disabledInteractorTypes.Array.data[1].reference
       value: Microsoft.MixedReality.Toolkit.IGazeInteractor, Microsoft.MixedReality.Toolkit.Core
+      objectReference: {fileID: 0}
+    - target: {fileID: 611918076176130036, guid: 771f2f2f1087fda47a68eeb15eecb4b3, type: 3}
+      propertyPath: <OnClicked>k__BackingField.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 611918076176130036, guid: 771f2f2f1087fda47a68eeb15eecb4b3, type: 3}
+      propertyPath: <OnClicked>k__BackingField.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 611918076176130036, guid: 771f2f2f1087fda47a68eeb15eecb4b3, type: 3}
+      propertyPath: <OnClicked>k__BackingField.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 8837358626807128460}
+    - target: {fileID: 611918076176130036, guid: 771f2f2f1087fda47a68eeb15eecb4b3, type: 3}
+      propertyPath: <OnClicked>k__BackingField.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 611918076176130036, guid: 771f2f2f1087fda47a68eeb15eecb4b3, type: 3}
+      propertyPath: <OnClicked>k__BackingField.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: DeleteWaypoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 611918076176130036, guid: 771f2f2f1087fda47a68eeb15eecb4b3, type: 3}
+      propertyPath: <OnClicked>k__BackingField.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: WaypointInfoCard, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 611918076176130036, guid: 771f2f2f1087fda47a68eeb15eecb4b3, type: 3}
+      propertyPath: <OnClicked>k__BackingField.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 611918076176130038, guid: 771f2f2f1087fda47a68eeb15eecb4b3, type: 3}
       propertyPath: m_Size.x
