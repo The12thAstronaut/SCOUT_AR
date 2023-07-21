@@ -1,0 +1,85 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CalculateSubregion
+//#pragma kernel CalculateTriangles
+
+StructuredBuffer<float3> MeshPoints;
+//StructuredBuffer<int> MeshTriangles;
+uint numMeshPoints;
+//uint numTriangles;
+float3 center;
+float range;
+
+AppendStructuredBuffer<float3> InnerVertices;
+AppendStructuredBuffer<int> InnerVerticesIndex;
+//AppendStructuredBuffer<float3> InnerNormals;
+//AppendStructuredBuffer<int> ChangeKey;
+AppendStructuredBuffer<int> ChangeValue;
+//AppendStructuredBuffer<int> InnerTriangles;
+//uint numInnerVertices;
+RWStructuredBuffer<uint> numInnerVertices;
+
+[numthreads(64,1,1)]
+void CalculateSubregion (uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= numMeshPoints)
+    {
+        return;
+    }
+    
+    float3 meshPoint = MeshPoints[id.x];
+
+    float3 dist = normalize(meshPoint) - center;
+    if (dist.x * dist.x <= range * range && dist.y * dist.y <= range * range && dist.z * dist.z <= range * range)
+    {
+        //vertices.Add(allVertices[i]);
+        //verticesIndex.Add(i);
+        //normals.Add(allVertices[i]);
+        //change.Add(i, vertices.Count - i - 1);
+        InnerVertices.Append(meshPoint);
+        InnerVerticesIndex.Append(id.x);
+        //InnerNormals.Append(meshPoint);
+        //ChangeKey.Append(id.x);
+        //numInnerVertices.IncrementCounter();
+        ChangeValue.Append(numInnerVertices.IncrementCounter() - id.x);
+    }
+    
+    /*for (int i = 0; i < allTriangles.Length; i += 3)
+    {
+        if (verticesIndex.Contains(allTriangles[i]) && verticesIndex.Contains(allTriangles[i + 1]) && verticesIndex.Contains(allTriangles[i + 2]))
+        {
+            triangles.Add(allTriangles[i] + change[allTriangles[i]]);
+            triangles.Add(allTriangles[i + 1] + change[allTriangles[i + 1]]);
+            triangles.Add(allTriangles[i + 2] + change[allTriangles[i + 2]]);
+        }
+    }*/
+}
+
+/*[numthreads(8,8,1)]
+void CalculateTriangles(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= numTriangles / 3)
+    {
+        return;
+    }
+    
+    bool first = false;
+    bool second = false;
+    bool third = false;
+    
+    for (int i = 0; i < numInnerVertices; i++)
+    {
+        if (InnerVerticesIndex[i] == MeshTriangles[id.x])
+        {
+            first = true;
+        }
+        if (InnerVerticesIndex[i] == MeshTriangles[id.x + 1])
+        {
+            second = true;
+        }
+        if (InnerVerticesIndex[i] == MeshTriangles[id.x + 2])
+        {
+            third = true;
+        }
+    }
+
+}*/

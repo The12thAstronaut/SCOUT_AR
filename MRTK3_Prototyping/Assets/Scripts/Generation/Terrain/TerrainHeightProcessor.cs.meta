@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 622c618721606e74293c4e384e4a6ccb
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - heightSettings: {instanceID: 0}
+  - heightMapCompute: {fileID: 7200000, guid: cbb53c6395d62854394ae075f95b5665, type: 3}
+  - heightMap: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -30,6 +30,29 @@ namespace Seb.Meshing
 			return meshes;
 		}
 
+		public static SimpleMeshData GenerateMesh(int resolution, int numSubdivisions = 1, int index = 0, float radius = 1) {
+			SimpleMeshData mesh = new SimpleMeshData("temp");
+			Vector3[] faceNormals = { Vector3.up, Vector3.down, Vector3.left, Vector3.right, Vector3.forward, Vector3.back };
+			float faceCoveragePerSubFace = 1f / numSubdivisions;
+			int meshIndex = 0;
+
+			foreach (Vector3 faceNormal in faceNormals) {
+				for (int y = 0; y < numSubdivisions; y++) {
+					for (int x = 0; x < numSubdivisions; x++) {
+						if (meshIndex == index) {
+							Vector2 startT = new Vector2(x, y) * faceCoveragePerSubFace;
+							Vector2 endT = startT + Vector2.one * faceCoveragePerSubFace;
+
+							mesh = CreateFace(resolution, faceNormal, startT, endT, radius);
+						}
+						meshIndex++;
+					}
+				}
+			}
+
+			return mesh;
+		}
+
 		static SimpleMeshData CreateFace(int resolution, Vector3 normal, Vector2 startT, Vector2 endT, float radius)
 		{
 			int numVerts = resolution * resolution;
@@ -84,15 +107,48 @@ namespace Seb.Meshing
 			return new SimpleMeshData(vertices, triangles, normals, uvs, "Sphere Cube Face");
 		}
 
+		public static Vector3[] CreateCornerPoints(int resolution, int numSubdivisions = 1, float radius = 1) {
+			Vector3[] cornerPoints = new Vector3[6 * numSubdivisions * numSubdivisions * 4];
+			Vector3[] faceNormals = { Vector3.up, Vector3.down, Vector3.left, Vector3.right, Vector3.forward, Vector3.back };
+			float faceCoveragePerSubFace = 1f / numSubdivisions;
+			int meshIndex = 0;
+
+			int i = 0;
+			foreach (Vector3 faceNormal in faceNormals) {
+				for (int y = 0; y < numSubdivisions; y++) {
+					for (int x = 0; x < numSubdivisions; x++) {
+						Vector2 startT = new Vector2(x, y) * faceCoveragePerSubFace;
+						Vector2 endT = startT + Vector2.one * faceCoveragePerSubFace;
+
+						//meshes[meshIndex] = CreateFace(resolution, faceNormal, startT, endT, radius);
+						Vector3 axisA = new Vector3(faceNormal.y, faceNormal.z, faceNormal.x);
+						Vector3 axisB = Vector3.Cross(faceNormal, axisA);
+
+						float ty = startT.y;
+						float dx = (endT.x - startT.x) / (resolution - 1);
+						float dy = (endT.y - startT.y) / (resolution - 1);
+
+						cornerPoints[i++] = faceNormal + (startT.x - 0.5f) * 2 * axisA + (startT.y - 0.5f) * 2 * axisB;
+						cornerPoints[i++] = faceNormal + (endT.x - 0.5f) * 2 * axisA + (startT.y - 0.5f) * 2 * axisB;
+						cornerPoints[i++] = faceNormal + (endT.x - 0.5f) * 2 * axisA + (endT.y - 0.5f) * 2 * axisB;
+						cornerPoints[i++] = faceNormal + (startT.x - 0.5f) * 2 * axisA + (endT.y - 0.5f) * 2 * axisB;
+						meshIndex++;
+					}
+				}
+			}
+
+			return cornerPoints;
+		}
+
 		// From http://mathproofs.blogspot.com/2005/07/mapping-cube-to-sphere.html
 		public static Vector3 CubePointToSpherePoint(Vector3 p)
 		{
-			float x2 = p.x * p.x / 2;
-			float y2 = p.y * p.y / 2;
-			float z2 = p.z * p.z / 2;
-			float x = p.x * Mathf.Sqrt(1 - y2 - z2 + (p.y * p.y * p.z * p.z) / 3);
-			float y = p.y * Mathf.Sqrt(1 - z2 - x2 + (p.x * p.x * p.z * p.z) / 3);
-			float z = p.z * Mathf.Sqrt(1 - x2 - y2 + (p.x * p.x * p.y * p.y) / 3);
+			float x2 = p.x * p.x;
+			float y2 = p.y * p.y;
+			float z2 = p.z * p.z;
+			float x = p.x * Mathf.Sqrt(1 - (y2 + z2) / 2 + (y2 * z2) / 3);
+			float y = p.y * Mathf.Sqrt(1 - (z2 + x2) / 2 + (z2 * x2) / 3);
+			float z = p.z * Mathf.Sqrt(1 - (x2 + y2) / 2 + (x2 * y2) / 3);
 			return new Vector3(x, y, z);
 
 		}

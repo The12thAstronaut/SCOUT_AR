@@ -42,6 +42,10 @@ public class VitalInfoCard : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
     {
+		
+	}
+
+	public void Initialize() {
 		sliderWidth = slider.gameObject.GetComponent<RectTransform>().sizeDelta.x;
 		valueRT = currentText.gameObject.GetComponent<RectTransform>();
 

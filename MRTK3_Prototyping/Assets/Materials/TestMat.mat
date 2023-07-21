@@ -275,10 +275,10 @@ Material:
     - _Specular_: 0
     - _SphericalHarmonics: 0
     - _SrcBlend: 1
-    - _StencilComparison: 0
+    - _StencilComparison: 6
     - _StencilOperation: 0
     - _StencilReadMask: 255
-    - _StencilReference: 0
+    - _StencilReference: 2
     - _StencilWriteMask: 255
     - _Subsurface_: 0
     - _Sun_Intensity_: 1

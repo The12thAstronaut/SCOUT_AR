@@ -8,7 +8,8 @@ public class CloseOnStartup : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        gameObject.SetActive(false);
+        
+        StartCoroutine(CloseObject());
     }
 
     // Update is called once per frame
@@ -16,4 +17,10 @@ public class CloseOnStartup : MonoBehaviour
     {
         
     }
+
+    IEnumerator CloseObject() {
+		yield return null;
+
+		gameObject.SetActive(false);
+	}
 }

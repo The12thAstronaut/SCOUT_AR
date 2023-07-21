@@ -64,6 +64,7 @@ public class SuitVital {
 		vitalInfoCard.value = value;
 		vitalInfoCard.minVal = minVal;
 		vitalInfoCard.maxVal = maxVal;
+		vitalInfoCard.Initialize();
 	}
 
     public void SetValue() {
