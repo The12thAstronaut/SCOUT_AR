@@ -8,11 +8,12 @@ public class GridDistanceIndicator : MonoBehaviour
 {
     public RectTransform mapWindow;
     public TextMeshProUGUI indicatorText;
+    public MapGrid mapGrid;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        transform.GetComponent<RectTransform>().sizeDelta = new Vector2(mapGrid.gridSize / mapGrid.gridDensity, transform.GetComponent<RectTransform>().sizeDelta.y);
     }
 
     // Update is called once per frame

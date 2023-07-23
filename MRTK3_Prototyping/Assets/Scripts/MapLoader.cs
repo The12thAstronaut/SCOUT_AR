@@ -126,7 +126,7 @@ public class MapLoader : MonoBehaviour {
 	}
 
 	async void UpdateMapRenderer(int resolution) {
-		try { gridDistanceIndicator.UpdateIndicator(); } catch (Exception e) { print(e); }
+		try { gridDistanceIndicator.UpdateIndicator(); } catch { }
 
 		float scale = mapSize * 2000000f / zoomRanges[zoomLevel - 1];
 
@@ -145,7 +145,7 @@ public class MapLoader : MonoBehaviour {
 			Debug.Log(mapWindowCorners[i]);
 		}*/
 
-		try { zoomPos[zoomLevel - 1] = zoomPos[zoomLevel - 2]; } catch (Exception e) { print(e); }
+		try { zoomPos[zoomLevel - 1] = zoomPos[zoomLevel - 2]; } catch {  }
 
 		for (int i = 0; i < 4; i++) {
 			while (!Physics.Raycast(mapWindowCorners[i], transform.parent.forward, 100f, Physics.IgnoreRaycastLayer)) {
