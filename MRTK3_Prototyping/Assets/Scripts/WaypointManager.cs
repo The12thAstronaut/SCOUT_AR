@@ -15,16 +15,20 @@ public class WaypointManager : MonoBehaviour
 {
 
     public GameObject waypointPrefab;
+	public GameObject mapMarkerPrefab;
     public Transform waypointCollection;
+	public Transform mapMarkerCollection;
     public MRTKRayInteractor leftRay;
     public MRTKRayInteractor rightRay;
     public TMP_InputField inputName;
 	public PressableButton newWaypointButton;
 	public VirtualizedScrollRectList waypointScrollList;
 	public GameObject waypointInfoCard;
+	public GameObject rightHandDetector;
+	public GameObject leftHandDetector;
 
 	private int totalWaypoints = 0;
-	public List<GameObject> waypoints;
+	public List<Waypoint> waypoints;
 
 	private float startTime;
 	private bool started = false;
@@ -67,7 +71,7 @@ public class WaypointManager : MonoBehaviour
 
 			newWaypointButton.ForceSetToggled(false);
 
-			waypoints.Add(instance);
+			waypoints.Add(instance.GetComponent<Waypoint>());
 			totalWaypoints++;
 			waypointScrollList.SetItemCount(totalWaypoints);
 		} else {
@@ -86,7 +90,7 @@ public class WaypointManager : MonoBehaviour
 			instance.GetComponent<SolverHandler>().LeftInteractor = leftRay;
 			instance.GetComponent<SolverHandler>().RightInteractor = rightRay;
 
-			// This makes it not start placement for some reason, so it's used here to stop placement.
+			// Calling this means placement is started twice due to auto-start, which means it is stopped. See: TapToPlace.StartPlacement
 			instance.GetComponent<TapToPlace>().StartPlacement();
 
 			instance.GetComponent<Waypoint>().waypointName = inputName.text;
@@ -95,7 +99,7 @@ public class WaypointManager : MonoBehaviour
 
 			newWaypointButton.ForceSetToggled(false);
 
-			waypoints.Add(instance);
+			waypoints.Add(instance.GetComponent<Waypoint>());
 			totalWaypoints++;
 			waypointScrollList.SetItemCount(totalWaypoints);
 		} else {
@@ -103,11 +107,21 @@ public class WaypointManager : MonoBehaviour
 		}
 	}
 
+	public void CreateMapMarker() {
+		var instance = Instantiate(mapMarkerPrefab, Camera.main.transform.position, Quaternion.identity, mapMarkerCollection);
+
+		instance.GetComponent<SolverHandler>().LeftInteractor = leftRay;
+		instance.GetComponent<SolverHandler>().RightInteractor = rightRay;
+
+		instance.GetComponent<MapPin>().rightHandDetector = rightHandDetector;
+		instance.GetComponent<MapPin>().leftHandDetector = leftHandDetector;
+	}
+
 	public void PopulateInfoCard(GameObject infoCard, int index) {
 		if (index < totalWaypoints) {
-			infoCard.transform.GetChild(2).GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = waypoints[index].transform.GetComponent<Waypoint>().waypointName;
-			infoCard.transform.GetChild(2).GetChild(0).GetChild(3).GetComponent<TextMeshProUGUI>().text = $"{waypoints[index].transform.GetComponent<Waypoint>().distance.ToString("0.##")} m";
-			infoCard.transform.GetComponent<WaypointInfoCard>().waypoint = waypoints[index].transform.GetComponent<Waypoint>();
+			infoCard.transform.GetChild(2).GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = waypoints[index].waypointName;
+			infoCard.transform.GetChild(2).GetChild(0).GetChild(3).GetComponent<TextMeshProUGUI>().text = $"{waypoints[index].distance.ToString("0.##")} m";
+			infoCard.transform.GetComponent<WaypointInfoCard>().waypoint = waypoints[index];
 			infoCard.transform.GetComponent<WaypointInfoCard>().index = index;
 			infoCard.transform.GetComponent<WaypointInfoCard>().waypointManager = this;
 		}
@@ -118,7 +132,7 @@ public class WaypointManager : MonoBehaviour
 	}
 
 	public void RemoveWaypoint(int index) {
-		Destroy(waypoints[index]);
+		Destroy(waypoints[index].gameObject);
 		waypoints.RemoveAt(index);
 		
 		totalWaypoints--;
