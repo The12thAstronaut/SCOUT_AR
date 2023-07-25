@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
-using Microsoft.Maps.Unity;
-using System.Linq;
 
 namespace Seb.Meshing
 {

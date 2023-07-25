@@ -1,15 +1,6 @@
 {
-  "scopedRegistries": [
-    {
-      "name": "Maps SDK for Unity",
-      "url": "https://unity.virtualearth.net/npm/registry/",
-      "scopes": [
-        "com.microsoft.maps"
-      ]
-    }
-  ],
+  "scopedRegistries": [],
   "dependencies": {
-    "com.microsoft.maps.unity": "0.11.2",
     "com.microsoft.mixedreality.openxr": "file:MixedReality/com.microsoft.mixedreality.openxr-1.8.0.tgz",
     "com.microsoft.mrtk.audio": "file:MixedReality/com.microsoft.mrtk.audio-3.0.0-pre.15.tgz",
     "com.microsoft.mrtk.core": "file:MixedReality/com.microsoft.mrtk.core-3.0.0-pre.15.tgz",
