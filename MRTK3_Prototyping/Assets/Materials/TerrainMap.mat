@@ -191,7 +191,7 @@ Material:
     - _Specular: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _StencilComparison: 4
+    - _StencilComparison: 0
     - _StencilOperation: 0
     - _StencilReadMask: 255
     - _StencilReference: 2

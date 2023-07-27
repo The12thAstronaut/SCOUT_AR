@@ -9,6 +9,8 @@ public class Waypoint : MonoBehaviour
     public string waypointName { get; set; }
 	public float distance { get; set; }
 
+	public WaypointManager manager { get; set; }
+
 	// Start is called before the first frame update
 	void Start() {
 		Vector3 lookPos = transform.position - Camera.main.transform.position;
@@ -32,5 +34,9 @@ public class Waypoint : MonoBehaviour
 
 		distance = Vector3.Distance(transform.position, Camera.main.transform.position);
 		transform.GetChild(1).transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = $"{distance.ToString("0.##")} m";
+	}
+
+	public void StopPlacement() {
+		manager.isPlacing = false;
 	}
 }

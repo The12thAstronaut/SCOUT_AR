@@ -8013,7 +8013,7 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 410561358}
         m_TargetAssemblyTypeName: PositionMenu, Assembly-CSharp
-        m_MethodName: beingMoved
+        m_MethodName: BeingMoved
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -11362,7 +11362,7 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 553162999}
         m_TargetAssemblyTypeName: PositionMenu, Assembly-CSharp
-        m_MethodName: beingMoved
+        m_MethodName: BeingMoved
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -12667,8 +12667,6 @@ MonoBehaviour:
   - 200000
   - 400000
   zoomLevel: 1
-  zoomLevelRetention: 3
-  zoomRetentionMinimum: 5000
   normalsStepSize: 0.0018
   minHeight: 0
   numSpherePointsMax: 699840000
@@ -20157,9 +20155,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waypointPrefab: {fileID: 4557755062300258701, guid: 370a2a08bd6cf514991d64fa178fdf1f, type: 3}
-  mapMarkerPrefab: {fileID: 8875680527888139416, guid: df85813bac2f5b34191501d831973524, type: 3}
+  mapMarkerPrefab: {fileID: 9096015655597885778, guid: df85813bac2f5b34191501d831973524, type: 3}
   waypointCollection: {fileID: 910391018}
   mapMarkerCollection: {fileID: 261269502}
+  mapWindow: {fileID: 256188773}
   leftRay: {fileID: 783490574}
   rightRay: {fileID: 567976803}
   inputName: {fileID: 769546638}
@@ -30347,8 +30346,8 @@ RectTransform:
   m_GameObject: {fileID: 1529642905}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 190, y: 190, z: 190}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 190, y: 190, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 435288397}
   m_RootOrder: 1
@@ -45589,7 +45588,7 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 7214214270689643539}
         m_TargetAssemblyTypeName: PositionMenu, Assembly-CSharp
-        m_MethodName: beingMoved
+        m_MethodName: BeingMoved
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -45991,7 +45990,7 @@ BoxCollider:
   m_GameObject: {fileID: 2589716730826891961}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 0.4, y: 0.26, z: 0.01}
   m_Center: {x: 0, y: 0.03, z: 0}

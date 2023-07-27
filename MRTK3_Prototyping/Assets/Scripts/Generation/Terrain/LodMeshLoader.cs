@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.Mesh;
-using System.Threading.Tasks;
 
 public class LodMeshLoader : MonoBehaviour
 {

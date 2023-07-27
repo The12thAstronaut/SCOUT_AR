@@ -18,6 +18,7 @@ public class WaypointManager : MonoBehaviour
 	public GameObject mapMarkerPrefab;
     public Transform waypointCollection;
 	public Transform mapMarkerCollection;
+	public RectTransform mapWindow;
     public MRTKRayInteractor leftRay;
     public MRTKRayInteractor rightRay;
     public TMP_InputField inputName;
@@ -33,6 +34,7 @@ public class WaypointManager : MonoBehaviour
 	private float startTime;
 	private bool started = false;
 	private bool ready = false;
+	public bool isPlacing { get; set; } = false;
 
 	// Start is called before the first frame update
 	void Start()
@@ -57,7 +59,8 @@ public class WaypointManager : MonoBehaviour
 	}
 
 	public void CreateAnchorPlace() {
-        if (inputName.text != "") {
+        if (!isPlacing && inputName.text != "") {
+			isPlacing = true;
 			var instance = Instantiate(waypointPrefab, Camera.main.transform.position, Quaternion.identity, waypointCollection);
 
 			if (instance.GetComponent<ARAnchor>() == null) {
@@ -68,6 +71,7 @@ public class WaypointManager : MonoBehaviour
 			instance.GetComponent<SolverHandler>().RightInteractor = rightRay;
 
 			instance.GetComponent<Waypoint>().name = inputName.text;
+			instance.GetComponent<Waypoint>().manager = this;
 
 			newWaypointButton.ForceSetToggled(false);
 
@@ -80,7 +84,8 @@ public class WaypointManager : MonoBehaviour
     }
 
 	public void CreateAnchorDrop() {
-		if (inputName.text != "") {
+		if (!isPlacing && inputName.text != "") {
+			isPlacing = true;
 			var instance = Instantiate(waypointPrefab, Camera.main.transform.position, Quaternion.identity, waypointCollection);
 
 			if (instance.GetComponent<ARAnchor>() == null) {
@@ -94,6 +99,7 @@ public class WaypointManager : MonoBehaviour
 			instance.GetComponent<TapToPlace>().StartPlacement();
 
 			instance.GetComponent<Waypoint>().waypointName = inputName.text;
+			instance.GetComponent<Waypoint>().manager = this;
 
 			instance.transform.position = instance.transform.position + new Vector3(0f, -0.5f, 0f);
 
@@ -108,6 +114,9 @@ public class WaypointManager : MonoBehaviour
 	}
 
 	public void CreateMapMarker() {
+		if (isPlacing) return;
+		isPlacing = true;
+
 		var instance = Instantiate(mapMarkerPrefab, Camera.main.transform.position, Quaternion.identity, mapMarkerCollection);
 
 		instance.GetComponent<SolverHandler>().LeftInteractor = leftRay;
@@ -115,6 +124,8 @@ public class WaypointManager : MonoBehaviour
 
 		instance.GetComponent<MapPin>().rightHandDetector = rightHandDetector;
 		instance.GetComponent<MapPin>().leftHandDetector = leftHandDetector;
+		instance.GetComponent<MapPin>().manager = this;
+		instance.GetComponent<MapPin>().mapWindow = mapWindow;
 	}
 
 	public void PopulateInfoCard(GameObject infoCard, int index) {

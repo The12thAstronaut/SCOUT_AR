@@ -39,7 +39,7 @@ public class PositionMenu : MonoBehaviour
 			}
 			transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
 
-			float dist = Vector3.Distance(transform.position, Camera.main.transform.position);
+			//float dist = Vector3.Distance(transform.position, Camera.main.transform.position);
 			if (Vector3.Distance(transform.position, target) > 0.001f) {
 				transform.position = Vector3.MoveTowards(transform.position, target, pushStrength * Time.deltaTime);
 			} else {
@@ -51,7 +51,7 @@ public class PositionMenu : MonoBehaviour
 		}
 	}
 
-	public void beingMoved() {
+	public void BeingMoved() {
         isManipulated = true;
         locked = false;
     }
@@ -61,11 +61,14 @@ public class PositionMenu : MonoBehaviour
 	}
 
 	public void OpenMenu() {
+		locked = true;
+		isManipulated = false;
+
 		Vector3 focus = Camera.main.transform.forward;
 		focus.y = 0;
 		transform.position = transform.parent.TransformPoint(focus.normalized * distance);
 		transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
 
-		transform.GetComponent<ObjectManipulator>().enabled = true;
+		if (!transform.GetComponent<ObjectManipulator>().enabled) transform.GetComponent<ObjectManipulator>().enabled = true;
 	}
 }

@@ -43,8 +43,8 @@ public class MapLoader : MonoBehaviour {
 
 	[SerializeField] float[] zoomRanges = { 50f, 100f, 200f, 500f, 1000f, 5000f, 10000f, 20000f, 50000f, 100000f, 200000f, 400000f };
 	[Range(1, 12)]public int zoomLevel = 1;
-	public int zoomLevelRetention = 3;
-	public float zoomRetentionMinimum = 5000f;
+	//public int zoomLevelRetention = 3;
+	//public float zoomRetentionMinimum = 5000f;
 
 	/*public ComputeShader mapCompute;
 
@@ -78,7 +78,6 @@ public class MapLoader : MonoBehaviour {
 	[Disabled] public int totalVertexCount;
 
 	ComputeBuffer spherePointsBuffer;
-	ComputeBuffer gridSpherePointsBuffer;
 
 	const int assignVertexHeightsKernel = 1;
 
@@ -148,7 +147,7 @@ public class MapLoader : MonoBehaviour {
 		try { zoomPos[zoomLevel - 1] = zoomPos[zoomLevel - 2]; } catch {  }
 
 		for (int i = 0; i < 4; i++) {
-			while (!Physics.Raycast(mapWindowCorners[i], transform.parent.forward, 100f, Physics.IgnoreRaycastLayer)) {
+			while (!Physics.Raycast(mapWindowCorners[i], transform.parent.forward, 1000f, Physics.IgnoreRaycastLayer)) {
 				SimpleMeshData meshData = new SimpleMeshData("temp");
 				await Task.Run(() => meshData = CubeSphere.GenerateMesh(resolution, subdivisions, keys[count++]/*, centerPoint, zoomRanges[zoomLevel - 1] / moonBaseRadius*/));
 				meshData = AssignMeshHeights(meshData);
@@ -166,7 +165,7 @@ public class MapLoader : MonoBehaviour {
 
 				zoomPos[zoomLevel - 1] = magnitude;
 				transform.GetChild(0).localPosition = new Vector3(0, 0, zoomPos[zoomLevel - 1] > 1 ? zoomPos[zoomLevel - 1] : 1);
-				parentTransform.GetChild(0).localPosition = new Vector3(0, 0, -zoomPos[zoomLevel - 1] - 16.4f / scale);
+				//parentTransform.GetChild(0).localPosition = new Vector3(0, 0, -zoomPos[zoomLevel - 1] - 16.4f / scale);
 				await Task.Yield();
 			}
 		}
@@ -198,7 +197,7 @@ public class MapLoader : MonoBehaviour {
 
 			zoomPos[zoomLevel - 1] = parentTransform.GetChild(1).InverseTransformPoint(hits[index].point).magnitude;
 			transform.GetChild(0).localPosition = new Vector3(0, 0, zoomPos[zoomLevel - 1] > 1 ? zoomPos[zoomLevel - 1] : 1);
-			parentTransform.GetChild(0).localPosition = new Vector3(0, 0, -zoomPos[zoomLevel - 1] - 16.4f / scale);
+			//parentTransform.GetChild(0).localPosition = new Vector3(0, 0, -zoomPos[zoomLevel - 1] - 16.4f / scale);
 		}
 
 		gridDistanceIndicator.UpdateIndicator();
@@ -314,8 +313,12 @@ public class MapLoader : MonoBehaviour {
 
 		float scale = mapSize * 2000000f / zoomRanges[zoomLevel - 1];
 		transform.localScale = new Vector3(scale, scale, scale);
-		parentTransform.GetChild(0).localScale = new Vector3(1 / scale, 1 / scale, 1 / scale);
-		parentTransform.GetChild(0).localPosition = new Vector3(0, 0, -zoomPos[zoomLevel - 1] - 16.4f / scale);
+		//parentTransform.GetChild(0).localScale = new Vector3(1 / scale, 1 / scale, 1 / scale);
+		//parentTransform.GetChild(0).localPosition = new Vector3(0, 0, -zoomPos[zoomLevel - 1] - 16.4f / scale);
+		for (int i = 0; i < parentTransform.GetChild(0).childCount; i++) {
+			parentTransform.GetChild(0).GetChild(i).localScale = Vector3.one * (zoomRanges[zoomLevel - 1] / zoomRanges[0]);
+		}
+
 		gridDistanceIndicator.UpdateIndicator();
 		zoomLevelIndicator.text = "Zoom Scale: " + zoomLevel;
 
@@ -332,7 +335,11 @@ public class MapLoader : MonoBehaviour {
 		float scale = mapSize * 2000000f / zoomRanges[zoomLevel - 1];
 
 		transform.localScale = new Vector3(scale, scale, scale);
-		parentTransform.GetChild(0).localScale = new Vector3(1 / scale, 1 / scale, 1 / scale);
+		//parentTransform.GetChild(0).localScale = new Vector3(1 / scale, 1 / scale, 1 / scale);
+
+		for (int i = 0; i < parentTransform.GetChild(0).childCount; i++) {
+			parentTransform.GetChild(0).GetChild(i).localScale = Vector3.one * (zoomRanges[zoomLevel - 1] / zoomRanges[0]);
+		}
 
 		if (zoomLevel >= 11) {
 			RemoveFarMeshes(-1);
@@ -383,7 +390,7 @@ public class MapLoader : MonoBehaviour {
 		Vector3[] normals = ComputeHelper.ReadDataFromBuffer<Vector3>(normalsBuffer, false);
 
 		//Release
-		ComputeHelper.Release(vertexBuffer, normalsBuffer);
+		ComputeHelper.Release(vertexBuffer, normalsBuffer, spherePointsBuffer);
 		totalVertexCount += vertices.Length;
 
 		SimpleMeshData sectorMeshData = new SimpleMeshData(vertices, mesh.triangles, normals);
@@ -411,7 +418,7 @@ public class MapLoader : MonoBehaviour {
 	}
 
 	void Release() {
-		ComputeHelper.Release(spherePointsBuffer, gridSpherePointsBuffer);
+		ComputeHelper.Release(spherePointsBuffer);
 	}
 
 	/*public SimpleMeshData BytesToRegionMesh(byte[] bytes, Vector3 center, float range) {
