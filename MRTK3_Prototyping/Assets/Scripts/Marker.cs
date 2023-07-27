@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class Waypoint : MonoBehaviour
+public class Marker : MonoBehaviour
 {
-    public string waypointName { get; set; }
+    public string markerName { get; set; }
 	public float distance { get; set; }
 
-	public WaypointManager manager { get; set; }
+	public MarkerManager manager { get; set; }
 
 	// Start is called before the first frame update
 	void Start() {
@@ -20,7 +20,7 @@ public class Waypoint : MonoBehaviour
 		}
 
 		distance = Vector3.Distance(transform.position, Camera.main.transform.position);
-		transform.GetChild(1).transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = waypointName;
+		transform.GetChild(1).transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = markerName;
 		transform.GetChild(1).transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = $"{distance.ToString("0.##")} m";
 	}
 

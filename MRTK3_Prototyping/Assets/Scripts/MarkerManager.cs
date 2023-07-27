@@ -11,36 +11,38 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 
-public class WaypointManager : MonoBehaviour
+public class MarkerManager : MonoBehaviour
 {
 
-    public GameObject waypointPrefab;
+    public GameObject markerPrefab;
 	public GameObject mapMarkerPrefab;
-    public Transform waypointCollection;
+    public Transform markerCollection;
 	public Transform mapMarkerCollection;
 	public RectTransform mapWindow;
     public MRTKRayInteractor leftRay;
     public MRTKRayInteractor rightRay;
     public TMP_InputField inputName;
-	public PressableButton newWaypointButton;
-	public VirtualizedScrollRectList waypointScrollList;
-	public GameObject waypointInfoCard;
+	public PressableButton newMarkerButton;
+	public VirtualizedScrollRectList markerScrollList;
+	public GameObject markerInfoCard;
 	public GameObject rightHandDetector;
 	public GameObject leftHandDetector;
 
-	private int totalWaypoints = 0;
-	public List<Waypoint> waypoints;
+	private int totalMarkers = 0;
+	public List<Marker> markers;
 
 	private float startTime;
 	private bool started = false;
 	private bool ready = false;
 	public bool isPlacing { get; set; } = false;
 
+	public List<CoordinateDegrees> markerLocations = new List<CoordinateDegrees>();
+
 	// Start is called before the first frame update
 	void Start()
     {
-		waypointScrollList.OnVisible = PopulateInfoCard;
-		waypointScrollList.OnInvisible = Depopulate;
+		markerScrollList.OnVisible = PopulateInfoCard;
+		markerScrollList.OnInvisible = Depopulate;
 	}
 
     // Update is called once per frame
@@ -53,7 +55,7 @@ public class WaypointManager : MonoBehaviour
 		}
 
 		if (started && Time.time - startTime >= .01) {
-			waypointScrollList.SetItemCount(totalWaypoints);
+			markerScrollList.SetItemCount(totalMarkers);
 			started = false;
 		}
 	}
@@ -61,7 +63,7 @@ public class WaypointManager : MonoBehaviour
 	public void CreateAnchorPlace() {
         if (!isPlacing && inputName.text != "") {
 			isPlacing = true;
-			var instance = Instantiate(waypointPrefab, Camera.main.transform.position, Quaternion.identity, waypointCollection);
+			var instance = Instantiate(markerPrefab, Camera.main.transform.position, Quaternion.identity, markerCollection);
 
 			if (instance.GetComponent<ARAnchor>() == null) {
 				instance.AddComponent<ARAnchor>();
@@ -70,14 +72,14 @@ public class WaypointManager : MonoBehaviour
 			instance.GetComponent<SolverHandler>().LeftInteractor = leftRay;
 			instance.GetComponent<SolverHandler>().RightInteractor = rightRay;
 
-			instance.GetComponent<Waypoint>().name = inputName.text;
-			instance.GetComponent<Waypoint>().manager = this;
+			instance.GetComponent<Marker>().name = inputName.text;
+			instance.GetComponent<Marker>().manager = this;
 
-			newWaypointButton.ForceSetToggled(false);
+			newMarkerButton.ForceSetToggled(false);
 
-			waypoints.Add(instance.GetComponent<Waypoint>());
-			totalWaypoints++;
-			waypointScrollList.SetItemCount(totalWaypoints);
+			markers.Add(instance.GetComponent<Marker>());
+			totalMarkers++;
+			markerScrollList.SetItemCount(totalMarkers);
 		} else {
 			Debug.Log("No name entered");
 		}
@@ -86,7 +88,7 @@ public class WaypointManager : MonoBehaviour
 	public void CreateAnchorDrop() {
 		if (!isPlacing && inputName.text != "") {
 			isPlacing = true;
-			var instance = Instantiate(waypointPrefab, Camera.main.transform.position, Quaternion.identity, waypointCollection);
+			var instance = Instantiate(markerPrefab, Camera.main.transform.position, Quaternion.identity, markerCollection);
 
 			if (instance.GetComponent<ARAnchor>() == null) {
 				instance.AddComponent<ARAnchor>();
@@ -98,16 +100,16 @@ public class WaypointManager : MonoBehaviour
 			// Calling this means placement is started twice due to auto-start, which means it is stopped. See: TapToPlace.StartPlacement
 			instance.GetComponent<TapToPlace>().StartPlacement();
 
-			instance.GetComponent<Waypoint>().waypointName = inputName.text;
-			instance.GetComponent<Waypoint>().manager = this;
+			instance.GetComponent<Marker>().markerName = inputName.text;
+			instance.GetComponent<Marker>().manager = this;
 
 			instance.transform.position = instance.transform.position + new Vector3(0f, -0.5f, 0f);
 
-			newWaypointButton.ForceSetToggled(false);
+			newMarkerButton.ForceSetToggled(false);
 
-			waypoints.Add(instance.GetComponent<Waypoint>());
-			totalWaypoints++;
-			waypointScrollList.SetItemCount(totalWaypoints);
+			markers.Add(instance.GetComponent<Marker>());
+			totalMarkers++;
+			markerScrollList.SetItemCount(totalMarkers);
 		} else {
 			Debug.Log("No name entered");
 		}
@@ -129,12 +131,12 @@ public class WaypointManager : MonoBehaviour
 	}
 
 	public void PopulateInfoCard(GameObject infoCard, int index) {
-		if (index < totalWaypoints) {
-			infoCard.transform.GetChild(2).GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = waypoints[index].waypointName;
-			infoCard.transform.GetChild(2).GetChild(0).GetChild(3).GetComponent<TextMeshProUGUI>().text = $"{waypoints[index].distance.ToString("0.##")} m";
-			infoCard.transform.GetComponent<WaypointInfoCard>().waypoint = waypoints[index];
-			infoCard.transform.GetComponent<WaypointInfoCard>().index = index;
-			infoCard.transform.GetComponent<WaypointInfoCard>().waypointManager = this;
+		if (index < totalMarkers) {
+			infoCard.transform.GetChild(2).GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = markers[index].markerName;
+			infoCard.transform.GetChild(2).GetChild(0).GetChild(3).GetComponent<TextMeshProUGUI>().text = $"{markers[index].distance.ToString("0.##")} m";
+			infoCard.transform.GetComponent<MarkerInfoCard>().marker = markers[index];
+			infoCard.transform.GetComponent<MarkerInfoCard>().index = index;
+			infoCard.transform.GetComponent<MarkerInfoCard>().waypointManager = this;
 		}
 	}
 
@@ -142,12 +144,12 @@ public class WaypointManager : MonoBehaviour
 		infoCard.transform.Translate(0, 30000, 0);
 	}
 
-	public void RemoveWaypoint(int index) {
-		Destroy(waypoints[index].gameObject);
-		waypoints.RemoveAt(index);
+	public void RemoveMarker(int index) {
+		Destroy(markers[index].gameObject);
+		markers.RemoveAt(index);
 		
-		totalWaypoints--;
-		waypointScrollList.SetItemCount(0);
+		totalMarkers--;
+		markerScrollList.SetItemCount(0);
 		ready = true;
 	}
 }

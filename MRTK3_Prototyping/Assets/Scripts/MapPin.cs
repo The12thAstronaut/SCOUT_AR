@@ -10,7 +10,7 @@ public class MapPin : MonoBehaviour {
     public GameObject rightHandDetector { get; set; }
     public GameObject leftHandDetector { get; set; }
     
-    public WaypointManager manager { get; set; }
+    public MarkerManager manager { get; set; }
 	public RectTransform mapWindow { get; set; }
     private Vector3[] mapCorners = new Vector3[4];
 

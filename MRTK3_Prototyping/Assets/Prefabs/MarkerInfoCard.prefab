@@ -363,7 +363,7 @@ GameObject:
   - component: {fileID: 1525330332116736773}
   - component: {fileID: 8837358626807128460}
   m_Layer: 0
-  m_Name: WaypointInfoCard
+  m_Name: MarkerInfoCard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1258,11 +1258,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 611918076176130036, guid: 771f2f2f1087fda47a68eeb15eecb4b3, type: 3}
       propertyPath: <OnClicked>k__BackingField.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: DeleteWaypoint
+      value: DeleteMarker
       objectReference: {fileID: 0}
     - target: {fileID: 611918076176130036, guid: 771f2f2f1087fda47a68eeb15eecb4b3, type: 3}
       propertyPath: <OnClicked>k__BackingField.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: WaypointInfoCard, Assembly-CSharp
+      value: MarkerInfoCard, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 611918076176130036, guid: 771f2f2f1087fda47a68eeb15eecb4b3, type: 3}
       propertyPath: <OnClicked>k__BackingField.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName

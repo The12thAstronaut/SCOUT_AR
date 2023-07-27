@@ -6446,7 +6446,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1289767064195868411, guid: dc1e9ce3e30961343bef4d500c7dd6b5, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 86
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1289767064195868411, guid: dc1e9ce3e30961343bef4d500c7dd6b5, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -7297,7 +7297,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1289767064195868411, guid: dc1e9ce3e30961343bef4d500c7dd6b5, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 86
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1289767064195868411, guid: dc1e9ce3e30961343bef4d500c7dd6b5, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -13956,7 +13956,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8864547319737434731, guid: 61b1d2477609bc34297ebc4689fffbe8, type: 3}
       propertyPath: m_Name
-      value: NewWaypoint Button
+      value: NewMarker Button
       objectReference: {fileID: 0}
     - target: {fileID: 8864547319737434737, guid: 61b1d2477609bc34297ebc4689fffbe8, type: 3}
       propertyPath: m_Size.x
@@ -14664,7 +14664,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8864547321217110512, guid: 61b1d2477609bc34297ebc4689fffbe8, type: 3}
       propertyPath: m_Name
-      value: ToggleWaypoints Button
+      value: ToggleMarkers Button
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 61b1d2477609bc34297ebc4689fffbe8, type: 3}
@@ -14898,7 +14898,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8376646494505211202, guid: c6b351a67ceb69140b199996bbbea156, type: 3}
       propertyPath: m_Name
-      value: PointPlaceWaypoint Button
+      value: PointPlaceMarker Button
       objectReference: {fileID: 0}
     - target: {fileID: 8376646494505211224, guid: c6b351a67ceb69140b199996bbbea156, type: 3}
       propertyPath: m_Size.x
@@ -20136,7 +20136,7 @@ GameObject:
   - component: {fileID: 910391018}
   - component: {fileID: 910391017}
   m_Layer: 0
-  m_Name: WaypointManager
+  m_Name: MarkerManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20154,20 +20154,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bccef0d45e9c6347b34859894238c20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waypointPrefab: {fileID: 4557755062300258701, guid: 370a2a08bd6cf514991d64fa178fdf1f, type: 3}
+  markerPrefab: {fileID: 4557755062300258701, guid: 370a2a08bd6cf514991d64fa178fdf1f, type: 3}
   mapMarkerPrefab: {fileID: 9096015655597885778, guid: df85813bac2f5b34191501d831973524, type: 3}
-  waypointCollection: {fileID: 910391018}
+  markerCollection: {fileID: 910391018}
   mapMarkerCollection: {fileID: 261269502}
   mapWindow: {fileID: 256188773}
   leftRay: {fileID: 783490574}
   rightRay: {fileID: 567976803}
   inputName: {fileID: 769546638}
-  newWaypointButton: {fileID: 1928954709}
-  waypointScrollList: {fileID: 883402570}
-  waypointInfoCard: {fileID: 3777961346460060716, guid: 93abe20ae13943b4faa5b8110758d2a1, type: 3}
+  newMarkerButton: {fileID: 1928954709}
+  markerScrollList: {fileID: 883402570}
+  markerInfoCard: {fileID: 3777961346460060716, guid: 93abe20ae13943b4faa5b8110758d2a1, type: 3}
   rightHandDetector: {fileID: 57697509}
   leftHandDetector: {fileID: 1608001729}
-  waypoints: []
+  markers: []
+  markerLocations: []
 --- !u!4 &910391018
 Transform:
   m_ObjectHideFlags: 0
@@ -23280,9 +23281,9 @@ MonoBehaviour:
   faceUserDefinedTargetTransform: 0
   targetToFace: {fileID: 0}
   pivotAxis: 7
-  minDistance: 0.3
-  maxDistance: 0.31
-  defaultDistance: 0.3
+  minDistance: 0.6
+  maxDistance: 0.61
+  defaultDistance: 0.6
   maxViewHorizontalDegrees: 0
   maxViewVerticalDegrees: 0
   reorientWhenOutsideParameters: 1
@@ -23369,8 +23370,8 @@ RectTransform:
   m_GameObject: {fileID: 1125865649}
   m_LocalRotation: {x: 0.38268343, y: -0, z: -0, w: 0.92387956}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.001, y: 0.001, z: 0.001}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.002, y: 0.002, z: 0.002}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 653098399}
   - {fileID: 1156548271}
@@ -34029,7 +34030,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1289767064195868411, guid: dc1e9ce3e30961343bef4d500c7dd6b5, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 86
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1289767064195868411, guid: dc1e9ce3e30961343bef4d500c7dd6b5, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -38602,7 +38603,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1289767064195868411, guid: dc1e9ce3e30961343bef4d500c7dd6b5, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 86
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1289767064195868411, guid: dc1e9ce3e30961343bef4d500c7dd6b5, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -39467,7 +39468,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1289767064195868411, guid: dc1e9ce3e30961343bef4d500c7dd6b5, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 86
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1289767064195868411, guid: dc1e9ce3e30961343bef4d500c7dd6b5, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -40329,7 +40330,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Waypoint Creation
+  m_text: Marker Creation
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d15b9765f7a456340a28cee00f9beeb2, type: 2}
   m_sharedMaterial: {fileID: -1440009900055822571, guid: d15b9765f7a456340a28cee00f9beeb2, type: 2}
@@ -40499,7 +40500,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8376646494505211202, guid: c6b351a67ceb69140b199996bbbea156, type: 3}
       propertyPath: m_Name
-      value: PlaceWaypointHere Button
+      value: PlaceMarkerHere Button
       objectReference: {fileID: 0}
     - target: {fileID: 8376646494505211224, guid: c6b351a67ceb69140b199996bbbea156, type: 3}
       propertyPath: m_Size.x
@@ -40689,7 +40690,7 @@ GameObject:
   - component: {fileID: 7468407654266453535}
   - component: {fileID: 7468407654266453537}
   m_Layer: 5
-  m_Name: WaypointCreationDialog
+  m_Name: MarkerCreationDialog
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -42758,7 +42759,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1289767064195868411, guid: dc1e9ce3e30961343bef4d500c7dd6b5, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 86
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1289767064195868411, guid: dc1e9ce3e30961343bef4d500c7dd6b5, type: 3}
       propertyPath: m_AnchoredPosition.y
