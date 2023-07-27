@@ -134,30 +134,30 @@ Shader"Custom/Terrain"
 					if (xIndex == 0)
 					{
 						float mipLevel = calculateGeoMipLevel(float2(x, y), _Col_TexelSize.zw);
-						unlitTerrainCol = tex2Dlod(_Col01, float4(float2(x, y), 0, mipLevel));
-						detailNormal = tex2D(_HeightMap01, float2(x, y));
-						col = tex2D(_Col01, float2(x, y));
-					}
-					else if (xIndex == 1)
-					{
-						float mipLevel = calculateGeoMipLevel(float2(x, y), _Col_TexelSize.zw);
-						unlitTerrainCol = tex2Dlod(_Col11, float4(float2(x, y), 0, mipLevel));
-						detailNormal = tex2D(_HeightMap11, float2(x, y));
-						col = tex2D(_Col11, float2(x, y));
-					}
-					else if (xIndex == 2)
-					{
-						float mipLevel = calculateGeoMipLevel(float2(x, y), _Col_TexelSize.zw);
 						unlitTerrainCol = tex2Dlod(_Col21, float4(float2(x, y), 0, mipLevel));
 						detailNormal = tex2D(_HeightMap21, float2(x, y));
 						col = tex2D(_Col21, float2(x, y));
 					}
-					else
+					else if (xIndex == 1)
 					{
 						float mipLevel = calculateGeoMipLevel(float2(x, y), _Col_TexelSize.zw);
 						unlitTerrainCol = tex2Dlod(_Col31, float4(float2(x, y), 0, mipLevel));
 						detailNormal = tex2D(_HeightMap31, float2(x, y));
 						col = tex2D(_Col31, float2(x, y));
+					}
+					else if (xIndex == 2)
+					{
+						float mipLevel = calculateGeoMipLevel(float2(x, y), _Col_TexelSize.zw);
+						unlitTerrainCol = tex2Dlod(_Col01, float4(float2(x, y), 0, mipLevel));
+						detailNormal = tex2D(_HeightMap01, float2(x, y));
+						col = tex2D(_Col01, float2(x, y));
+					}
+					else
+					{
+						float mipLevel = calculateGeoMipLevel(float2(x, y), _Col_TexelSize.zw);
+						unlitTerrainCol = tex2Dlod(_Col11, float4(float2(x, y), 0, mipLevel));
+						detailNormal = tex2D(_HeightMap11, float2(x, y));
+						col = tex2D(_Col11, float2(x, y));
 					}
 				}
 				else
@@ -166,30 +166,30 @@ Shader"Custom/Terrain"
 					if (xIndex == 0)
 					{
 						float mipLevel = calculateGeoMipLevel(float2(x, y), _Col_TexelSize.zw);
-						unlitTerrainCol = tex2Dlod(_Col00, float4(float2(x, y), 0, mipLevel));
-						detailNormal = tex2D(_HeightMap00, float2(x, y));
-						col = tex2D(_Col00, float2(x, y));
-					}
-					else if (xIndex == 1)
-					{
-						float mipLevel = calculateGeoMipLevel(float2(x, y), _Col_TexelSize.zw);
-						unlitTerrainCol = tex2Dlod(_Col10, float4(float2(x, y), 0, mipLevel));
-						detailNormal = tex2D(_HeightMap10, float2(x, y));
-						col = tex2D(_Col10, float2(x, y));
-					}
-					else if (xIndex == 2)
-					{
-						float mipLevel = calculateGeoMipLevel(float2(x, y), _Col_TexelSize.zw);
 						unlitTerrainCol = tex2Dlod(_Col20, float4(float2(x, y), 0, mipLevel));
 						detailNormal = tex2D(_HeightMap20, float2(x, y));
 						col = tex2D(_Col20, float2(x, y));
 					}
-					else
+					else if (xIndex == 1)
 					{
 						float mipLevel = calculateGeoMipLevel(float2(x, y), _Col_TexelSize.zw);
 						unlitTerrainCol = tex2Dlod(_Col30, float4(float2(x, y), 0, mipLevel));
 						detailNormal = tex2D(_HeightMap30, float2(x, y));
 						col = tex2D(_Col30, float2(x, y));
+					}
+					else if (xIndex == 2)
+					{
+						float mipLevel = calculateGeoMipLevel(float2(x, y), _Col_TexelSize.zw);
+						unlitTerrainCol = tex2Dlod(_Col00, float4(float2(x, y), 0, mipLevel));
+						detailNormal = tex2D(_HeightMap00, float2(x, y));
+						col = tex2D(_Col00, float2(x, y));
+					}
+					else
+					{
+						float mipLevel = calculateGeoMipLevel(float2(x, y), _Col_TexelSize.zw);
+						unlitTerrainCol = tex2Dlod(_Col10, float4(float2(x, y), 0, mipLevel));
+						detailNormal = tex2D(_HeightMap10, float2(x, y));
+						col = tex2D(_Col10, float2(x, y));
 					}
 				}
 	

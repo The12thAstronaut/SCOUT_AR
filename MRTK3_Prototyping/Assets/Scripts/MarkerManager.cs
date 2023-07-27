@@ -128,6 +128,8 @@ public class MarkerManager : MonoBehaviour
 		instance.GetComponent<MapPin>().leftHandDetector = leftHandDetector;
 		instance.GetComponent<MapPin>().manager = this;
 		instance.GetComponent<MapPin>().mapWindow = mapWindow;
+
+		//markerLocations.Add(new CoordinateDegrees())
 	}
 
 	public void PopulateInfoCard(GameObject infoCard, int index) {

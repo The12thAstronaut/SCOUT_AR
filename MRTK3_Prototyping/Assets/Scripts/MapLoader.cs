@@ -12,6 +12,7 @@ using TMPro;
 using static Microsoft.MixedReality.GraphicsTools.ProximityLight;
 using UnityEngine.UIElements;
 using UnityEngine.InputSystem.HID;
+using UserInfo;
 
 public class MapLoader : MonoBehaviour {
 
@@ -26,10 +27,9 @@ public class MapLoader : MonoBehaviour {
 	[Range(1, 2000)] public float heightMult = 1.0f;
 	public float mapSize = 5.0f;
 	public Transform parentTransform;
-	public float longitude = -86f;
-	public float latitude = -19f;
 	public GridDistanceIndicator gridDistanceIndicator;
 	public TextMeshProUGUI zoomLevelIndicator;
+	public TelemetryManager positionInfo;
 
 	private Vector3[] mapWindowCorners = new Vector3[4];
 	private Vector3 centerPoint = Vector3.zero;
@@ -44,8 +44,6 @@ public class MapLoader : MonoBehaviour {
 
 	[SerializeField] float[] zoomRanges = { 50f, 100f, 200f, 500f, 1000f, 5000f, 10000f, 20000f, 50000f, 100000f, 200000f, 400000f };
 	[Range(1, 12)]public int zoomLevel = 1;
-	//public int zoomLevelRetention = 3;
-	//public float zoomRetentionMinimum = 5000f;
 
 	/*public ComputeShader mapCompute;
 
@@ -255,18 +253,10 @@ public class MapLoader : MonoBehaviour {
 	}
 
 	void UpdatePosition() {
-		#if WINDOWS_UWP
-		UWPGeolocation.GetLocation(pos => {
-		   latitude = pos.Coordinate.Point.Position.Latitude;
-		   longitude = pos.Coordinate.Point.Position.Longitude;
-		}, err => {
-		   Debug.LogError(err);
-		});
-		#endif
 
-		transform.GetChild(0).localRotation = Quaternion.Euler(-latitude, 0, 0);
-		transform.GetChild(0).GetChild(0).localRotation = Quaternion.Euler(0, longitude, 0);
-		centerPoint = GeoMaths.CoordinateToPoint(new Coordinate(Mathf.Deg2Rad * longitude, Mathf.Deg2Rad * latitude));
+		transform.GetChild(0).localRotation = Quaternion.Euler(-positionInfo.latitude, 0, 0);
+		transform.GetChild(0).GetChild(0).localRotation = Quaternion.Euler(0, positionInfo.longitude, 0);
+		centerPoint = GeoMaths.CoordinateToPoint(new Coordinate(Mathf.Deg2Rad * positionInfo.longitude, Mathf.Deg2Rad * positionInfo.latitude));
 
 		float[] distances = new float[cornerPoints.Length / 4];
 
