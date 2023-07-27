@@ -18,6 +18,7 @@ public class MapLoader : MonoBehaviour {
 	public Material mat;
 	public bool useStaticBatching;
 	public bool loadOnStart;
+	public bool useStencil;
 	private bool loaded;
 	public float sizeMult = 0.01f;
 	[Min(5000)] public float mapRange = 5000; // meters
@@ -85,6 +86,11 @@ public class MapLoader : MonoBehaviour {
 		zoomPos = new float[zoomRanges.Length];
 		meshCenters = new Vector3[6 * subdivisions * subdivisions];
 		Physics.IgnoreLayerCollision(0, 3);
+		if (useStencil) {
+			mat = new Material(mat);
+			mat.SetFloat("_StencilComparison", 4);
+		}
+		
 		if (loadOnStart) {
 			//Load();
 			loaded = true;

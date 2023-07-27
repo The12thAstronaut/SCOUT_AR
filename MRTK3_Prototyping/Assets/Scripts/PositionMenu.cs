@@ -19,8 +19,13 @@ public class PositionMenu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+		Vector3 focus = Camera.main.transform.forward;
+		focus.y = 0;
+		transform.position = transform.parent.TransformPoint(focus.normalized * distance);
+		transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
 
-    }
+		locked = true;
+	}
 
     // Update is called once per frame
     void Update()
@@ -61,14 +66,12 @@ public class PositionMenu : MonoBehaviour
 	}
 
 	public void OpenMenu() {
-		locked = true;
-		isManipulated = false;
+		//locked = true;
+		//isManipulated = false;
 
 		Vector3 focus = Camera.main.transform.forward;
 		focus.y = 0;
 		transform.position = transform.parent.TransformPoint(focus.normalized * distance);
 		transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
-
-		if (!transform.GetComponent<ObjectManipulator>().enabled) transform.GetComponent<ObjectManipulator>().enabled = true;
 	}
 }
