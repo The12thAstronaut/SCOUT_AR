@@ -11,8 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 
-public class MarkerManager : MonoBehaviour
-{
+public class MarkerManager : MonoBehaviour {
 
     public GameObject markerPrefab;
 	public GameObject mapMarkerPrefab;
@@ -27,6 +26,7 @@ public class MarkerManager : MonoBehaviour
 	public GameObject markerInfoCard;
 	public GameObject rightHandDetector;
 	public GameObject leftHandDetector;
+	public TelemetryManager telemetryManager;
 
 	private int totalMarkers = 0;
 	public List<Marker> markers;
@@ -63,23 +63,8 @@ public class MarkerManager : MonoBehaviour
 	public void CreateAnchorPlace() {
         if (!isPlacing && inputName.text != "") {
 			isPlacing = true;
-			var instance = Instantiate(markerPrefab, Camera.main.transform.position, Quaternion.identity, markerCollection);
 
-			if (instance.GetComponent<ARAnchor>() == null) {
-				instance.AddComponent<ARAnchor>();
-			}
-
-			instance.GetComponent<SolverHandler>().LeftInteractor = leftRay;
-			instance.GetComponent<SolverHandler>().RightInteractor = rightRay;
-
-			instance.GetComponent<Marker>().name = inputName.text;
-			instance.GetComponent<Marker>().manager = this;
-
-			newMarkerButton.ForceSetToggled(false);
-
-			markers.Add(instance.GetComponent<Marker>());
-			totalMarkers++;
-			markerScrollList.SetItemCount(totalMarkers);
+			CreateLocalMarker();
 		} else {
 			Debug.Log("No name entered");
 		}
@@ -87,32 +72,38 @@ public class MarkerManager : MonoBehaviour
 
 	public void CreateAnchorDrop() {
 		if (!isPlacing && inputName.text != "") {
-			isPlacing = true;
-			var instance = Instantiate(markerPrefab, Camera.main.transform.position, Quaternion.identity, markerCollection);
-
-			if (instance.GetComponent<ARAnchor>() == null) {
-				instance.AddComponent<ARAnchor>();
-			}
-
-			instance.GetComponent<SolverHandler>().LeftInteractor = leftRay;
-			instance.GetComponent<SolverHandler>().RightInteractor = rightRay;
+			//isPlacing = true;
 
 			// Calling this means placement is started twice due to auto-start, which means it is stopped. See: TapToPlace.StartPlacement
-			instance.GetComponent<TapToPlace>().StartPlacement();
-
-			instance.GetComponent<Marker>().markerName = inputName.text;
-			instance.GetComponent<Marker>().manager = this;
-
-			instance.transform.position = instance.transform.position + new Vector3(0f, -0.5f, 0f);
-
-			newMarkerButton.ForceSetToggled(false);
-
-			markers.Add(instance.GetComponent<Marker>());
-			totalMarkers++;
-			markerScrollList.SetItemCount(totalMarkers);
+			CreateLocalMarker().GetComponent<TapToPlace>().StartPlacement();
 		} else {
 			Debug.Log("No name entered");
 		}
+	}
+
+	private GameObject CreateLocalMarker() {
+		var instance = Instantiate(markerPrefab, Camera.main.transform.position, Quaternion.identity, markerCollection);
+
+		if (instance.GetComponent<ARAnchor>() == null) {
+			instance.AddComponent<ARAnchor>();
+		}
+
+		instance.GetComponent<SolverHandler>().LeftInteractor = leftRay;
+		instance.GetComponent<SolverHandler>().RightInteractor = rightRay;
+
+		instance.GetComponent<Marker>().markerName = inputName.text;
+		instance.GetComponent<Marker>().manager = this;
+
+		instance.transform.position = instance.transform.position + new Vector3(0f, -0.5f, 0f);
+
+		newMarkerButton.ForceSetToggled(false);
+
+		markers.Add(instance.GetComponent<Marker>());
+		markerLocations.Add(new CoordinateDegrees(telemetryManager.longitude, telemetryManager.latitude));
+
+		totalMarkers++;
+		markerScrollList.SetItemCount(totalMarkers);
+		return instance;
 	}
 
 	public void CreateMapMarker() {
@@ -129,7 +120,8 @@ public class MarkerManager : MonoBehaviour
 		instance.GetComponent<MapPin>().manager = this;
 		instance.GetComponent<MapPin>().mapWindow = mapWindow;
 
-		//markerLocations.Add(new CoordinateDegrees())
+		markerLocations.Add(new CoordinateDegrees(telemetryManager.longitude, telemetryManager.latitude));
+		CreateLocalMarker().GetComponent<TapToPlace>().StartPlacement();
 	}
 
 	public void PopulateInfoCard(GameObject infoCard, int index) {

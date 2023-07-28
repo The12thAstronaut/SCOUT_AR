@@ -12,7 +12,6 @@ using TMPro;
 using static Microsoft.MixedReality.GraphicsTools.ProximityLight;
 using UnityEngine.UIElements;
 using UnityEngine.InputSystem.HID;
-using UserInfo;
 
 public class MapLoader : MonoBehaviour {
 

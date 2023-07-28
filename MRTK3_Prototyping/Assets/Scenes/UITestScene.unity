@@ -20358,6 +20358,7 @@ MonoBehaviour:
   markerInfoCard: {fileID: 3777961346460060716, guid: 93abe20ae13943b4faa5b8110758d2a1, type: 3}
   rightHandDetector: {fileID: 57697509}
   leftHandDetector: {fileID: 1608001729}
+  telemetryManager: {fileID: 534388247}
   markers: []
   markerLocations: []
 --- !u!4 &910391018

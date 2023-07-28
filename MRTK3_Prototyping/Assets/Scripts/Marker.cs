@@ -26,13 +26,26 @@ public class Marker : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
+
+		distance = Vector3.Distance(transform.position, Camera.main.transform.position);
+
+		if (distance < 1) {
+			transform.GetChild(0).gameObject.SetActive(false);
+			transform.GetChild(1).gameObject.SetActive(false);
+			return;
+		}
+
+		if (!transform.GetChild(0).gameObject.activeSelf) {
+			transform.GetChild(0).gameObject.SetActive(true);
+			transform.GetChild(1).gameObject.SetActive(true);
+		}
+
 		Vector3 lookPos = transform.position - Camera.main.transform.position;
 		lookPos.y = 0;
 		if (lookPos != Vector3.zero) {
 			transform.rotation = Quaternion.LookRotation(lookPos);
 		}
 
-		distance = Vector3.Distance(transform.position, Camera.main.transform.position);
 		transform.GetChild(1).transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = $"{distance.ToString("0.##")} m";
 	}
 
