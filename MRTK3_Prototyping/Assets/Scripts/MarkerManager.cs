@@ -27,6 +27,9 @@ public class MarkerManager : MonoBehaviour {
 	public GameObject rightHandDetector;
 	public GameObject leftHandDetector;
 	public TelemetryManager telemetryManager;
+	public MapLoader mapLoader;
+
+	public float markerYOffset = -0.5f;
 
 	private int totalMarkers = 0;
 	public List<Marker> markers;
@@ -94,7 +97,7 @@ public class MarkerManager : MonoBehaviour {
 		instance.GetComponent<Marker>().markerName = inputName.text;
 		instance.GetComponent<Marker>().manager = this;
 
-		instance.transform.position = instance.transform.position + new Vector3(0f, -0.5f, 0f);
+		instance.transform.position = instance.transform.position + new Vector3(0f, markerYOffset, 0f);
 
 		newMarkerButton.ForceSetToggled(false);
 
@@ -111,6 +114,7 @@ public class MarkerManager : MonoBehaviour {
 		isPlacing = true;
 
 		var instance = Instantiate(mapMarkerPrefab, Camera.main.transform.position, Quaternion.identity, mapMarkerCollection);
+		mapLoader.UpdateMarkerSize();
 
 		instance.GetComponent<SolverHandler>().LeftInteractor = leftRay;
 		instance.GetComponent<SolverHandler>().RightInteractor = rightRay;
@@ -119,9 +123,11 @@ public class MarkerManager : MonoBehaviour {
 		instance.GetComponent<MapPin>().leftHandDetector = leftHandDetector;
 		instance.GetComponent<MapPin>().manager = this;
 		instance.GetComponent<MapPin>().mapWindow = mapWindow;
+		instance.GetComponent<MapPin>().mapLoader = mapLoader;
 
 		markerLocations.Add(new CoordinateDegrees(telemetryManager.longitude, telemetryManager.latitude));
-		CreateLocalMarker().GetComponent<TapToPlace>().StartPlacement();
+		instance.GetComponent<MapPin>().worldMarker = CreateLocalMarker().GetComponent<Marker>();
+		instance.GetComponent<MapPin>().worldMarker.GetComponent<TapToPlace>().StartPlacement();
 	}
 
 	public void PopulateInfoCard(GameObject infoCard, int index) {

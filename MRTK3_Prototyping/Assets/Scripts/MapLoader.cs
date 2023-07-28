@@ -29,6 +29,7 @@ public class MapLoader : MonoBehaviour {
 	public GridDistanceIndicator gridDistanceIndicator;
 	public TextMeshProUGUI zoomLevelIndicator;
 	public TelemetryManager positionInfo;
+	public Vector3 worldPosition { get; set; }
 
 	private Vector3[] mapWindowCorners = new Vector3[4];
 	private Vector3 centerPoint = Vector3.zero;
@@ -206,6 +207,10 @@ public class MapLoader : MonoBehaviour {
 		gridDistanceIndicator.UpdateIndicator();
 		isZooming = false;
 
+		RaycastHit hit;
+		Physics.Raycast(transform.parent.transform.position, transform.parent.transform.forward, out hit, 100f, Physics.IgnoreRaycastLayer);
+		worldPosition = transform.parent.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(1).transform.InverseTransformPoint(hit.point);
+
 		/*SimpleMeshData meshData = new SimpleMeshData("temp");
 		Debug.Log(zoomRanges[zoomLevel - 1]);
 		await Task.Run(() => meshData = MeshSerializer.BytesToRegionMesh(File.ReadAllBytes(files[keys[count++]]), centerPoint, zoomRanges[zoomLevel - 1] / moonBaseRadius));
@@ -274,6 +279,10 @@ public class MapLoader : MonoBehaviour {
 			keys[i] = i;
 		}
 		Array.Sort(distances, keys);
+
+		RaycastHit hit;
+		Physics.Raycast(transform.parent.transform.position, transform.parent.transform.forward, out hit, 100f, Physics.IgnoreRaycastLayer);
+		try { worldPosition = transform.parent.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(1).transform.InverseTransformPoint(hit.point); } catch { }
 	}
 
 	float CalculateHighestVector(SimpleMeshData meshData) {
@@ -306,16 +315,9 @@ public class MapLoader : MonoBehaviour {
 		zoomLevel--;
 		transform.GetChild(0).localPosition = new Vector3(0, 0, zoomPos[zoomLevel - 1] > 1 ? zoomPos[zoomLevel - 1] : 1);
 
-		float scale = mapSize * 2000000f / zoomRanges[zoomLevel - 1];
-		transform.localScale = new Vector3(scale, scale, scale);
-		//parentTransform.GetChild(0).localScale = new Vector3(1 / scale, 1 / scale, 1 / scale);
-		//parentTransform.GetChild(0).localPosition = new Vector3(0, 0, -zoomPos[zoomLevel - 1] - 16.4f / scale);
-		for (int i = 0; i < parentTransform.GetChild(0).childCount; i++) {
-			parentTransform.GetChild(0).GetChild(i).localScale = Vector3.one * (zoomRanges[zoomLevel - 1] / zoomRanges[0]);
-		}
+		UpdateMapSize();
 
 		gridDistanceIndicator.UpdateIndicator();
-		zoomLevelIndicator.text = "Zoom Scale: " + zoomLevel;
 
 		//Debug.Log((zoomLevel + 3) / 4);
 		RemoveFarMeshes((zoomLevel + 3) / 4);
@@ -327,14 +329,7 @@ public class MapLoader : MonoBehaviour {
 		zoomLevel++;
 		isZooming = true;
 
-		float scale = mapSize * 2000000f / zoomRanges[zoomLevel - 1];
-
-		transform.localScale = new Vector3(scale, scale, scale);
-		//parentTransform.GetChild(0).localScale = new Vector3(1 / scale, 1 / scale, 1 / scale);
-
-		for (int i = 0; i < parentTransform.GetChild(0).childCount; i++) {
-			parentTransform.GetChild(0).GetChild(i).localScale = Vector3.one * (zoomRanges[zoomLevel - 1] / zoomRanges[0]);
-		}
+		UpdateMapSize();
 
 		if (zoomLevel >= 11) {
 			RemoveFarMeshes(-1);
@@ -345,6 +340,22 @@ public class MapLoader : MonoBehaviour {
 
 		zoomLevelIndicator.text = "Zoom Scale: " + zoomLevel;
 		//isZooming = false;
+	}
+
+	private void UpdateMapSize() {
+		float scale = mapSize * 2000000f / zoomRanges[zoomLevel - 1];
+
+		transform.localScale = new Vector3(scale, scale, scale);
+
+		UpdateMarkerSize();
+
+		zoomLevelIndicator.text = "Zoom Scale: " + zoomLevel;
+	}
+
+	public void UpdateMarkerSize() {
+		for (int i = 0; i < parentTransform.GetChild(0).childCount; i++) {
+			parentTransform.GetChild(0).GetChild(i).localScale = Vector3.one * (zoomRanges[zoomLevel - 1] / zoomRanges[0]);
+		}
 	}
 
 	private SimpleMeshData AssignMeshHeights(SimpleMeshData mesh) {

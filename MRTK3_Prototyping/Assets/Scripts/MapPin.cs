@@ -12,13 +12,15 @@ public class MapPin : MonoBehaviour {
     
     public MarkerManager manager { get; set; }
 	public RectTransform mapWindow { get; set; }
+	public Marker worldMarker { get; set; }
+	public MapLoader mapLoader { get; set; }
+
     private Vector3[] mapCorners = new Vector3[4];
 
 	// Start is called before the first frame update
 	void Start()
     {
         mapWindow.GetLocalCorners(mapCorners);
-
 		gameObject.layer = LayerMask.NameToLayer("UI");
 		//rightHandDetector = FindFirstObjectByType<NearInteractionModeDetector>().gameObject;
 		//leftHandDetector = FindObjectsByType<NearInteractionModeDetector>(FindObjectsSortMode.InstanceID)[1].gameObject;
@@ -27,7 +29,19 @@ public class MapPin : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        
+        if (transform.GetComponent<TapToPlace>().IsBeingPlaced) {
+
+			Vector3 pos = mapLoader.transform.GetChild(0).GetChild(0).GetChild(1).transform.InverseTransformPoint(transform.position);
+			float angle = Mathf.Atan2(Vector3.Magnitude(Vector3.Cross(mapLoader.worldPosition, pos)), Vector3.Dot(mapLoader.worldPosition, pos));
+			float dist = (angle * 1719145f);
+
+			float angleFromRight = Mathf.Atan2(pos.y - mapLoader.worldPosition.y, pos.x - mapLoader.worldPosition.x) * Mathf.Rad2Deg;
+			//float angleDepth = Mathf.Atan2(pos.z - mapLoader.worldPosition.z, pos.y - mapLoader.worldPosition.y) * Mathf.Rad2Deg;
+			//float angleDepth = Vector3.SignedAngle(mapLoader.worldPosition, pos, Vector3.forward);
+			//Debug.Log(angleDepth);
+
+			worldMarker.transform.position = Camera.main.transform.position + new Vector3(dist * Mathf.Cos(angleFromRight * Mathf.Deg2Rad), manager.markerYOffset, dist * Mathf.Sin(angleFromRight * Mathf.Deg2Rad));
+		}
     }
 
     public void StopPlacement() {

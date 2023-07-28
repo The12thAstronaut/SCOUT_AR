@@ -20359,6 +20359,7 @@ MonoBehaviour:
   rightHandDetector: {fileID: 57697509}
   leftHandDetector: {fileID: 1608001729}
   telemetryManager: {fileID: 534388247}
+  mapLoader: {fileID: 602309412}
   markers: []
   markerLocations: []
 --- !u!4 &910391018
