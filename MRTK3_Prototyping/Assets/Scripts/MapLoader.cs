@@ -22,7 +22,7 @@ public class MapLoader : MonoBehaviour {
 	private bool loaded;
 	public float sizeMult = 0.01f;
 	[Min(5000)] public float mapRange = 5000; // meters
-	private float moonBaseRadius = 1719145; // meters
+	//private float moonBaseRadius = 1719145; // meters
 	[Range(1, 2000)] public float heightMult = 1.0f;
 	public float mapSize = 5.0f;
 	public Transform parentTransform;
@@ -258,9 +258,9 @@ public class MapLoader : MonoBehaviour {
 
 	void UpdatePosition() {
 
-		transform.GetChild(0).localRotation = Quaternion.Euler(-positionInfo.latitude, 0, 0);
-		transform.GetChild(0).GetChild(0).localRotation = Quaternion.Euler(0, positionInfo.longitude, 0);
-		centerPoint = GeoMaths.CoordinateToPoint(new Coordinate(Mathf.Deg2Rad * positionInfo.longitude, Mathf.Deg2Rad * positionInfo.latitude));
+		transform.GetChild(0).localRotation = Quaternion.Euler(-positionInfo.longitudeLatitude.latitude, 0, 0);
+		transform.GetChild(0).GetChild(0).localRotation = Quaternion.Euler(0, positionInfo.longitudeLatitude.longitude, 0);
+		centerPoint = GeoMaths.CoordinateToPoint(new Coordinate(Mathf.Deg2Rad * positionInfo.longitudeLatitude.longitude, Mathf.Deg2Rad * positionInfo.longitudeLatitude.latitude));
 
 		float[] distances = new float[cornerPoints.Length / 4];
 
@@ -406,7 +406,7 @@ public class MapLoader : MonoBehaviour {
 
 	private void RemoveFarMeshes(int retentionVar) {
 		float meshDiameter = 2 * MathF.PI / (6.0f * subdivisions);
-		float retentionDistance = zoomRanges[zoomLevel - 1] / moonBaseRadius + meshDiameter * retentionVar;
+		float retentionDistance = zoomRanges[zoomLevel - 1] / positionInfo.moonBaseRadius + meshDiameter * retentionVar;
 
 		for (int i = meshRenderers.Count - 1; i >= 0; i--) {
 			if (Vector3.Distance(centerPoint, meshCenters[keys[i]]) > retentionDistance) {

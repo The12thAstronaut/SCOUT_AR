@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TelemetryManager : MonoBehaviour {
-	[Range(-180, 180)] public float longitude;
-	[Range(-90, 90)] public float latitude;
+	public Vector3 unitSpherePos {  get; private set; }
+	public CoordinateDegrees longitudeLatitude;
+	public float moonBaseRadius = 1719145; // meters
+	public float moonMaxRadius = 1758957;
 
 	void Start()
     {
@@ -25,5 +27,6 @@ public class TelemetryManager : MonoBehaviour {
 		   Debug.LogError(err);
 		});
 #endif
+		unitSpherePos = GeoMaths.CoordinateToPoint(longitudeLatitude.ConvertToRadians());
 	}
 }

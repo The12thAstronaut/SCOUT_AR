@@ -32,14 +32,13 @@ public class MarkerManager : MonoBehaviour {
 	public float markerYOffset = -0.5f;
 
 	private int totalMarkers = 0;
-	public List<Marker> markers;
+	public List<Marker> markers = new List<Marker>();
+	public List<MapPin> mapMarkers = new List<MapPin>();
 
 	private float startTime;
 	private bool started = false;
 	private bool ready = false;
 	public bool isPlacing { get; set; } = false;
-
-	public List<CoordinateDegrees> markerLocations = new List<CoordinateDegrees>();
 
 	// Start is called before the first frame update
 	void Start()
@@ -67,7 +66,19 @@ public class MarkerManager : MonoBehaviour {
         if (!isPlacing && inputName.text != "") {
 			isPlacing = true;
 
-			CreateLocalMarker();
+			GameObject marker = CreateLocalMarker();
+
+			MapPin mapMarker = MakeMapMarker().GetComponent<MapPin>();
+			mapMarker.GetComponent<TapToPlace>().StartPlacement();
+			mapMarker.GetComponent<TapToPlace>().StartPlacement();
+
+			marker.transform.GetComponent<Marker>().mapMarker = mapMarker;
+			mapMarker.worldMarker = marker.GetComponent<Marker>();
+			mapMarker.SetBeingPlaced(false);
+			mapMarker.SetHandDetectors(false);
+
+			mapMarkers.Add(mapMarker);
+
 		} else {
 			Debug.Log("No name entered");
 		}
@@ -77,15 +88,26 @@ public class MarkerManager : MonoBehaviour {
 		if (!isPlacing && inputName.text != "") {
 			//isPlacing = true;
 
-			// Calling this means placement is started twice due to auto-start, which means it is stopped. See: TapToPlace.StartPlacement
-			CreateLocalMarker().GetComponent<TapToPlace>().StartPlacement();
+			GameObject marker = CreateLocalMarker();
+			marker.GetComponent<TapToPlace>().StartPlacement();
+
+			MapPin mapMarker = MakeMapMarker().GetComponent<MapPin>();
+			mapMarker.GetComponent<TapToPlace>().StartPlacement();
+			mapMarker.GetComponent<TapToPlace>().StartPlacement();
+
+			marker.transform.GetComponent<Marker>().mapMarker = mapMarker;
+			mapMarker.worldMarker = marker.GetComponent<Marker>();
+			mapMarker.SetBeingPlaced(false);
+			mapMarker.SetHandDetectors(false);
+
+			mapMarkers.Add(mapMarker);
 		} else {
 			Debug.Log("No name entered");
 		}
 	}
 
 	private GameObject CreateLocalMarker() {
-		var instance = Instantiate(markerPrefab, Camera.main.transform.position, Quaternion.identity, markerCollection);
+		GameObject instance = Instantiate(markerPrefab, Camera.main.transform.position, Quaternion.identity, markerCollection);
 
 		if (instance.GetComponent<ARAnchor>() == null) {
 			instance.AddComponent<ARAnchor>();
@@ -102,7 +124,6 @@ public class MarkerManager : MonoBehaviour {
 		newMarkerButton.ForceSetToggled(false);
 
 		markers.Add(instance.GetComponent<Marker>());
-		markerLocations.Add(new CoordinateDegrees(telemetryManager.longitude, telemetryManager.latitude));
 
 		totalMarkers++;
 		markerScrollList.SetItemCount(totalMarkers);
@@ -113,7 +134,16 @@ public class MarkerManager : MonoBehaviour {
 		if (isPlacing) return;
 		isPlacing = true;
 
-		var instance = Instantiate(mapMarkerPrefab, Camera.main.transform.position, Quaternion.identity, mapMarkerCollection);
+		GameObject instance = MakeMapMarker();
+
+		instance.GetComponent<MapPin>().worldMarker = CreateLocalMarker().GetComponent<Marker>();
+		instance.GetComponent<MapPin>().worldMarker.GetComponent<TapToPlace>().StartPlacement();
+
+		mapMarkers.Add(instance.GetComponent<MapPin>());
+	}
+
+	private GameObject MakeMapMarker() {
+		GameObject instance = Instantiate(mapMarkerPrefab, Camera.main.transform.position, Quaternion.identity, mapMarkerCollection);
 		mapLoader.UpdateMarkerSize();
 
 		instance.GetComponent<SolverHandler>().LeftInteractor = leftRay;
@@ -125,9 +155,7 @@ public class MarkerManager : MonoBehaviour {
 		instance.GetComponent<MapPin>().mapWindow = mapWindow;
 		instance.GetComponent<MapPin>().mapLoader = mapLoader;
 
-		markerLocations.Add(new CoordinateDegrees(telemetryManager.longitude, telemetryManager.latitude));
-		instance.GetComponent<MapPin>().worldMarker = CreateLocalMarker().GetComponent<Marker>();
-		instance.GetComponent<MapPin>().worldMarker.GetComponent<TapToPlace>().StartPlacement();
+		return instance;
 	}
 
 	public void PopulateInfoCard(GameObject infoCard, int index) {
@@ -146,8 +174,10 @@ public class MarkerManager : MonoBehaviour {
 
 	public void RemoveMarker(int index) {
 		Destroy(markers[index].gameObject);
+		Destroy(mapMarkers[index].gameObject);
 		markers.RemoveAt(index);
-		
+		mapMarkers.RemoveAt(index);
+
 		totalMarkers--;
 		markerScrollList.SetItemCount(0);
 		ready = true;

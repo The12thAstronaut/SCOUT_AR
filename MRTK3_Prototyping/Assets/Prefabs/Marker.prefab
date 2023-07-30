@@ -117,6 +117,7 @@ GameObject:
   - component: {fileID: 4557755062300258698}
   - component: {fileID: 4557755062300258695}
   - component: {fileID: -3132709543484511349}
+  - component: {fileID: 7295352243535340202}
   m_Layer: 0
   m_Name: Marker
   m_TagString: Untagged
@@ -280,7 +281,7 @@ MonoBehaviour:
   placementActionReference: {fileID: -6131295136447488360, guid: 18c412191cdc9274897f101c7fd5316f, type: 3}
   autoStart: 1
   defaultPlacementDistance: 0.5
-  maxRaycastDistance: 20
+  maxRaycastDistance: 50
   surfaceNormalOffset: 0
   useDefaultSurfaceNormalOffset: 1
   keepOrientationVertical: 1
@@ -288,10 +289,22 @@ MonoBehaviour:
   magneticSurfaces:
   - serializedVersion: 2
     m_Bits: 64
-  debugEnabled: 1
+  debugEnabled: 0
   onPlacingStarted:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: -3132709543484511349}
+        m_TargetAssemblyTypeName: Marker, Assembly-CSharp
+        m_MethodName: StartPlacement
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onPlacingStopped:
     m_PersistentCalls:
       m_Calls:
@@ -492,6 +505,7 @@ MonoBehaviour:
   disabledInteractorTypes:
   - reference: Microsoft.MixedReality.Toolkit.IGazeInteractor, Microsoft.MixedReality.Toolkit.Core
   - reference: Microsoft.MixedReality.Toolkit.IPokeInteractor, Microsoft.MixedReality.Toolkit.Core
+  - reference: Microsoft.MixedReality.Toolkit.IGrabInteractor, Microsoft.MixedReality.Toolkit.Core
   <ToggleMode>k__BackingField: 0
   <SelectThreshold>k__BackingField: 0.9
   <DeselectThreshold>k__BackingField: 0.1
@@ -546,6 +560,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e59517352dfc2fb4a9e9b15ffd926b44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7295352243535340202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4557755062300258701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb898793194e03f4bb10dba03ec2cb70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_DestroyOnRemoval: 1
 --- !u!1 &4738499820177772440
 GameObject:
   m_ObjectHideFlags: 0

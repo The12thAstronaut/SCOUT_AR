@@ -1,3 +1,4 @@
+using Microsoft.MixedReality.Toolkit.SpatialManipulation;
 using Microsoft.MixedReality.Toolkit.UX;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ public class Marker : MonoBehaviour
 	public float distance { get; set; }
 
 	public MarkerManager manager { get; set; }
+	public MapPin mapMarker { get; set; }
 
 	// Start is called before the first frame update
 	void Start() {
@@ -17,6 +19,9 @@ public class Marker : MonoBehaviour
 		lookPos.y = 0;
 		if (lookPos != Vector3.zero) {
 			transform.rotation = Quaternion.LookRotation(lookPos);
+		}
+		if (mapMarker.worldMarker == null) {
+			mapMarker.worldMarker = this;
 		}
 
 		distance = Vector3.Distance(transform.position, Camera.main.transform.position);
@@ -29,7 +34,7 @@ public class Marker : MonoBehaviour
 
 		distance = Vector3.Distance(transform.position, Camera.main.transform.position);
 
-		if (distance < 1) {
+		if (distance < 0.5f || distance > 200) {
 			transform.GetChild(0).gameObject.SetActive(false);
 			transform.GetChild(1).gameObject.SetActive(false);
 			return;
@@ -47,9 +52,36 @@ public class Marker : MonoBehaviour
 		}
 
 		transform.GetChild(1).transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = $"{distance.ToString("0.##")} m";
+
+		if (transform.GetComponent<TapToPlace>().IsBeingPlaced) {
+
+			Vector3 relativePos = transform.position - Camera.main.transform.position;
+			float newLatitude = manager.telemetryManager.longitudeLatitude.latitude + (relativePos.z / manager.telemetryManager.moonBaseRadius) * (180f / Mathf.PI);
+			float newLongitude = manager.telemetryManager.longitudeLatitude.longitude + (relativePos.x / manager.telemetryManager.moonBaseRadius) * (180f / Mathf.PI) / Mathf.Cos(manager.telemetryManager.longitudeLatitude.latitude * Mathf.PI / 180f);
+			mapMarker.longLat = new Coordinate(newLongitude * Mathf.Deg2Rad, newLatitude * Mathf.Deg2Rad);
+			/*
+			Vector3 pos = mapLoader.transform.GetChild(0).GetChild(0).GetChild(1).transform.InverseTransformPoint(transform.position);
+			float angle = Mathf.Atan2(Vector3.Magnitude(Vector3.Cross(mapLoader.worldPosition, pos)), Vector3.Dot(mapLoader.worldPosition, pos));
+			float dist = (angle * 1719145f);
+
+			float angleFromRight = Mathf.Atan2(pos.y - mapLoader.worldPosition.y, pos.x - mapLoader.worldPosition.x) * Mathf.Rad2Deg;
+			//float angleDepth = Mathf.Atan2(pos.z - mapLoader.worldPosition.z, pos.y - mapLoader.worldPosition.y) * Mathf.Rad2Deg;
+			//float angleDepth = Vector3.SignedAngle(mapLoader.worldPosition, pos, Vector3.forward);
+			//Debug.Log(angleDepth);
+
+			worldMarker.transform.position = Camera.main.transform.position + new Vector3(dist * Mathf.Cos(angleFromRight * Mathf.Deg2Rad), manager.markerYOffset, dist * Mathf.Sin(angleFromRight * Mathf.Deg2Rad));
+			*/
+		}
+	}
+
+	public void StartPlacement() {
+		mapMarker.SetHandDetectors(false);
 	}
 
 	public void StopPlacement() {
 		manager.isPlacing = false;
+
+		mapMarker.SetHandDetectors(true);
+		Debug.Log(mapMarker.longLat.longitude + ", " + mapMarker.longLat.latitude);
 	}
 }
