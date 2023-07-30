@@ -1402,7 +1402,7 @@ MonoBehaviour:
   rotateAccordingToSurface: 0
   magneticSurfaces:
   - serializedVersion: 2
-    m_Bits: 4
+    m_Bits: 8
   debugEnabled: 0
   onPlacingStarted:
     m_PersistentCalls:

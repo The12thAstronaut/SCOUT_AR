@@ -75,13 +75,13 @@ public class Marker : MonoBehaviour
 	}
 
 	public void StartPlacement() {
-		mapMarker.SetHandDetectors(false);
+		//mapMarker.SetHandDetectors(false);
 	}
 
 	public void StopPlacement() {
 		manager.isPlacing = false;
 
-		mapMarker.SetHandDetectors(true);
+		//mapMarker.SetHandDetectors(true);
 		Debug.Log(mapMarker.longLat.longitude + ", " + mapMarker.longLat.latitude);
 	}
 }
