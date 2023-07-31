@@ -12396,7 +12396,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 410561356}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.7}
+  m_LocalPosition: {x: 0, y: 0, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -12419,7 +12419,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f40832014f2cc4488e5b3fdf5d0c472, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distance: 0.7
+  distance: 0.5
   angle: 0
 --- !u!114 &410561359
 MonoBehaviour:
@@ -17672,7 +17672,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 553162997}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.7}
+  m_LocalPosition: {x: 0, y: 0, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -17695,7 +17695,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f40832014f2cc4488e5b3fdf5d0c472, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distance: 0.7
+  distance: 0.5
   angle: 0
 --- !u!114 &553163001
 MonoBehaviour:
@@ -22917,7 +22917,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 696057314}
-  m_LocalRotation: {x: 0.07085189, y: -0.055359896, z: 0.0039383364, w: 0.9959417}
+  m_LocalRotation: {x: -0.0076296437, y: 0.9921531, z: 0.09805038, w: 0.07720291}
   m_LocalPosition: {x: 0, y: 0, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -28690,6 +28690,8 @@ MonoBehaviour:
   leftHandDetector: {fileID: 1608001729}
   telemetryManager: {fileID: 534388247}
   mapLoader: {fileID: 602309412}
+  markerViewer: {fileID: 2072208977}
+  leftManipulationBar: {fileID: 1144593695}
   markerYOffset: -0.5
   markers: []
   mapMarkers: []
@@ -35229,6 +35231,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1141445332}
   m_CullTransparentMesh: 1
+--- !u!1 &1144593695 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4315470963204288739, guid: 780708c8a9a42ac4d9ce9c6ba083cec0, type: 3}
+  m_PrefabInstance: {fileID: 788500878}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1151498636
 GameObject:
   m_ObjectHideFlags: 0
@@ -57900,6 +57907,8 @@ GameObject:
   - component: {fileID: 2072208970}
   - component: {fileID: 2072208969}
   - component: {fileID: 2072208975}
+  - component: {fileID: 2072208976}
+  - component: {fileID: 2072208977}
   m_Layer: 0
   m_Name: Marker Viewer
   m_TagString: Untagged
@@ -57914,7 +57923,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2072208967}
-  m_LocalRotation: {x: -0.008184611, y: -0.15921243, z: -0.0013199747, w: 0.98720956}
+  m_LocalRotation: {x: 0.0024195416, y: 0.9761582, z: -0.010895502, w: 0.21677345}
   m_LocalPosition: {x: 0, y: 0, z: -13}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -58042,6 +58051,33 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &2072208976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2072208967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4aff5da990e82ef4c9cc17d1e69a95b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2072208977
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2072208967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98c7405b55ce2504e953f8a6917e084d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  markerManager: {fileID: 910391017}
+  nameInput: {fileID: 7503496792698886123}
+  descriptionInput: {fileID: 417728419}
 --- !u!4 &2079078190 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2244185731585867246, guid: cd0f0697f0939504389ec612388f609a, type: 3}
@@ -60038,7 +60074,19 @@ MonoBehaviour:
         m_Calls: []
   <OnClicked>k__BackingField:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2072208977}
+        m_TargetAssemblyTypeName: MarkerViewer, Assembly-CSharp
+        m_MethodName: CloseViewer
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   <OnEnabled>k__BackingField:
     m_PersistentCalls:
       m_Calls: []
@@ -71948,7 +71996,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2589716730826891961}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.7}
+  m_LocalPosition: {x: 0, y: 0, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -72356,7 +72404,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f40832014f2cc4488e5b3fdf5d0c472, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distance: 0.7
+  distance: 0.5
   angle: 0
 --- !u!224 &7230206329624151167
 RectTransform:
@@ -74461,7 +74509,19 @@ MonoBehaviour:
         m_Calls: []
   <OnClicked>k__BackingField:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2072208977}
+        m_TargetAssemblyTypeName: MarkerViewer, Assembly-CSharp
+        m_MethodName: RemoveMarker
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   <OnEnabled>k__BackingField:
     m_PersistentCalls:
       m_Calls: []

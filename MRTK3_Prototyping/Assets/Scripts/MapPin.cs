@@ -104,4 +104,11 @@ public class MapPin : MonoBehaviour {
 		transform.GetComponent<TapToPlace>().enabled = isPlacing;
 		manager.isPlacing = isPlacing;
 	}
+
+	public void SelectMarker() {
+		manager.selectedMarker = worldMarker;
+		manager.markerViewer.gameObject.SetActive(true);
+		manager.leftManipulationBar.gameObject.SetActive(false);
+		manager.markerViewer.UpdateInfo();
+	}
 }

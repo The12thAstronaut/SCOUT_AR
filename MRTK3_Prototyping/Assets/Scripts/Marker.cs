@@ -8,10 +8,12 @@ using UnityEngine;
 public class Marker : MonoBehaviour
 {
     public string markerName { get; set; }
+	public string markerDescription { get; set; }
 	public float distance { get; set; }
 
 	public MarkerManager manager { get; set; }
 	public MapPin mapMarker { get; set; }
+	public int index { get; set; }
 
 	// Start is called before the first frame update
 	void Start() {

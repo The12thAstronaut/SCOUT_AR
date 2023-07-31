@@ -28,16 +28,20 @@ public class MarkerManager : MonoBehaviour {
 	public GameObject leftHandDetector;
 	public TelemetryManager telemetryManager;
 	public MapLoader mapLoader;
+	public MarkerViewer markerViewer;
+	public GameObject leftManipulationBar;
 
 	public float markerYOffset = -0.5f;
 
 	private int totalMarkers = 0;
 	public List<Marker> markers = new List<Marker>();
 	public List<MapPin> mapMarkers = new List<MapPin>();
+	public Marker selectedMarker { get; set; }
 
 	private float startTime;
 	private bool started = false;
 	private bool ready = false;
+
 	public bool isPlacing { get; set; } = false;
 
 	// Start is called before the first frame update
@@ -117,7 +121,9 @@ public class MarkerManager : MonoBehaviour {
 		instance.GetComponent<SolverHandler>().RightInteractor = rightRay;
 
 		instance.GetComponent<Marker>().markerName = inputName.text;
+		instance.GetComponent<Marker>().markerDescription = "";
 		instance.GetComponent<Marker>().manager = this;
+		instance.GetComponent<Marker>().index = totalMarkers;
 
 		instance.transform.position = instance.transform.position + new Vector3(0f, markerYOffset, 0f);
 
@@ -177,6 +183,10 @@ public class MarkerManager : MonoBehaviour {
 		Destroy(mapMarkers[index].gameObject);
 		markers.RemoveAt(index);
 		mapMarkers.RemoveAt(index);
+
+		foreach (Marker marker in markers) {
+			if (marker.index > index) marker.index--;
+		}
 
 		totalMarkers--;
 		markerScrollList.SetItemCount(0);
