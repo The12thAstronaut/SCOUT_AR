@@ -102,4 +102,8 @@ public class LodMeshLoader : MonoBehaviour
 
 		//return meshRenderer;
 	}
+
+	public bool IsLoaded() {
+		return loaded;
+	}
 }

@@ -15,8 +15,11 @@ public class MoonPalm : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!transform.parent.parent.GetComponentInChildren<LodMeshLoader>().IsLoaded()) return;
+
         if (isRotating) {
-            transform.RotateAround(transform.position, transform.up, 5 * Time.deltaTime);
+			transform.parent.rotation = Quaternion.identity;
+			transform.RotateAround(transform.position, transform.up, 2 * Time.deltaTime);
         }
     }
 }

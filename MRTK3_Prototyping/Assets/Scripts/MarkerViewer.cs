@@ -1,3 +1,4 @@
+using Microsoft.MixedReality.Toolkit.UX;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -8,6 +9,7 @@ public class MarkerViewer : MonoBehaviour
     public MarkerManager markerManager;
     public TMP_InputField nameInput;
     public TMP_InputField descriptionInput;
+    public GameObject iconPicker;
 
     // Start is called before the first frame update
     void Start()
@@ -34,5 +36,10 @@ public class MarkerViewer : MonoBehaviour
     public void RemoveMarker() {
         markerManager.RemoveMarker(markerManager.selectedMarker.index);
         CloseViewer();
+    }
+
+    public void SetIcon(FontIconSelector fontIcon) {
+        markerManager.selectedMarker.currentIconName = fontIcon.CurrentIconName;
+        markerManager.selectedMarker.UpdateIcon();
     }
 }

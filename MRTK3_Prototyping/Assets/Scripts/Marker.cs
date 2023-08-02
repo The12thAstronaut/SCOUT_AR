@@ -14,9 +14,12 @@ public class Marker : MonoBehaviour
 	public MarkerManager manager { get; set; }
 	public MapPin mapMarker { get; set; }
 	public int index { get; set; }
+	public string currentIconName { get; set; }
 
 	// Start is called before the first frame update
 	void Start() {
+		currentIconName = "Icon 103";
+
 		Vector3 lookPos = transform.position - Camera.main.transform.position;
 		lookPos.y = 0;
 		if (lookPos != Vector3.zero) {
@@ -85,5 +88,9 @@ public class Marker : MonoBehaviour
 
 		//mapMarker.SetHandDetectors(true);
 		Debug.Log(mapMarker.longLat.longitude + ", " + mapMarker.longLat.latitude);
+	}
+
+	public void UpdateIcon() {
+		mapMarker.markerIcon.CurrentIconName = currentIconName;
 	}
 }

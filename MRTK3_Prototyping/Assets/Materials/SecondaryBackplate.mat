@@ -55,11 +55,11 @@ Material:
     - _Highlight_Width_: 0.95
     - _Iridescence_Edge_Intensity_: 1
     - _Iridescence_Enable_: 1
-    - _Iridescence_Intensity_: 0.35
+    - _Iridescence_Intensity_: 0.25
     - _Line_Disabled_: 0
     - _Line_Enable_: 1
     - _Line_Gradient_Blend_: 0
-    - _Line_Width_: 1
+    - _Line_Width_: 0.5
     - _Occluded_Intensity_: 1
     - _Orthographic_Distance_: 400
     - _Rate_: 0

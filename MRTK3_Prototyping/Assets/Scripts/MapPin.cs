@@ -19,6 +19,7 @@ public class MapPin : MonoBehaviour {
 	public Vector3 unitSpherePos { get; set; }
 	public Vector3 moonPos { get; set; }
 	public Coordinate longLat { get; set; }
+	public FontIconSelector markerIcon { get; set; }
 
 	private Transform mapParent;
 	private int mapLayerMask = 1 << 3;
@@ -33,6 +34,8 @@ public class MapPin : MonoBehaviour {
 		if (worldMarker.mapMarker == null) {
 			worldMarker.mapMarker = this;
 		}
+
+		markerIcon = transform.GetComponentInChildren<FontIconSelector>();
 	}
 
     // Update is called once per frame
