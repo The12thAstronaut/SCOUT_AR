@@ -110,8 +110,7 @@ public class MapPin : MonoBehaviour {
 
 	public void SelectMarker() {
 		manager.selectedMarker = worldMarker;
-		manager.markerViewer.gameObject.SetActive(true);
-		manager.leftManipulationBar.gameObject.SetActive(false);
+		manager.markerViewer.OpenViewer();
 		manager.markerViewer.UpdateInfo();
 	}
 }

@@ -29,7 +29,6 @@ public class MarkerManager : MonoBehaviour {
 	public TelemetryManager telemetryManager;
 	public MapLoader mapLoader;
 	public MarkerViewer markerViewer;
-	public GameObject leftManipulationBar;
 
 	public float markerYOffset = -0.5f;
 

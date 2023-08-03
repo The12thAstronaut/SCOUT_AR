@@ -90,7 +90,8 @@ public class Marker : MonoBehaviour
 		Debug.Log(mapMarker.longLat.longitude + ", " + mapMarker.longLat.latitude);
 	}
 
-	public void UpdateIcon() {
+	public void UpdateInfo() {
 		mapMarker.markerIcon.CurrentIconName = currentIconName;
+		transform.GetChild(1).transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = markerName;
 	}
 }
