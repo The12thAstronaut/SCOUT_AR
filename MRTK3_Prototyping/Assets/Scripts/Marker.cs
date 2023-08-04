@@ -18,8 +18,6 @@ public class Marker : MonoBehaviour
 
 	// Start is called before the first frame update
 	void Start() {
-		currentIconName = "Icon 103";
-
 		Vector3 lookPos = transform.position - Camera.main.transform.position;
 		lookPos.y = 0;
 		if (lookPos != Vector3.zero) {
@@ -91,6 +89,7 @@ public class Marker : MonoBehaviour
 	}
 
 	public void UpdateInfo() {
+		Debug.Log(currentIconName);
 		mapMarker.markerIcon.CurrentIconName = currentIconName;
 		transform.GetChild(1).transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = markerName;
 	}

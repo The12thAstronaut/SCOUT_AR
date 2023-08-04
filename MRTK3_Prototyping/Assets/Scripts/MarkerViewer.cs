@@ -1,5 +1,6 @@
 using Microsoft.MixedReality.Toolkit.SpatialManipulation;
 using Microsoft.MixedReality.Toolkit.UX;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -25,15 +26,13 @@ public class MarkerViewer : MonoBehaviour
         
     }
 
-    public void UpdateInfo() {
-        nameInput.text = markerManager.selectedMarker.markerName;
-        descriptionInput.text = markerManager.selectedMarker.markerDescription;
-    }
-
     public void OpenViewer() {
 		generalViewer.SetActive(false);
 		gameObject.SetActive(true);
-    }
+		nameInput.text = markerManager.selectedMarker.markerName;
+		descriptionInput.text = markerManager.selectedMarker.markerDescription;
+		iconPicker.GetComponent<ToggleCollection>().CurrentIndex = Array.IndexOf(markerManager.markerIconNames, markerManager.selectedMarker.currentIconName);
+	}
 
     public void CloseViewer() {
         gameObject.SetActive(false);

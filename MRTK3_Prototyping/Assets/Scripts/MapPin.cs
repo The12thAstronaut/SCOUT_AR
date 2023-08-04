@@ -36,6 +36,7 @@ public class MapPin : MonoBehaviour {
 		}
 
 		markerIcon = transform.GetComponentInChildren<FontIconSelector>();
+		worldMarker.UpdateInfo();
 	}
 
     // Update is called once per frame
@@ -71,6 +72,8 @@ public class MapPin : MonoBehaviour {
 			//Debug.Log(hit.transform.name + ": " + hit.transform.position);
 			transform.position = hit.point;
 		}
+
+		//Debug.Log(transform.GetComponent<Collider>().enabled);
     }
 
     public void StopPlacement() {
@@ -102,6 +105,7 @@ public class MapPin : MonoBehaviour {
 	}*/
 
 	public void SetBeingPlaced(bool isPlacing) {
+		//Debug.Log(isPlacing);
 		transform.GetComponent<PressableButton>().enabled = !isPlacing;
 		transform.GetComponent<Collider>().enabled = !isPlacing;
 		transform.GetComponent<TapToPlace>().enabled = isPlacing;
@@ -111,6 +115,5 @@ public class MapPin : MonoBehaviour {
 	public void SelectMarker() {
 		manager.selectedMarker = worldMarker;
 		manager.markerViewer.OpenViewer();
-		manager.markerViewer.UpdateInfo();
 	}
 }

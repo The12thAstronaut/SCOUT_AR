@@ -29,6 +29,8 @@ public class MarkerManager : MonoBehaviour {
 	public TelemetryManager telemetryManager;
 	public MapLoader mapLoader;
 	public MarkerViewer markerViewer;
+	public FontIconSelector markerIconSelector;
+	public string[] markerIconNames = { "Icon 103" };
 
 	public float markerYOffset = -0.5f;
 
@@ -40,6 +42,7 @@ public class MarkerManager : MonoBehaviour {
 	private float startTime;
 	private bool started = false;
 	private bool ready = false;
+	private int currentIconIndex = 0;
 
 	public bool isPlacing { get; set; } = false;
 
@@ -78,6 +81,7 @@ public class MarkerManager : MonoBehaviour {
 			marker.transform.GetComponent<Marker>().mapMarker = mapMarker;
 			mapMarker.worldMarker = marker.GetComponent<Marker>();
 			mapMarker.SetBeingPlaced(false);
+			//marker.GetComponent<Marker>().UpdateInfo();
 			//mapMarker.SetHandDetectors(false);
 
 			mapMarkers.Add(mapMarker);
@@ -101,6 +105,7 @@ public class MarkerManager : MonoBehaviour {
 			marker.transform.GetComponent<Marker>().mapMarker = mapMarker;
 			mapMarker.worldMarker = marker.GetComponent<Marker>();
 			mapMarker.SetBeingPlaced(false);
+			//marker.GetComponent<Marker>().UpdateInfo();
 			//mapMarker.SetHandDetectors(false);
 
 			mapMarkers.Add(mapMarker);
@@ -123,6 +128,7 @@ public class MarkerManager : MonoBehaviour {
 		instance.GetComponent<Marker>().markerDescription = "";
 		instance.GetComponent<Marker>().manager = this;
 		instance.GetComponent<Marker>().index = totalMarkers;
+		instance.GetComponent<Marker>().currentIconName = markerIconNames[currentIconIndex];
 
 		instance.transform.position = instance.transform.position + new Vector3(0f, markerYOffset, 0f);
 
@@ -132,6 +138,9 @@ public class MarkerManager : MonoBehaviour {
 
 		totalMarkers++;
 		markerScrollList.SetItemCount(totalMarkers);
+		currentIconIndex = 0;
+		markerIconSelector.CurrentIconName = markerIconNames[currentIconIndex];
+		inputName.text = "";
 		return instance;
 	}
 
@@ -190,5 +199,15 @@ public class MarkerManager : MonoBehaviour {
 		totalMarkers--;
 		markerScrollList.SetItemCount(0);
 		ready = true;
+	}
+
+	public void NextIcon() {
+		currentIconIndex = Mathf.Clamp(++currentIconIndex, 0, markerIconNames.Length - 1);
+		markerIconSelector.CurrentIconName = markerIconNames[currentIconIndex];
+	}
+
+	public void PreviousIcon() {
+		currentIconIndex = Mathf.Clamp(--currentIconIndex, 0, markerIconNames.Length - 1);
+		markerIconSelector.CurrentIconName = markerIconNames[currentIconIndex];
 	}
 }
