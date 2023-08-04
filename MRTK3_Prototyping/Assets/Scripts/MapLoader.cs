@@ -12,6 +12,7 @@ using TMPro;
 using static Microsoft.MixedReality.GraphicsTools.ProximityLight;
 using UnityEngine.UIElements;
 using UnityEngine.InputSystem.HID;
+using Unity.Mathematics;
 
 public class MapLoader : MonoBehaviour {
 
@@ -21,8 +22,6 @@ public class MapLoader : MonoBehaviour {
 	public bool useStencil;
 	private bool loaded;
 	public float sizeMult = 0.01f;
-	[Min(5000)] public float mapRange = 5000; // meters
-	//private float moonBaseRadius = 1719145; // meters
 	[Range(1, 2000)] public float heightMult = 1.0f;
 	public float mapSize = 5.0f;
 	public Transform parentTransform;
@@ -132,22 +131,10 @@ public class MapLoader : MonoBehaviour {
 	async void UpdateMapRenderer(int resolution) {
 		try { gridDistanceIndicator.UpdateIndicator(); } catch { }
 
-		float scale = mapSize * 2000000f / zoomRanges[zoomLevel - 1];
-
-		//Vector3 cubePoint = CubeSphere.SpherePointToCubePoint(centerPoint);
 		await Task.Yield(); // This many is necessary
 		await Task.Yield();
 		await Task.Yield();
 		await Task.Yield();
-
-		// Visualize the map's corner points
-		/*for (int i = 0; i < 4; i++) {
-			Transform t = GameObject.CreatePrimitive(PrimitiveType.Sphere).transform;
-			t.parent = transform;
-			t.localScale = new Vector3(0.00001f, 0.00001f, 0.00001f);
-			t.position = mapWindowCorners[i];
-			Debug.Log(mapWindowCorners[i]);
-		}*/
 
 		try { zoomPos[zoomLevel - 1] = zoomPos[zoomLevel - 2]; } catch {  }
 
@@ -160,8 +147,6 @@ public class MapLoader : MonoBehaviour {
 
 				await Task.Run(() => meshHighestMagnitude.Add(CalculateHighestVector(meshData)));
 
-				//totalVec += meshHighestMagnitude[count++];
-				//float avgMagnitude = totalVec / count;
 
 				float magnitude = 0f;
 				foreach (float mag in meshHighestMagnitude) {
@@ -170,18 +155,17 @@ public class MapLoader : MonoBehaviour {
 
 				zoomPos[zoomLevel - 1] = magnitude;
 				transform.GetChild(0).localPosition = new Vector3(0, 0, zoomPos[zoomLevel - 1] > 1 ? zoomPos[zoomLevel - 1] : 1);
-				//parentTransform.GetChild(0).localPosition = new Vector3(0, 0, -zoomPos[zoomLevel - 1] - 16.4f / scale);
 				await Task.Yield();
 			}
 		}
 
-		if (zoomRanges[zoomLevel - 1] < 1000f) {
+		if (zoomRanges[zoomLevel - 1] < 50000f) {
 			RaycastHit[] hits = new RaycastHit[5];
-			Physics.Raycast(mapWindowCorners[0], transform.parent.forward, out hits[0], 100f, mapLayerMask);
-			Physics.Raycast(mapWindowCorners[1], transform.parent.forward, out hits[1], 100f, mapLayerMask);
-			Physics.Raycast(mapWindowCorners[2], transform.parent.forward, out hits[2], 100f, mapLayerMask);
-			Physics.Raycast(mapWindowCorners[3], transform.parent.forward, out hits[3], 100f, mapLayerMask);
-			Physics.Raycast(transform.position, transform.parent.forward, out hits[4], 100f, mapLayerMask);
+			Physics.Raycast(mapWindowCorners[0], transform.parent.forward, out hits[0], 1000f, mapLayerMask);
+			Physics.Raycast(mapWindowCorners[1], transform.parent.forward, out hits[1], 1000f, mapLayerMask);
+			Physics.Raycast(mapWindowCorners[2], transform.parent.forward, out hits[2], 1000f, mapLayerMask);
+			Physics.Raycast(mapWindowCorners[3], transform.parent.forward, out hits[3], 1000f, mapLayerMask);
+			Physics.Raycast(transform.position, transform.parent.forward, out hits[4], 1000f, mapLayerMask);
 
 			float dist = float.MaxValue;
 			int index = 0;
@@ -192,17 +176,8 @@ public class MapLoader : MonoBehaviour {
 				}
 			}
 
-			/*for (int i = 0; i < 5; i++) {
-				Transform t = GameObject.CreatePrimitive(PrimitiveType.Sphere).transform;
-				t.parent = transform;
-				t.localScale = new Vector3(0.00001f, 0.00001f, 0.00001f);
-				t.position = hits[i].point;
-				t.GetComponent<SphereCollider>().enabled = false;
-			}*/
-
 			zoomPos[zoomLevel - 1] = parentTransform.GetChild(1).InverseTransformPoint(hits[index].point).magnitude;
 			transform.GetChild(0).localPosition = new Vector3(0, 0, zoomPos[zoomLevel - 1] > 1 ? zoomPos[zoomLevel - 1] : 1);
-			//parentTransform.GetChild(0).localPosition = new Vector3(0, 0, -zoomPos[zoomLevel - 1] - 16.4f / scale);
 		}
 
 		gridDistanceIndicator.UpdateIndicator();
@@ -211,23 +186,6 @@ public class MapLoader : MonoBehaviour {
 		RaycastHit hit;
 		Physics.Raycast(transform.parent.transform.position, transform.parent.transform.forward, out hit, 100f, mapLayerMask);
 		worldPosition = transform.parent.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(1).transform.InverseTransformPoint(hit.point);
-
-		/*SimpleMeshData meshData = new SimpleMeshData("temp");
-		Debug.Log(zoomRanges[zoomLevel - 1]);
-		await Task.Run(() => meshData = MeshSerializer.BytesToRegionMesh(File.ReadAllBytes(files[keys[count++]]), centerPoint, zoomRanges[zoomLevel - 1] / moonBaseRadius));
-		meshRenderers.Add(CreateMapMesh(meshData));
-
-		await Task.Run(() => totalVec += CalculateAvgVector(meshData));
-
-
-		//totalVec /= d.vertices.Length;
-		//meshVec /= meshData.vertices.Length;
-		float avgMagnitude = (totalVec / count).magnitude;
-
-		transform.GetChild(0).localPosition = new Vector3(0, 0, avgMagnitude > 1 ? avgMagnitude : 1);
-		await Task.Yield();*/
-
-		//return meshRenderers.ToArray();
 	}
 
 	private void LoadData() {
