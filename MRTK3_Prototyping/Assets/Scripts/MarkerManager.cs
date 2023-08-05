@@ -78,11 +78,9 @@ public class MarkerManager : MonoBehaviour {
 			mapMarker.GetComponent<TapToPlace>().StartPlacement();
 			mapMarker.GetComponent<TapToPlace>().StartPlacement();
 
-			marker.transform.GetComponent<Marker>().mapMarker = mapMarker;
+			marker.GetComponent<Marker>().mapMarker = mapMarker;
 			mapMarker.worldMarker = marker.GetComponent<Marker>();
 			mapMarker.SetBeingPlaced(false);
-			//marker.GetComponent<Marker>().UpdateInfo();
-			//mapMarker.SetHandDetectors(false);
 
 			mapMarkers.Add(mapMarker);
 
@@ -105,8 +103,6 @@ public class MarkerManager : MonoBehaviour {
 			marker.transform.GetComponent<Marker>().mapMarker = mapMarker;
 			mapMarker.worldMarker = marker.GetComponent<Marker>();
 			mapMarker.SetBeingPlaced(false);
-			//marker.GetComponent<Marker>().UpdateInfo();
-			//mapMarker.SetHandDetectors(false);
 
 			mapMarkers.Add(mapMarker);
 		} else {

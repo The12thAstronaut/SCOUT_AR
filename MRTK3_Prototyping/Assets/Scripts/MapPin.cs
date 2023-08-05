@@ -27,6 +27,7 @@ public class MapPin : MonoBehaviour {
 	// Start is called before the first frame update
 	void Start()
     {
+		Debug.Log(1);
         mapWindow.GetLocalCorners(mapCorners);
 		gameObject.layer = LayerMask.NameToLayer("UI");
 		mapParent = mapLoader.transform.GetChild(0).GetChild(0);
@@ -37,13 +38,13 @@ public class MapPin : MonoBehaviour {
 
 		markerIcon = transform.GetComponentInChildren<FontIconSelector>();
 		worldMarker.UpdateInfo();
+		worldMarker.UpdateLongLat();
 	}
 
     // Update is called once per frame
     void Update()
     {
         if (transform.GetComponent<TapToPlace>().IsBeingPlaced) {
-			//Debug.Log("Being placed on map");
 			moonPos = mapParent.GetChild(1).InverseTransformPoint(transform.position);
 			unitSpherePos = moonPos.normalized;
 			longLat = GeoMaths.PointToCoordinate(unitSpherePos);
@@ -60,21 +61,24 @@ public class MapPin : MonoBehaviour {
 		}
 
 		if (worldMarker.transform.GetComponent<TapToPlace>().IsBeingPlaced) {
-			//Debug.Log("Being placed by local marker");
-			unitSpherePos = GeoMaths.CoordinateToPoint(longLat);
-
-			//Debug.Log(unitSpherePos.x);
-			//Debug.Log(longLat.longitude + " : " + longLat.latitude);
-			RaycastHit hit;
-			//Physics.Raycast(mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 1) / manager.telemetryManager.moonBaseRadius)), -mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 1) / manager.telemetryManager.moonBaseRadius)) + mapParent.GetChild(1).TransformPoint(Vector3.zero), out hit, manager.telemetryManager.moonMaxRadius - manager.telemetryManager.moonBaseRadius + 1f, Physics.IgnoreRaycastLayer);
-			Physics.Raycast(mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 1) / manager.telemetryManager.moonBaseRadius)), -mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 1) / manager.telemetryManager.moonBaseRadius)) + mapParent.GetChild(1).TransformPoint(Vector3.zero), out hit, manager.telemetryManager.moonMaxRadius - manager.telemetryManager.moonBaseRadius + 1f, mapLayerMask);
-			//Debug.DrawRay(mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 10) / manager.telemetryManager.moonBaseRadius)), -mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 10) / manager.telemetryManager.moonBaseRadius)) + mapParent.GetChild(1).TransformPoint(Vector3.zero));
-			//Debug.Log(hit.transform.name + ": " + hit.transform.position);
-			transform.position = hit.point;
+			PositionFromLocalMarker();
 		}
 
 		//Debug.Log(transform.GetComponent<Collider>().enabled);
     }
+
+	public void PositionFromLocalMarker() {
+		unitSpherePos = GeoMaths.CoordinateToPoint(longLat);
+
+		//Debug.Log(unitSpherePos.x);
+		//Debug.Log(longLat.longitude + " : " + longLat.latitude);
+		RaycastHit hit;
+		//Physics.Raycast(mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 1) / manager.telemetryManager.moonBaseRadius)), -mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 1) / manager.telemetryManager.moonBaseRadius)) + mapParent.GetChild(1).TransformPoint(Vector3.zero), out hit, manager.telemetryManager.moonMaxRadius - manager.telemetryManager.moonBaseRadius + 1f, Physics.IgnoreRaycastLayer);
+		Physics.Raycast(mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 1) / manager.telemetryManager.moonBaseRadius)), -mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 1) / manager.telemetryManager.moonBaseRadius)) + mapParent.GetChild(1).TransformPoint(Vector3.zero), out hit, manager.telemetryManager.moonMaxRadius - manager.telemetryManager.moonBaseRadius + 1f, mapLayerMask);
+		//Debug.DrawRay(mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 10) / manager.telemetryManager.moonBaseRadius)), -mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 10) / manager.telemetryManager.moonBaseRadius)) + mapParent.GetChild(1).TransformPoint(Vector3.zero));
+		//Debug.Log(hit.transform.name + ": " + hit.transform.position);
+		transform.position = hit.point;
+	}
 
     public void StopPlacement() {
         Vector3 pos = mapWindow.transform.InverseTransformPoint(transform.TransformPoint(transform.position));
