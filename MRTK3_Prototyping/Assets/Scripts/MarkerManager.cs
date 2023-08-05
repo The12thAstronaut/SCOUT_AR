@@ -95,6 +95,7 @@ public class MarkerManager : MonoBehaviour {
 
 			GameObject marker = CreateLocalMarker();
 			marker.GetComponent<TapToPlace>().StartPlacement();
+			marker.GetComponent<Marker>().movedWhileMapClosed = true;
 
 			MapPin mapMarker = MakeMapMarker().GetComponent<MapPin>();
 			mapMarker.GetComponent<TapToPlace>().StartPlacement();

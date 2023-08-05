@@ -15,6 +15,8 @@ public class Marker : MonoBehaviour
 	public MapPin mapMarker { get; set; }
 	public int index { get; set; }
 	public string currentIconName { get; set; }
+	
+	public bool movedWhileMapClosed { get; set; }
 
 	// Start is called before the first frame update
 	void Start() {
@@ -30,6 +32,8 @@ public class Marker : MonoBehaviour
 		distance = Vector3.Distance(transform.position, Camera.main.transform.position);
 		transform.GetChild(1).transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = markerName;
 		transform.GetChild(1).transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = $"{distance.ToString("0.##")} m";
+
+		mapMarker.mapParent = mapMarker.mapLoader.transform.GetChild(0).GetChild(0);
 	}
 
     // Update is called once per frame
@@ -66,7 +70,12 @@ public class Marker : MonoBehaviour
 		float newLatitude = manager.telemetryManager.longitudeLatitude.latitude + (relativePos.z / manager.telemetryManager.moonBaseRadius) * (180f / Mathf.PI);
 		float newLongitude = manager.telemetryManager.longitudeLatitude.longitude + (relativePos.x / manager.telemetryManager.moonBaseRadius) * (180f / Mathf.PI) / Mathf.Cos(manager.telemetryManager.longitudeLatitude.latitude * Mathf.PI / 180f);
 		mapMarker.longLat = new Coordinate(newLongitude * Mathf.Deg2Rad, newLatitude * Mathf.Deg2Rad);
-		mapMarker.PositionFromLocalMarker();
+
+		if (mapMarker.mapParent.gameObject.activeInHierarchy) {
+			mapMarker.PositionFromLocalMarker();
+		} else {
+			movedWhileMapClosed = true;
+		}
 
 		/*
 		Vector3 pos = mapLoader.transform.GetChild(0).GetChild(0).GetChild(1).transform.InverseTransformPoint(transform.position);

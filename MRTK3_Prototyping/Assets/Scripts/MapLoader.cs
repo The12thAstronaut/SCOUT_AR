@@ -20,7 +20,8 @@ public class MapLoader : MonoBehaviour {
 	public bool useStaticBatching;
 	public bool loadOnStart;
 	public bool useStencil;
-	private bool loaded;
+	public bool loaded { get; private set; }
+	public bool generated { get; private set; }
 	public float sizeMult = 0.01f;
 	[Range(1, 2000)] public float heightMult = 1.0f;
 	public float mapSize = 5.0f;
@@ -84,6 +85,8 @@ public class MapLoader : MonoBehaviour {
 	void Start() {
 		zoomPos = new float[zoomRanges.Length];
 		meshCenters = new Vector3[6 * subdivisions * subdivisions];
+		loaded = false;
+		generated = false;
 		Physics.IgnoreLayerCollision(0, 3);
 		if (useStencil) {
 			mat = new Material(mat);
@@ -92,7 +95,7 @@ public class MapLoader : MonoBehaviour {
 		
 		if (loadOnStart) {
 			//Load();
-			loaded = true;
+			//loaded = true;
 		}
 
 		//Load();
@@ -116,6 +119,7 @@ public class MapLoader : MonoBehaviour {
 		LoadData();
 		loaded = true;
 		UpdateMapRenderer(maxResolution);
+		//generated = true;
 	}
 
 	public void Reload() {
@@ -129,6 +133,7 @@ public class MapLoader : MonoBehaviour {
 	}
 
 	async void UpdateMapRenderer(int resolution) {
+		generated = false;
 		try { gridDistanceIndicator.UpdateIndicator(); } catch { }
 
 		await Task.Yield(); // This many is necessary
@@ -186,6 +191,7 @@ public class MapLoader : MonoBehaviour {
 		RaycastHit hit;
 		Physics.Raycast(transform.parent.transform.position, transform.parent.transform.forward, out hit, 100f, mapLayerMask);
 		worldPosition = transform.parent.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(1).transform.InverseTransformPoint(hit.point);
+		generated = true;
 	}
 
 	private void LoadData() {

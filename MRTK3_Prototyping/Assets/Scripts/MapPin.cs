@@ -21,16 +21,18 @@ public class MapPin : MonoBehaviour {
 	public Coordinate longLat { get; set; }
 	public FontIconSelector markerIcon { get; set; }
 
-	private Transform mapParent;
+	public Transform mapParent;
 	private int mapLayerMask = 1 << 3;
+	private bool waitNextFrame = true;
 
 	// Start is called before the first frame update
 	void Start()
     {
-		Debug.Log(1);
         mapWindow.GetLocalCorners(mapCorners);
 		gameObject.layer = LayerMask.NameToLayer("UI");
-		mapParent = mapLoader.transform.GetChild(0).GetChild(0);
+		if (mapParent == null) {
+			mapParent = mapLoader.transform.GetChild(0).GetChild(0);
+		}
 
 		if (worldMarker.mapMarker == null) {
 			worldMarker.mapMarker = this;
@@ -38,12 +40,17 @@ public class MapPin : MonoBehaviour {
 
 		markerIcon = transform.GetComponentInChildren<FontIconSelector>();
 		worldMarker.UpdateInfo();
-		worldMarker.UpdateLongLat();
 	}
 
     // Update is called once per frame
     void Update()
     {
+		if (!(mapLoader.generated && mapLoader.loaded)) return;
+		if (waitNextFrame) {
+			waitNextFrame = false;
+			return;
+		}
+
         if (transform.GetComponent<TapToPlace>().IsBeingPlaced) {
 			moonPos = mapParent.GetChild(1).InverseTransformPoint(transform.position);
 			unitSpherePos = moonPos.normalized;
@@ -58,6 +65,10 @@ public class MapPin : MonoBehaviour {
 			//Debug.Log(angleDepth);
 
 			worldMarker.transform.position = Camera.main.transform.position + new Vector3(dist * Mathf.Cos(angleFromRight * Mathf.Deg2Rad), manager.markerYOffset, dist * Mathf.Sin(angleFromRight * Mathf.Deg2Rad));
+		}
+
+		if (worldMarker.movedWhileMapClosed) {
+			worldMarker.UpdateLongLat();
 		}
 
 		if (worldMarker.transform.GetComponent<TapToPlace>().IsBeingPlaced) {
