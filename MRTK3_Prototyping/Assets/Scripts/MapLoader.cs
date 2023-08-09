@@ -144,7 +144,7 @@ public class MapLoader : MonoBehaviour {
 		try { zoomPos[zoomLevel - 1] = zoomPos[zoomLevel - 2]; } catch {  }
 
 		for (int i = 0; i < 4; i++) {
-			while (!Physics.Raycast(mapWindowCorners[i], transform.parent.forward, 1000f, mapLayerMask)) {
+			while (!Physics.Raycast(mapWindowCorners[i], transform.parent.forward, 10000f, mapLayerMask)) {
 				SimpleMeshData meshData = new SimpleMeshData("temp");
 				await Task.Run(() => meshData = CubeSphere.GenerateMesh(resolution, subdivisions, keys[count++]/*, centerPoint, zoomRanges[zoomLevel - 1] / moonBaseRadius*/));
 				meshData = AssignMeshHeights(meshData);
@@ -166,11 +166,21 @@ public class MapLoader : MonoBehaviour {
 
 		if (zoomRanges[zoomLevel - 1] < 50000f) {
 			RaycastHit[] hits = new RaycastHit[5];
-			Physics.Raycast(mapWindowCorners[0], transform.parent.forward, out hits[0], 1000f, mapLayerMask);
-			Physics.Raycast(mapWindowCorners[1], transform.parent.forward, out hits[1], 1000f, mapLayerMask);
-			Physics.Raycast(mapWindowCorners[2], transform.parent.forward, out hits[2], 1000f, mapLayerMask);
-			Physics.Raycast(mapWindowCorners[3], transform.parent.forward, out hits[3], 1000f, mapLayerMask);
-			Physics.Raycast(transform.position, transform.parent.forward, out hits[4], 1000f, mapLayerMask);
+			Physics.Raycast(mapWindowCorners[0], transform.parent.forward, out hits[0], 10000f, mapLayerMask);
+			Physics.Raycast(mapWindowCorners[1], transform.parent.forward, out hits[1], 10000f, mapLayerMask);
+			Physics.Raycast(mapWindowCorners[2], transform.parent.forward, out hits[2], 10000f, mapLayerMask);
+			Physics.Raycast(mapWindowCorners[3], transform.parent.forward, out hits[3], 10000f, mapLayerMask);
+			Physics.Raycast(transform.position, transform.parent.forward, out hits[4], 10000f, mapLayerMask);
+
+			// Raycasts in opposite direction in case the map mesh is in front of the panel
+			for (int i = 0; i < hits.Length; i++) {
+				if (i < 4 && hits[i].point == Vector3.zero) {
+					Physics.Raycast(mapWindowCorners[i], -transform.parent.forward, out hits[i], 10000f, mapLayerMask);
+				}
+				if (i == 4 && hits[i].point == Vector3.zero) {
+					Physics.Raycast(transform.position, -transform.parent.forward, out hits[4], 10000f, mapLayerMask);
+				}
+			}
 
 			float dist = float.MaxValue;
 			int index = 0;
@@ -189,7 +199,7 @@ public class MapLoader : MonoBehaviour {
 		isZooming = false;
 
 		RaycastHit hit;
-		Physics.Raycast(transform.parent.transform.position, transform.parent.transform.forward, out hit, 100f, mapLayerMask);
+		Physics.Raycast(transform.parent.transform.position, transform.parent.transform.forward, out hit, 10000f, mapLayerMask);
 		worldPosition = transform.parent.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(1).transform.InverseTransformPoint(hit.point);
 		generated = true;
 	}
