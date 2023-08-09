@@ -8,6 +8,7 @@ using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Timeline;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 
@@ -30,19 +31,25 @@ public class MarkerManager : MonoBehaviour {
 	public MapLoader mapLoader;
 	public MarkerViewer markerViewer;
 	public FontIconSelector markerIconSelector;
+	public MarkerGroupViewer markerGroupViewer;
 	public string[] markerIconNames = { "Icon 103" };
+	public string groupMarkerIconName = "Icon 51";
 
 	public float markerYOffset = -0.5f;
+	public float mapGroupingRange = 0.02f;
 
 	private int totalMarkers = 0;
 	public List<Marker> markers = new List<Marker>();
 	public List<MapPin> mapMarkers = new List<MapPin>();
+	public List<MarkerGroup> mapMarkerGroups = new List<MarkerGroup>();
 	public Marker selectedMarker { get; set; }
+	public MarkerGroup selectedGroup { get; set; }
 
 	private float startTime;
 	private bool started = false;
 	private bool ready = false;
 	private int currentIconIndex = 0;
+	private int mapLayerMask = 1 << 3;
 
 	public bool isPlacing { get; set; } = false;
 
@@ -206,5 +213,85 @@ public class MarkerManager : MonoBehaviour {
 	public void PreviousIcon() {
 		currentIconIndex = Mathf.Clamp(--currentIconIndex, 0, markerIconNames.Length - 1);
 		markerIconSelector.CurrentIconName = markerIconNames[currentIconIndex];
+	}
+
+	public void UpdateGroupings() {
+
+		foreach (MarkerGroup group in mapMarkerGroups) {
+			Destroy(group.groupMapMarker.gameObject);
+		}
+		//mapMarkerGroups.Clear();
+
+		mapMarkerGroups.RemoveRange(0, mapMarkerGroups.Count);
+
+		foreach (MapPin pin in mapMarkers) {
+			pin.gameObject.SetActive(true);
+		}
+
+		int currentGroup = 0;
+		bool[] usedIndex = new bool[mapMarkers.Count]; // True/false for if index is already in a group, defaulted to false
+
+		// Generate map marker groups
+		for (int i = 0; i < mapMarkers.Count; i++) {
+			if (usedIndex[i]) continue; //If index is in a group, skip to next index
+			if (mapMarkers.Count - i < 2) break;
+
+			Vector3 centerTotalPoint = mapMarkers[i].transform.position;
+			int count = 1;
+			for ( int j = i + 1; j < mapMarkers.Count; j++) {
+				if (usedIndex[j]) continue;
+
+				if (Vector3.Distance(centerTotalPoint / count, mapMarkers[j].transform.position) < mapGroupingRange) {
+					centerTotalPoint += mapMarkers[j].transform.position;
+					count++;
+
+					if (count == 2) {
+
+						MapPin groupMapMarker = MakeMapMarker().GetComponent<MapPin>();
+						groupMapMarker.GetComponent<TapToPlace>().StartPlacement();
+						groupMapMarker.GetComponent<TapToPlace>().StartPlacement();
+						groupMapMarker.SetBeingPlaced(false);
+						groupMapMarker.isGroupMarker = true;
+						groupMapMarker.groupIndex = currentGroup;
+
+						mapMarkerGroups.Add(new MarkerGroup(currentGroup, groupMapMarker));
+						mapMarkerGroups[currentGroup].mapMarkers.Add(mapMarkers[i]);
+						usedIndex[i] = true;
+					}
+					mapMarkerGroups[currentGroup].mapMarkers.Add(mapMarkers[j]);
+					usedIndex[j] = true;
+				}
+			}
+			currentGroup++;
+		}
+
+		// Create map group markers, hide map markers in group
+		foreach (MarkerGroup group in mapMarkerGroups) {
+			Vector3 avgPoint = Vector3.zero;
+			foreach (MapPin pin in group.mapMarkers) {
+				avgPoint += pin.transform.localPosition;
+				pin.gameObject.SetActive(false);
+			}
+			avgPoint /= group.mapMarkers.Count;
+
+			Vector3 unitSpherePos = avgPoint.normalized;
+			Transform mapParent = mapLoader.transform.GetChild(0).GetChild(0);
+			RaycastHit hit;
+			Physics.Raycast(mapParent.GetChild(1).TransformPoint(unitSpherePos * ((telemetryManager.moonMaxRadius + 1) / telemetryManager.moonBaseRadius)), -mapParent.GetChild(1).TransformPoint(unitSpherePos * ((telemetryManager.moonMaxRadius + 1) / telemetryManager.moonBaseRadius)) + mapParent.GetChild(1).TransformPoint(Vector3.zero), out hit, telemetryManager.moonMaxRadius - telemetryManager.moonBaseRadius + 1f, mapLayerMask);
+			group.groupMapMarker.transform.position = hit.point;
+
+		}
+	}
+}
+
+public struct MarkerGroup {
+	public List<MapPin> mapMarkers;// = new List<MapPin>();
+	public int groupIndex;
+	public MapPin groupMapMarker;
+
+	public MarkerGroup(int groupIndex, MapPin groupMapMarker) {
+		this.groupIndex = groupIndex;
+		mapMarkers = new List<MapPin>();
+		this.groupMapMarker = groupMapMarker;
 	}
 }

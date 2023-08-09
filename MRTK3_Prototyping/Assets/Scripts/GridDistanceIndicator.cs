@@ -26,13 +26,13 @@ public class GridDistanceIndicator : MonoBehaviour
 
     public void UpdateIndicator() {
         RaycastHit hit;
-        if (!Physics.Raycast(mapWindow.position, mapWindow.forward, out hit, 100f, mapLayerMask)) return;
+        if (!Physics.Raycast(mapWindow.position, mapWindow.forward, out hit, 1000f, mapLayerMask)) return;
 
 		Vector3 point1 = mapWindow.GetChild(0).GetChild(0).GetChild(0).GetChild(1).transform.InverseTransformPoint(hit.point).normalized;
 
         float distance = Vector3.Distance(transform.GetChild(1).GetComponent<RectTransform>().position, transform.GetChild(2).GetComponent<RectTransform>().position);
         Vector3 refPos = mapWindow.position + mapWindow.right * distance;
-		Physics.Raycast(refPos, mapWindow.forward, out hit, 100f, mapLayerMask);
+		Physics.Raycast(refPos, mapWindow.forward, out hit, 1000f, mapLayerMask);
 
 		Vector3 point2 = mapWindow.GetChild(0).GetChild(0).GetChild(0).GetChild(1).transform.InverseTransformPoint(hit.point).normalized;
 

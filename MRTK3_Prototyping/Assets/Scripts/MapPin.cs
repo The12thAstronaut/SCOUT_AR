@@ -4,6 +4,7 @@ using Microsoft.MixedReality.Toolkit.SpatialManipulation;
 using Microsoft.MixedReality.Toolkit.UX;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class MapPin : MonoBehaviour {
@@ -22,6 +23,9 @@ public class MapPin : MonoBehaviour {
 	public FontIconSelector markerIcon { get; set; }
 
 	public Transform mapParent;
+	public bool isGroupMarker { get; set; }
+	public int groupIndex { get; set; }
+
 	private int mapLayerMask = 1 << 3;
 	private bool waitNextFrame = true;
 
@@ -34,17 +38,24 @@ public class MapPin : MonoBehaviour {
 			mapParent = mapLoader.transform.GetChild(0).GetChild(0);
 		}
 
-		if (worldMarker.mapMarker == null) {
+		if (!isGroupMarker && worldMarker.mapMarker == null) {
 			worldMarker.mapMarker = this;
 		}
 
 		markerIcon = transform.GetComponentInChildren<FontIconSelector>();
-		worldMarker.UpdateInfo();
+
+		if (!isGroupMarker) {
+			worldMarker.UpdateInfo();
+		} else {
+			markerIcon.CurrentIconName = manager.groupMarkerIconName;
+			transform.rotation = mapWindow.rotation;
+		}
 	}
 
     // Update is called once per frame
     void Update()
     {
+		if (isGroupMarker) return;
 		if (!(mapLoader.generated && mapLoader.loaded)) return;
 		if (waitNextFrame) {
 			waitNextFrame = false;
@@ -119,16 +130,23 @@ public class MapPin : MonoBehaviour {
 		leftHandDetector.SetActive(active);
 	}*/
 
-	public void SetBeingPlaced(bool isPlacing) {
+	public async void SetBeingPlaced(bool isPlacing) {
 		//Debug.Log(isPlacing);
-		transform.GetComponent<PressableButton>().enabled = !isPlacing;
+		manager.UpdateGroupings();
 		transform.GetComponent<Collider>().enabled = !isPlacing;
 		transform.GetComponent<TapToPlace>().enabled = isPlacing;
+		await Task.Delay(1000);
+		transform.GetComponent<PressableButton>().enabled = !isPlacing;
 		manager.isPlacing = isPlacing;
 	}
 
 	public void SelectMarker() {
-		manager.selectedMarker = worldMarker;
-		manager.markerViewer.OpenViewer();
+		if (isGroupMarker) {
+			manager.selectedGroup = manager.mapMarkerGroups[groupIndex];
+			manager.markerGroupViewer.OpenViewer();
+		} else {
+			manager.selectedMarker = worldMarker;
+			manager.markerViewer.OpenViewer();
+		}
 	}
 }

@@ -97,6 +97,7 @@ public class Marker : MonoBehaviour
 
 	public void StopPlacement() {
 		manager.isPlacing = false;
+		manager.UpdateGroupings();
 
 		//mapMarker.SetHandDetectors(true);
 		Debug.Log(mapMarker.longLat.longitude + ", " + mapMarker.longLat.latitude);
