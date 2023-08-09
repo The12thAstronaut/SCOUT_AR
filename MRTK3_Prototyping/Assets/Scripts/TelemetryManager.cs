@@ -21,8 +21,8 @@ public class TelemetryManager : MonoBehaviour {
     private void UpdatePosition() {
 #if WINDOWS_UWP
 		UWPGeolocation.GetLocation(pos => {
-		   latitude = pos.Coordinate.Point.Position.Latitude;
-		   longitude = pos.Coordinate.Point.Position.Longitude;
+		   longitudeLatitude.latitude = pos.Coordinate.Point.Position.Latitude;
+		   longitudeLatitude.longitude = pos.Coordinate.Point.Position.Longitude;
 		}, err => {
 		   Debug.LogError(err);
 		});
