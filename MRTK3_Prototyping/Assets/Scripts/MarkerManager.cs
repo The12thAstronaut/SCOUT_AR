@@ -24,6 +24,7 @@ public class MarkerManager : MonoBehaviour {
     public TMP_InputField inputName;
 	public PressableButton newMarkerButton;
 	public VirtualizedScrollRectList markerScrollList;
+	public VirtualizedScrollRectList markerGroupScrollList;
 	public GameObject markerInfoCard;
 	public GameObject rightHandDetector;
 	public GameObject leftHandDetector;
@@ -58,7 +59,10 @@ public class MarkerManager : MonoBehaviour {
 	void Start()
     {
 		markerScrollList.OnVisible = PopulateInfoCard;
-		markerScrollList.OnInvisible = Depopulate;
+		markerScrollList.OnInvisible = DepopulateInfoCard;
+
+		markerGroupScrollList.OnVisible = PopulateGroupViewer;
+		markerGroupScrollList.OnInvisible = DepopulateGroupViewer;
 	}
 
     // Update is called once per frame
@@ -194,8 +198,22 @@ public class MarkerManager : MonoBehaviour {
 		}
 	}
 
-	public void Depopulate(GameObject infoCard, int index) {
+	public void DepopulateInfoCard(GameObject infoCard, int index) {
 		infoCard.transform.Translate(0, 30000, 0);
+	}
+
+
+	public void PopulateGroupViewer(GameObject selectorButton, int index) {
+		if (index < selectedGroup.mapMarkers.Count) {
+			selectorButton.GetComponentInChildren<TextMeshProUGUI>().text = selectedGroup.mapMarkers[index].worldMarker.markerName;
+			selectorButton.GetComponentInChildren<FontIconSelector>().CurrentIconName = selectedGroup.mapMarkers[index].worldMarker.currentIconName;
+			selectorButton.GetComponent<MarkerSelectorButton>().markerManager = this;
+			selectorButton.GetComponent<MarkerSelectorButton>().markerIndex = index;
+		}
+	}
+
+	public void DepopulateGroupViewer(GameObject selectorButton, int index) {
+		selectorButton.transform.Translate(0, 30000, 0);
 	}
 
 	public void RemoveMarker(int index) {

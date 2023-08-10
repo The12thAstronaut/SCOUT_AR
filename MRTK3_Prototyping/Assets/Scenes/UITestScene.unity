@@ -28258,10 +28258,10 @@ RectTransform:
   m_Father: {fileID: 7676938115859036198}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 68, y: -16}
+  m_SizeDelta: {x: 32, y: 32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &840495194
 MonoBehaviour:
@@ -29524,7 +29524,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   markerManager: {fileID: 910391017}
   generalViewer: {fileID: 1781560645}
-  markerScrollList: {fileID: 1208604360}
 --- !u!114 &851049736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32169,6 +32168,7 @@ MonoBehaviour:
   inputName: {fileID: 769546638}
   newMarkerButton: {fileID: 1928954709}
   markerScrollList: {fileID: 883402570}
+  markerGroupScrollList: {fileID: 1208604360}
   markerInfoCard: {fileID: 3777961346460060716, guid: 93abe20ae13943b4faa5b8110758d2a1, type: 3}
   rightHandDetector: {fileID: 57697509}
   leftHandDetector: {fileID: 1608001729}
@@ -40603,10 +40603,10 @@ RectTransform:
   m_Father: {fileID: 851049734}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 75, y: -105.25}
-  m_SizeDelta: {x: 146, y: 165.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -4, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1208604358
 MonoBehaviour:
@@ -40635,7 +40635,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 979936856}
-  m_Horizontal: 1
+  m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 1
   m_Elasticity: 0.1
@@ -40664,13 +40664,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c839e9f0bf4ba384fb0c4ee324030d95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefab: {fileID: 0}
+  prefab: {fileID: 5275251833244463753, guid: 783700d3cd45b984ab7d7257a79b6b56, type: 3}
   scrollRect: {fileID: 1208604359}
   layoutDirection: 0
-  layoutRowsOrColumns: 2
-  cellSize: {x: 130, y: 24}
+  layoutRowsOrColumns: 1
+  cellSize: {x: 130, y: 32}
   gutter: 2
-  margin: 8
+  margin: 26
   trailingSpace: 12
   itemCount: 0
 --- !u!114 &1208604361
@@ -77017,10 +77017,10 @@ RectTransform:
   m_Father: {fileID: 7676938115859036198}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 16, y: -16}
+  m_SizeDelta: {x: 32, y: 32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &5200143989384485508
 MonoBehaviour:
@@ -82208,10 +82208,10 @@ RectTransform:
   m_Father: {fileID: 7676938115859036198}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 42, y: -16}
+  m_SizeDelta: {x: 20, y: 32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &8031240517876304076
 MonoBehaviour:

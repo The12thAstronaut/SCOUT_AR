@@ -145,6 +145,7 @@ public class MapPin : MonoBehaviour {
 	public void SelectMarker() {
 		if (isGroupMarker) {
 			manager.selectedGroup = manager.mapMarkerGroups[groupIndex];
+			manager.markerGroupScrollList.SetItemCount(manager.selectedGroup.mapMarkers.Count);
 			manager.markerGroupViewer.OpenViewer();
 		} else {
 			manager.selectedMarker = worldMarker;
