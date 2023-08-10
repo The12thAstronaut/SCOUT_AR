@@ -21,8 +21,10 @@ public class PositionMenu : MonoBehaviour
     {
 		Vector3 focus = Camera.main.transform.forward;
 		focus.y = 0;
+		Debug.Log(transform.position);
 		transform.position = transform.parent.TransformPoint(focus.normalized * distance);
-		transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
+		Debug.Log(transform.position);
+		//transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
 
 		locked = true;
 	}
@@ -72,6 +74,6 @@ public class PositionMenu : MonoBehaviour
 		Vector3 focus = Camera.main.transform.forward;
 		focus.y = 0;
 		transform.position = transform.parent.TransformPoint(focus.normalized * distance);
-		transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
+		transform.rotation = Quaternion.Euler(0, Camera.main.transform.rotation.eulerAngles.y, 0);//Quaternion.LookRotation(transform.parent.TransformPoint(focus.normalized * distance) - Camera.main.transform.position);
 	}
 }
