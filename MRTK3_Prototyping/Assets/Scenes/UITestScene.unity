@@ -32176,7 +32176,7 @@ MonoBehaviour:
   mapLoader: {fileID: 602309412}
   markerViewer: {fileID: 2072208977}
   markerIconSelector: {fileID: 7932252771182105347}
-  markerGroupViewer: {fileID: 0}
+  markerGroupViewer: {fileID: 851049735}
   markerIconNames:
   - Icon 103
   - Icon 96

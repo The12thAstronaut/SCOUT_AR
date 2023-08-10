@@ -21,10 +21,7 @@ public class PositionMenu : MonoBehaviour
     {
 		Vector3 focus = Camera.main.transform.forward;
 		focus.y = 0;
-		Debug.Log(transform.position);
 		transform.position = transform.parent.TransformPoint(focus.normalized * distance);
-		Debug.Log(transform.position);
-		//transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
 
 		locked = true;
 	}
@@ -68,9 +65,6 @@ public class PositionMenu : MonoBehaviour
 	}
 
 	public void OpenMenu() {
-		//locked = true;
-		//isManipulated = false;
-
 		Vector3 focus = Camera.main.transform.forward;
 		focus.y = 0;
 		transform.position = transform.parent.TransformPoint(focus.normalized * distance);

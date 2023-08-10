@@ -8,7 +8,7 @@ public class MarkerInfoCard : MonoBehaviour
 {
 	public Marker marker { get; set; }
 	public int index { get; set; }
-	public MarkerManager waypointManager { get; set; }
+	public MarkerManager markerManager { get; set; }
 
     // Start is called before the first frame update
     void Start()
@@ -26,6 +26,6 @@ public class MarkerInfoCard : MonoBehaviour
 	}
 
 	public void DeleteMarker() {
-		waypointManager.RemoveMarker(index);
+		markerManager.RemoveMarker(index);
 	}
 }

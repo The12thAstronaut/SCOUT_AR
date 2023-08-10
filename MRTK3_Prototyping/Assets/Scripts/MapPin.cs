@@ -28,6 +28,7 @@ public class MapPin : MonoBehaviour {
 
 	private int mapLayerMask = 1 << 3;
 	private bool waitNextFrame = true;
+	private float passedTime;
 
 	// Start is called before the first frame update
 	void Start()
@@ -78,28 +79,30 @@ public class MapPin : MonoBehaviour {
 			worldMarker.transform.position = Camera.main.transform.position + new Vector3(dist * Mathf.Cos(angleFromRight * Mathf.Deg2Rad), manager.markerYOffset, dist * Mathf.Sin(angleFromRight * Mathf.Deg2Rad));
 		}
 
-		if (worldMarker.movedWhileMapClosed) {
+		if (worldMarker.movedWhileMapClosed && (passedTime += Time.deltaTime) > .001f) {
+			manager.movedCount--;
 			worldMarker.UpdateLongLat();
+			if (manager.movedCount == 0) {
+				manager.UpdateGroupings();
+			}
 		}
 
 		if (worldMarker.transform.GetComponent<TapToPlace>().IsBeingPlaced) {
 			PositionFromLocalMarker();
 		}
-
-		//Debug.Log(transform.GetComponent<Collider>().enabled);
     }
 
 	public void PositionFromLocalMarker() {
 		unitSpherePos = GeoMaths.CoordinateToPoint(longLat);
-
 		//Debug.Log(unitSpherePos.x);
 		//Debug.Log(longLat.longitude + " : " + longLat.latitude);
 		RaycastHit hit;
 		//Physics.Raycast(mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 1) / manager.telemetryManager.moonBaseRadius)), -mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 1) / manager.telemetryManager.moonBaseRadius)) + mapParent.GetChild(1).TransformPoint(Vector3.zero), out hit, manager.telemetryManager.moonMaxRadius - manager.telemetryManager.moonBaseRadius + 1f, Physics.IgnoreRaycastLayer);
-		Physics.Raycast(mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 1) / manager.telemetryManager.moonBaseRadius)), -mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 1) / manager.telemetryManager.moonBaseRadius)) + mapParent.GetChild(1).TransformPoint(Vector3.zero), out hit, manager.telemetryManager.moonMaxRadius - manager.telemetryManager.moonBaseRadius + 1f, mapLayerMask);
+		Physics.Raycast(mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 100) / manager.telemetryManager.moonBaseRadius)), -mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 100) / manager.telemetryManager.moonBaseRadius)) + mapParent.GetChild(1).TransformPoint(Vector3.zero), out hit, manager.telemetryManager.moonMaxRadius - manager.telemetryManager.moonBaseRadius + 100f, mapLayerMask);
 		//Debug.DrawRay(mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 10) / manager.telemetryManager.moonBaseRadius)), -mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 10) / manager.telemetryManager.moonBaseRadius)) + mapParent.GetChild(1).TransformPoint(Vector3.zero));
 		//Debug.Log(hit.transform.name + ": " + hit.transform.position);
 		transform.position = hit.point;
+		transform.rotation = mapWindow.rotation;
 	}
 
     public void StopPlacement() {
@@ -112,6 +115,7 @@ public class MapPin : MonoBehaviour {
 			longLat = GeoMaths.PointToCoordinate(unitSpherePos);
 
 			SetBeingPlaced(false);
+			manager.UpdateGroupings();
 
 			//SetHandDetectors(true);
 
@@ -130,12 +134,10 @@ public class MapPin : MonoBehaviour {
 		leftHandDetector.SetActive(active);
 	}*/
 
-	public async void SetBeingPlaced(bool isPlacing) {
-		//Debug.Log(isPlacing);
-		manager.UpdateGroupings();
+	public /*async*/ void SetBeingPlaced(bool isPlacing) {
 		transform.GetComponent<Collider>().enabled = !isPlacing;
 		transform.GetComponent<TapToPlace>().enabled = isPlacing;
-		await Task.Delay(1000);
+		//await Task.Delay(1000);
 		transform.GetComponent<PressableButton>().enabled = !isPlacing;
 		manager.isPlacing = isPlacing;
 	}

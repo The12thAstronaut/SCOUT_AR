@@ -52,6 +52,7 @@ public class MarkerManager : MonoBehaviour {
 	private int mapLayerMask = 1 << 3;
 
 	public bool isPlacing { get; set; } = false;
+	public int movedCount { get; set; } = 0;
 
 	// Start is called before the first frame update
 	void Start()
@@ -73,6 +74,11 @@ public class MarkerManager : MonoBehaviour {
 			markerScrollList.SetItemCount(totalMarkers);
 			started = false;
 		}
+
+		/*if (markerMovedWhileClosed && mapWindow.gameObject.activeInHierarchy && mapLoader.generated) {
+			markerMovedWhileClosed = false;
+			UpdateGroupings();
+		}*/
 	}
 
 	public void CreateAnchorPlace() {
@@ -103,6 +109,8 @@ public class MarkerManager : MonoBehaviour {
 			GameObject marker = CreateLocalMarker();
 			marker.GetComponent<TapToPlace>().StartPlacement();
 			marker.GetComponent<Marker>().movedWhileMapClosed = true;
+			movedCount++;
+			//markerMovedWhileClosed = true;
 
 			MapPin mapMarker = MakeMapMarker().GetComponent<MapPin>();
 			mapMarker.GetComponent<TapToPlace>().StartPlacement();
@@ -182,7 +190,7 @@ public class MarkerManager : MonoBehaviour {
 			infoCard.transform.GetChild(2).GetChild(0).GetChild(3).GetComponent<TextMeshProUGUI>().text = $"{markers[index].distance.ToString("0.##")} m";
 			infoCard.transform.GetComponent<MarkerInfoCard>().marker = markers[index];
 			infoCard.transform.GetComponent<MarkerInfoCard>().index = index;
-			infoCard.transform.GetComponent<MarkerInfoCard>().waypointManager = this;
+			infoCard.transform.GetComponent<MarkerInfoCard>().markerManager = this;
 		}
 	}
 
@@ -203,6 +211,12 @@ public class MarkerManager : MonoBehaviour {
 		totalMarkers--;
 		markerScrollList.SetItemCount(0);
 		ready = true;
+
+		if (mapWindow.gameObject.activeInHierarchy) {
+			UpdateGroupings();
+		} else {
+			//markerMovedWhileClosed = true;
+		}
 	}
 
 	public void NextIcon() {
@@ -220,7 +234,6 @@ public class MarkerManager : MonoBehaviour {
 		foreach (MarkerGroup group in mapMarkerGroups) {
 			Destroy(group.groupMapMarker.gameObject);
 		}
-		//mapMarkerGroups.Clear();
 
 		mapMarkerGroups.RemoveRange(0, mapMarkerGroups.Count);
 

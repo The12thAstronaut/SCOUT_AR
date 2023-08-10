@@ -66,6 +66,7 @@ public class Marker : MonoBehaviour
 	}
 
 	public void UpdateLongLat() {
+		movedWhileMapClosed = false;
 		Vector3 relativePos = transform.position - Camera.main.transform.position;
 		float newLatitude = manager.telemetryManager.longitudeLatitude.latitude + (relativePos.z / manager.telemetryManager.moonBaseRadius) * (180f / Mathf.PI);
 		float newLongitude = manager.telemetryManager.longitudeLatitude.longitude + (relativePos.x / manager.telemetryManager.moonBaseRadius) * (180f / Mathf.PI) / Mathf.Cos(manager.telemetryManager.longitudeLatitude.latitude * Mathf.PI / 180f);
@@ -75,6 +76,7 @@ public class Marker : MonoBehaviour
 			mapMarker.PositionFromLocalMarker();
 		} else {
 			movedWhileMapClosed = true;
+			manager.movedCount++;
 		}
 
 		/*
@@ -97,7 +99,12 @@ public class Marker : MonoBehaviour
 
 	public void StopPlacement() {
 		manager.isPlacing = false;
-		manager.UpdateGroupings();
+
+		if (manager.mapWindow.gameObject.activeInHierarchy) {
+			manager.UpdateGroupings();
+		} else {
+			//manager.markerMovedWhileClosed = true;
+		}
 
 		//mapMarker.SetHandDetectors(true);
 		Debug.Log(mapMarker.longLat.longitude + ", " + mapMarker.longLat.latitude);
