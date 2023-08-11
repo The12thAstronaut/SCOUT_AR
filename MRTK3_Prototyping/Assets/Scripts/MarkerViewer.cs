@@ -47,6 +47,7 @@ public class MarkerViewer : MonoBehaviour
     public void SetIcon(FontIconSelector fontIcon) {
         markerManager.selectedMarker.currentIconName = fontIcon.CurrentIconName;
         markerManager.selectedMarker.UpdateInfo();
+        markerManager.selectedMarker.mapMarker.UpdateMapIcon();
     }
 
     public void SetName() {

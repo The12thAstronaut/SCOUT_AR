@@ -13,6 +13,7 @@ public class Marker : MonoBehaviour
 
 	public MarkerManager manager { get; set; }
 	public MapPin mapMarker { get; set; }
+	public FontIconSelector markerIcon;
 	public int index { get; set; }
 	public string currentIconName { get; set; }
 	
@@ -34,6 +35,7 @@ public class Marker : MonoBehaviour
 		transform.GetChild(1).transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = $"{distance.ToString("0.##")} m";
 
 		mapMarker.mapParent = mapMarker.mapLoader.transform.GetChild(0).GetChild(0);
+		UpdateInfo();
 	}
 
     // Update is called once per frame
@@ -111,7 +113,8 @@ public class Marker : MonoBehaviour
 	}
 
 	public void UpdateInfo() {
-		mapMarker.markerIcon.CurrentIconName = currentIconName;
+		//if (mapMarker != null && manager.mapWindow.gameObject.activeInHierarchy) mapMarker.markerIcon.CurrentIconName = currentIconName;
+		markerIcon.CurrentIconName = currentIconName;
 		transform.GetChild(1).transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = markerName;
 	}
 }

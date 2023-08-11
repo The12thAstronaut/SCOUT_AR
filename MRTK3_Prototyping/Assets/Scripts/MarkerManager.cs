@@ -195,6 +195,7 @@ public class MarkerManager : MonoBehaviour {
 			infoCard.transform.GetComponent<MarkerInfoCard>().marker = markers[index];
 			infoCard.transform.GetComponent<MarkerInfoCard>().index = index;
 			infoCard.transform.GetComponent<MarkerInfoCard>().markerManager = this;
+			infoCard.transform.GetComponent<MarkerInfoCard>().infoCardIcon.CurrentIconName = markers[index].currentIconName;
 		}
 	}
 
@@ -205,7 +206,8 @@ public class MarkerManager : MonoBehaviour {
 
 	public void PopulateGroupViewer(GameObject selectorButton, int index) {
 		if (index < selectedGroup.mapMarkers.Count) {
-			selectorButton.GetComponentInChildren<TextMeshProUGUI>().text = selectedGroup.mapMarkers[index].worldMarker.markerName;
+			//selectorButton.GetComponentInChildren<TextMeshProUGUI>().text = selectedGroup.mapMarkers[index].worldMarker.markerName;
+			selectorButton.transform.GetChild(2).GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = selectedGroup.mapMarkers[index].worldMarker.markerName;
 			selectorButton.GetComponentInChildren<FontIconSelector>().CurrentIconName = selectedGroup.mapMarkers[index].worldMarker.currentIconName;
 			selectorButton.GetComponent<MarkerSelectorButton>().markerManager = this;
 			selectorButton.GetComponent<MarkerSelectorButton>().markerIndex = index;

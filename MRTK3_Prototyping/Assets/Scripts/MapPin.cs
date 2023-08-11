@@ -47,6 +47,7 @@ public class MapPin : MonoBehaviour {
 
 		if (!isGroupMarker) {
 			worldMarker.UpdateInfo();
+			UpdateMapIcon();
 		} else {
 			markerIcon.CurrentIconName = manager.groupMarkerIconName;
 			transform.rotation = mapWindow.rotation;
@@ -79,7 +80,7 @@ public class MapPin : MonoBehaviour {
 			worldMarker.transform.position = Camera.main.transform.position + new Vector3(dist * Mathf.Cos(angleFromRight * Mathf.Deg2Rad), manager.markerYOffset, dist * Mathf.Sin(angleFromRight * Mathf.Deg2Rad));
 		}
 
-		if (worldMarker.movedWhileMapClosed && (passedTime += Time.deltaTime) > .001f) {
+		if (worldMarker.movedWhileMapClosed && (passedTime += Time.deltaTime) > .01f) {
 			manager.movedCount--;
 			worldMarker.UpdateLongLat();
 			if (manager.movedCount == 0) {
@@ -151,5 +152,9 @@ public class MapPin : MonoBehaviour {
 			manager.selectedMarker = worldMarker;
 			manager.markerViewer.OpenViewer();
 		}
+	}
+
+	public void UpdateMapIcon() {
+		markerIcon.CurrentIconName = worldMarker.currentIconName;
 	}
 }
