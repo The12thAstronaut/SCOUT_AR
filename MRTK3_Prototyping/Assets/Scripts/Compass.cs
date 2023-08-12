@@ -29,14 +29,15 @@ public class Compass : MonoBehaviour
 	}
 
 	void Update() {
+		transform.localRotation = Quaternion.Euler(0, 0, Camera.main.transform.rotation.eulerAngles.y);
+
 		foreach (CompassPin pin in compassPins) {
 			Vector3 pinVec = pin.refMarker.transform.position - transform.position;
 			pinVec.y = pinVec.z;
 			pinVec.z = 0;
 
-			float distance = Vector3.Distance(new Vector3(pin.refMarker.transform.position.x, 0, pin.refMarker.transform.position.z), new Vector3(Camera.main.transform.position.x, 0, Camera.main.transform.position.z));
+			float distance = Vector3.Distance(new Vector3(pin.refMarker.transform.position.x, 0, pin.refMarker.transform.position.z), new Vector3(transform.position.x, 0, transform.position.z));
 			float range = Mathf.Clamp(distance, 0, distancePerRing * numRings);
-			Debug.Log(range);
 			pin.pin.transform.localPosition = pinVec.normalized * range * radius / distancePerRing * 1000f * radius;
 		}
 	}
@@ -74,6 +75,7 @@ public class Compass : MonoBehaviour
 		foreach (CompassPin pin in compassPins) {
 			Destroy(pin.pin);
 		}
+		transform.rotation = Quaternion.identity;
 		compassPins.RemoveRange(0, compassPins.Count);
 	}
 }
