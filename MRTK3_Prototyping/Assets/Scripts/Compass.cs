@@ -13,14 +13,20 @@ public class Compass : MonoBehaviour
 
 	[Header("Marking Properties")]
 	public GameObject compassPinPrefab;
+	public GameObject cardinalDirectionPrefab;
 	public MarkerManager markerManager;
 	public float distancePerRing = 2f;
+	public Transform lineMarkings;
+
+	private Vector3[] cardinalDirections = { Vector3.forward, Vector3.left, Vector3.right, Vector3.back };
+	private string[] cardinalText = { "N", "W", "E", "S" };
 
 	private int size;
 	private LineRenderer[] lineDrawers;
 	private float theta = 0f;
 
 	private List<CompassPin> compassPins = new List<CompassPin>();
+	private GameObject[] cardinalPoints = new GameObject[4];
 
 	void Start() {
 		lineDrawers = new LineRenderer[numRings];
@@ -29,7 +35,10 @@ public class Compass : MonoBehaviour
 	}
 
 	void Update() {
-		transform.localRotation = Quaternion.Euler(0, 0, Camera.main.transform.rotation.eulerAngles.y);
+		Vector3 target = transform.position - Camera.main.transform.position;
+		float angle = Vector2.SignedAngle(new Vector2(Camera.main.transform.forward.x, Camera.main.transform.forward.z), new Vector2(target.x, target.z));
+
+		transform.localRotation = Quaternion.Euler(0, 0, Camera.main.transform.rotation.eulerAngles.y - angle);
 
 		foreach (CompassPin pin in compassPins) {
 			Vector3 pinVec = pin.refMarker.transform.position - transform.position;
@@ -39,13 +48,28 @@ public class Compass : MonoBehaviour
 			float distance = Vector3.Distance(new Vector3(pin.refMarker.transform.position.x, 0, pin.refMarker.transform.position.z), new Vector3(transform.position.x, 0, transform.position.z));
 			float range = Mathf.Clamp(distance, 0, distancePerRing * numRings);
 			pin.pin.transform.localPosition = pinVec.normalized * range * radius / distancePerRing * 1000f * radius;
+
+			pin.pin.transform.GetChild(1).rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
 		}
+
+		for (int i = 0; i < 4; i++) {
+			Vector3 dirVec = cardinalDirections[i];
+			dirVec.y = dirVec.z;
+			dirVec.z = 0;
+
+			cardinalPoints[i].transform.localPosition = dirVec.normalized * (numRings + 1) * radius * 1000f * radius;
+
+			cardinalPoints[i].transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
+		}
+
+		AlignMarkings();
 	}
 
 	void DrawCompass() {
 		for (int i = 0; i < numRings; i++) {
 			DrawCompassRing(lineDrawers[i], radius * (i + 1) / numRings);
 		}
+		DrawDirections();
 	}
 
 	void DrawCompassRing(LineRenderer lineDrawer, float segmentRadius) {
@@ -69,6 +93,7 @@ public class Compass : MonoBehaviour
 				compassPins.Add(new CompassPin(marker, pin));
 			}
 		}
+		AlignMarkings();
 	}
 
 	public void UnloadPins() {
@@ -77,6 +102,20 @@ public class Compass : MonoBehaviour
 		}
 		transform.rotation = Quaternion.identity;
 		compassPins.RemoveRange(0, compassPins.Count);
+	}
+
+	private void AlignMarkings() {
+		//lineMarkings.localRotation = Quaternion.Euler(0, 0, Vector3.Angle(transform.up, Vector3.forward));
+		//Debug.Log(Vector3.SignedAngle(transform.up, Vector3.forward, /*Vector3.Cross(transform.up, Vector3.forward)*/Vector3.up));
+	}
+
+	private void DrawDirections() {
+		for (int i = 0; i < 4; i++) {
+			GameObject dirText = Instantiate(cardinalDirectionPrefab, transform.position, Quaternion.identity, lineMarkings);
+			dirText.transform.localScale *= 2;
+			dirText.GetComponent<TextMeshProUGUI>().text = cardinalText[i];
+			cardinalPoints[i] = dirText;
+		}
 	}
 }
 
