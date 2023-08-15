@@ -5,6 +5,7 @@ using Microsoft.MixedReality.Toolkit.UX;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 
 public class MapPin : MonoBehaviour {
@@ -21,6 +22,7 @@ public class MapPin : MonoBehaviour {
 	public Vector3 moonPos { get; set; }
 	public Coordinate longLat { get; set; }
 	public FontIconSelector markerIcon { get; set; }
+	private TextMeshProUGUI markerColor;
 
 	public Transform mapParent;
 	public bool isGroupMarker { get; set; }
@@ -44,6 +46,7 @@ public class MapPin : MonoBehaviour {
 		}
 
 		markerIcon = transform.GetComponentInChildren<FontIconSelector>();
+		markerColor = markerIcon.GetComponent<TextMeshProUGUI>();
 
 		if (!isGroupMarker) {
 			worldMarker.UpdateInfo();
@@ -90,6 +93,12 @@ public class MapPin : MonoBehaviour {
 
 		if (worldMarker.transform.GetComponent<TapToPlace>().IsBeingPlaced) {
 			PositionFromLocalMarker();
+		}
+
+		if (worldMarker.isTargeted) {
+			markerColor.color = manager.targetedColor;
+		} else {
+			markerColor.color = Color.white;
 		}
     }
 
@@ -148,6 +157,10 @@ public class MapPin : MonoBehaviour {
 			manager.selectedGroup = manager.mapMarkerGroups[groupIndex];
 			manager.markerGroupScrollList.SetItemCount(manager.selectedGroup.mapMarkers.Count);
 			manager.markerGroupViewer.OpenViewer();
+		} else if (manager.isTargetingPin) {
+			worldMarker.isTargeted = true;
+			manager.targetedMarker = worldMarker;
+			manager.setTargetButton.ForceSetToggled(false);
 		} else {
 			manager.selectedMarker = worldMarker;
 			manager.markerViewer.OpenViewer();

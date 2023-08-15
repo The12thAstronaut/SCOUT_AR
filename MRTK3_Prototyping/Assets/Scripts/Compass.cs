@@ -2,6 +2,7 @@ using Microsoft.MixedReality.Toolkit.UX;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class Compass : MonoBehaviour
@@ -18,6 +19,7 @@ public class Compass : MonoBehaviour
 	public MarkerManager markerManager;
 	public float distancePerRing = 2f;
 	public Transform lineMarkings;
+	public Color distanceMarkingColor;
 
 	private Vector3[] cardinalDirections = { Vector3.forward, Vector3.left, Vector3.right, Vector3.back };
 	private string[] cardinalText = { "N", "W", "E", "S" };
@@ -52,6 +54,17 @@ public class Compass : MonoBehaviour
 
 			pin.pin.transform.localPosition = pinVec.normalized * radius * 1000f * range / (distancePerRing * numRings);
 			pin.pin.transform.GetChild(1).rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
+
+			
+			TextMeshProUGUI[] parts = pin.pin.GetComponentsInChildren<TextMeshProUGUI>();
+			foreach (TextMeshProUGUI part in parts) {
+				if (pin.refMarker.isTargeted) {
+					part.color = markerManager.targetedColor;
+				} else {
+					part.color = Color.white;
+				}
+			}
+				
 		}
 
 		for (int i = 0; i < 4; i++) {
@@ -118,15 +131,14 @@ public class Compass : MonoBehaviour
 			for (int j = 0; j < numRings; j++) {
 				TextMeshProUGUI distMark = Instantiate(cardinalDirectionPrefab, transform.position, Quaternion.identity, lineMarkings).GetComponent<TextMeshProUGUI>();
 				distMark.transform.localScale *= 2;
-				distMark.fontSize = 6;
+				distMark.fontSize = 6 + ((j + 1f) / numRings);
 				distMark.text = ((j + 1) * distancePerRing).ToString();
-				distMark.color = new Color(166, 166, 166);
+				distMark.color = distanceMarkingColor;
 
 				distanceMarkers.Add(distMark.transform);
 
 				distMark.transform.localPosition = new Vector3(radius * (j + 1) / numRings * cardinalDirections[i].x, radius * (j + 1) / numRings * cardinalDirections[i].z, 0) * 1000f;
 			}
-
 		}
 	}
 

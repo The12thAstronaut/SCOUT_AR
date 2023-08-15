@@ -23,6 +23,7 @@ public class MarkerManager : MonoBehaviour {
     public MRTKRayInteractor rightRay;
     public TMP_InputField inputName;
 	public PressableButton newMarkerButton;
+	public PressableButton setTargetButton;
 	public VirtualizedScrollRectList markerScrollList;
 	public VirtualizedScrollRectList markerGroupScrollList;
 	public GameObject markerInfoCard;
@@ -38,12 +39,15 @@ public class MarkerManager : MonoBehaviour {
 
 	public float markerYOffset = -0.5f;
 	public float mapGroupingRange = 0.02f;
+	public float targetTime = 10f;
+	public Color targetedColor = Color.red;
 
 	private int totalMarkers = 0;
 	public List<Marker> markers = new List<Marker>();
 	public List<MapPin> mapMarkers = new List<MapPin>();
 	public List<MarkerGroup> mapMarkerGroups = new List<MarkerGroup>();
 	public Marker selectedMarker { get; set; }
+	public Marker targetedMarker { get; set; }
 	public MarkerGroup selectedGroup { get; set; }
 
 	private float startTime;
@@ -53,7 +57,9 @@ public class MarkerManager : MonoBehaviour {
 	private int mapLayerMask = 1 << 3;
 
 	public bool isPlacing { get; set; } = false;
+	public bool isTargetingPin { get; set; } = false;
 	public int movedCount { get; set; } = 0;
+	private float targetDeltaTime = 0;
 
 	// Start is called before the first frame update
 	void Start()
@@ -77,6 +83,11 @@ public class MarkerManager : MonoBehaviour {
 		if (started && Time.time - startTime >= .01) {
 			markerScrollList.SetItemCount(totalMarkers);
 			started = false;
+		}
+
+		if (isTargetingPin && (targetDeltaTime += Time.deltaTime) > targetTime) {
+			isTargetingPin = false;
+			setTargetButton.ForceSetToggled(false);
 		}
 
 		/*if (markerMovedWhileClosed && mapWindow.gameObject.activeInHierarchy && mapLoader.generated) {
@@ -314,6 +325,17 @@ public class MarkerManager : MonoBehaviour {
 			group.groupMapMarker.transform.position = hit.point;
 
 		}
+	}
+
+	public void TargetSelected(bool isTargeting) {
+		selectedMarker.isTargeted = isTargeting;
+		targetedMarker = selectedMarker;
+		setTargetButton.ForceSetToggled(false);
+	}
+
+	public void StartTargeting() {
+		isTargetingPin = true;
+		targetDeltaTime = 0;
 	}
 }
 

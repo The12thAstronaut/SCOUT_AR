@@ -562,6 +562,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   markerIcon: {fileID: 8300502521693450190}
+  markerIconColor: {fileID: 7159405149131477247}
 --- !u!114 &7295352243535340202
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -14,10 +14,13 @@ public class Marker : MonoBehaviour
 	public MarkerManager manager { get; set; }
 	public MapPin mapMarker { get; set; }
 	public FontIconSelector markerIcon;
+	public TextMeshProUGUI markerIconColor;
 	public int index { get; set; }
 	public string currentIconName { get; set; }
 	
 	public bool movedWhileMapClosed { get; set; }
+
+	public bool isTargeted { get; set; }
 
 	// Start is called before the first frame update
 	void Start() {
@@ -64,6 +67,12 @@ public class Marker : MonoBehaviour
 
 		if (transform.GetComponent<TapToPlace>().IsBeingPlaced) {
 			UpdateLongLat();
+		}
+
+		if (isTargeted) {
+			markerIconColor.color = manager.targetedColor;
+		} else {
+			markerIconColor.color = Color.white;
 		}
 	}
 
