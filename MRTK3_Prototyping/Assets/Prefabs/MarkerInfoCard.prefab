@@ -404,6 +404,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0916edfd703378144911b2ad09e8c5e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  infoCardIcon: {fileID: 8608632826480830477}
 --- !u!1 &4158778731704414883
 GameObject:
   m_ObjectHideFlags: 0
