@@ -28,6 +28,7 @@ public class Compass : MonoBehaviour
 
 	private List<CompassPin> compassPins = new List<CompassPin>();
 	private GameObject[] cardinalPoints = new GameObject[4];
+	private List<Transform> distanceMarkers = new List<Transform>();
 
 	void Start() {
 		lineDrawers = new LineRenderer[numRings];
@@ -61,6 +62,10 @@ public class Compass : MonoBehaviour
 			cardinalPoints[i].transform.localPosition = dirVec.normalized * radius * 1000f * (numRings + 1) / numRings;
 			cardinalPoints[i].transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
 		}
+
+		foreach (Transform mark in distanceMarkers) {
+			mark.localRotation = Quaternion.Euler(0, 0, -Camera.main.transform.rotation.eulerAngles.y + angle);
+		}
 	}
 
 	void DrawCompass() {
@@ -69,7 +74,7 @@ public class Compass : MonoBehaviour
 			DrawCompassRing(lineDrawers[i], radius * (i + 1) / numRings);
 		}
 		DrawDirections();
-		AlignMarkings();
+		DrawMarkings();
 	}
 
 	void DrawCompassRing(LineRenderer lineDrawer, float segmentRadius) {
@@ -103,12 +108,25 @@ public class Compass : MonoBehaviour
 		compassPins.RemoveRange(0, compassPins.Count);
 	}
 
-	private void AlignMarkings() {
+	private void DrawMarkings() {
 		LineRenderer[] cardinalLines = lineMarkings.GetChild(0).GetComponentsInChildren<LineRenderer>();
 		for (int i = 0; i < cardinalLines.Length; i++) {
 			cardinalLines[i].positionCount = 2;
 			cardinalLines[i].SetPosition(0, new Vector3(radius / numRings * cardinalDirections[i].x, radius / numRings * cardinalDirections[i].z, 0) * 1000f);
 			cardinalLines[i].SetPosition(1, new Vector3(radius * (numRings + 1) / numRings * cardinalDirections[i].x, radius * (numRings + 1) / numRings * cardinalDirections[i].z, 0) * 1000f);
+
+			for (int j = 0; j < numRings; j++) {
+				TextMeshProUGUI distMark = Instantiate(cardinalDirectionPrefab, transform.position, Quaternion.identity, lineMarkings).GetComponent<TextMeshProUGUI>();
+				distMark.transform.localScale *= 2;
+				distMark.fontSize = 6;
+				distMark.text = ((j + 1) * distancePerRing).ToString();
+				distMark.color = new Color(166, 166, 166);
+
+				distanceMarkers.Add(distMark.transform);
+
+				distMark.transform.localPosition = new Vector3(radius * (j + 1) / numRings * cardinalDirections[i].x, radius * (j + 1) / numRings * cardinalDirections[i].z, 0) * 1000f;
+			}
+
 		}
 	}
 
