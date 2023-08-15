@@ -10,6 +10,7 @@ public class Compass : MonoBehaviour
 	public int numRings = 5;
 	public float thetaScale = 0.01f;
 	public float radius = 3f;
+	public GameObject compassRing;
 
 	[Header("Marking Properties")]
 	public GameObject compassPinPrefab;
@@ -30,7 +31,7 @@ public class Compass : MonoBehaviour
 
 	void Start() {
 		lineDrawers = new LineRenderer[numRings];
-		lineDrawers = GetComponentsInChildren<LineRenderer>();
+		//lineDrawers = GetComponentsInChildren<LineRenderer>();
 		DrawCompass();
 	}
 
@@ -47,8 +48,8 @@ public class Compass : MonoBehaviour
 
 			float distance = Vector3.Distance(new Vector3(pin.refMarker.transform.position.x, 0, pin.refMarker.transform.position.z), new Vector3(transform.position.x, 0, transform.position.z));
 			float range = Mathf.Clamp(distance, 0, distancePerRing * numRings);
-			pin.pin.transform.localPosition = pinVec.normalized * range * radius / distancePerRing * 1000f * radius;
 
+			pin.pin.transform.localPosition = pinVec.normalized * radius * 1000f * range / (distancePerRing * numRings);
 			pin.pin.transform.GetChild(1).rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
 		}
 
@@ -57,19 +58,18 @@ public class Compass : MonoBehaviour
 			dirVec.y = dirVec.z;
 			dirVec.z = 0;
 
-			cardinalPoints[i].transform.localPosition = dirVec.normalized * (numRings + 1) * radius * 1000f * radius;
-
+			cardinalPoints[i].transform.localPosition = dirVec.normalized * radius * 1000f * (numRings + 1) / numRings;
 			cardinalPoints[i].transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
 		}
-
-		AlignMarkings();
 	}
 
 	void DrawCompass() {
 		for (int i = 0; i < numRings; i++) {
+			lineDrawers[i] = Instantiate(compassRing, transform.position, Quaternion.identity, transform).GetComponent<LineRenderer>();
 			DrawCompassRing(lineDrawers[i], radius * (i + 1) / numRings);
 		}
 		DrawDirections();
+		AlignMarkings();
 	}
 
 	void DrawCompassRing(LineRenderer lineDrawer, float segmentRadius) {
@@ -93,7 +93,6 @@ public class Compass : MonoBehaviour
 				compassPins.Add(new CompassPin(marker, pin));
 			}
 		}
-		AlignMarkings();
 	}
 
 	public void UnloadPins() {
@@ -105,8 +104,12 @@ public class Compass : MonoBehaviour
 	}
 
 	private void AlignMarkings() {
-		//lineMarkings.localRotation = Quaternion.Euler(0, 0, Vector3.Angle(transform.up, Vector3.forward));
-		//Debug.Log(Vector3.SignedAngle(transform.up, Vector3.forward, /*Vector3.Cross(transform.up, Vector3.forward)*/Vector3.up));
+		LineRenderer[] cardinalLines = lineMarkings.GetChild(0).GetComponentsInChildren<LineRenderer>();
+		for (int i = 0; i < cardinalLines.Length; i++) {
+			cardinalLines[i].positionCount = 2;
+			cardinalLines[i].SetPosition(0, new Vector3(radius / numRings * cardinalDirections[i].x, radius / numRings * cardinalDirections[i].z, 0) * 1000f);
+			cardinalLines[i].SetPosition(1, new Vector3(radius * (numRings + 1) / numRings * cardinalDirections[i].x, radius * (numRings + 1) / numRings * cardinalDirections[i].z, 0) * 1000f);
+		}
 	}
 
 	private void DrawDirections() {
