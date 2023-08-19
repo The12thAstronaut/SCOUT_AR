@@ -65,10 +65,10 @@ public class MarkerManager : MonoBehaviour {
 	void Start()
     {
 		markerScrollList.OnVisible = PopulateInfoCard;
-		markerScrollList.OnInvisible = DepopulateInfoCard;
+		markerScrollList.OnInvisible = DepopulateScrollView;
 
 		markerGroupScrollList.OnVisible = PopulateGroupViewer;
-		markerGroupScrollList.OnInvisible = DepopulateGroupViewer;
+		markerGroupScrollList.OnInvisible = DepopulateScrollView;
 	}
 
     // Update is called once per frame
@@ -210,8 +210,8 @@ public class MarkerManager : MonoBehaviour {
 		}
 	}
 
-	public void DepopulateInfoCard(GameObject infoCard, int index) {
-		infoCard.transform.Translate(0, 30000, 0);
+	public void DepopulateScrollView(GameObject obj, int index) {
+		obj.transform.Translate(0, 30000, 0);
 	}
 
 
@@ -223,10 +223,6 @@ public class MarkerManager : MonoBehaviour {
 			selectorButton.GetComponent<MarkerSelectorButton>().markerManager = this;
 			selectorButton.GetComponent<MarkerSelectorButton>().markerIndex = index;
 		}
-	}
-
-	public void DepopulateGroupViewer(GameObject selectorButton, int index) {
-		selectorButton.transform.Translate(0, 30000, 0);
 	}
 
 	public void RemoveMarker(int index) {
