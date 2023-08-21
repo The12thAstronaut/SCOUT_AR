@@ -23,8 +23,6 @@ public class MarkerGroupViewer : MonoBehaviour {
 	public void OpenViewer() {
 		generalViewer.SetActive(false);
 		gameObject.SetActive(true);
-		Debug.Log(markerManager.selectedGroup.mapMarkers.Count);
-		Debug.Log(markerManager.markerGroupScrollList.ItemCount);
 	}
 
 	public void CloseViewer() {
