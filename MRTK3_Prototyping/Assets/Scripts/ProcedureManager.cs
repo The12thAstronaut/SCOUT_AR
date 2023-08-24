@@ -44,7 +44,16 @@ public class ProcedureManager : MonoBehaviour
 	}
 
 	private void PopulateProcedureButton(GameObject obj, int index) {
-		//Debug.Log(index);
+
+		if (index == 0) { // Scroll views are set up with a "fake" first element to fix top element pop-in.
+			obj.SetActive(false);
+			return;
+		} else {
+			obj.SetActive(true);
+		}
+
+		ProcedureSelectorButton button = obj.GetComponent<ProcedureSelectorButton>();
+		button.nameText.text = index.ToString();
 	}
 
 	private void DepopulateProcedureButton(GameObject obj, int index) {

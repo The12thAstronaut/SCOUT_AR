@@ -9,6 +9,8 @@ using UnityEngine.XR.Interaction.Toolkit;
 [RequireComponent(typeof(Scrollbar))]
 public class VirtualScroll : MonoBehaviour
 {
+    public bool stickyEnds = true;
+
     private Vector3 startPos;
     private Vector3 endPos;
     private bool isScrolling = false;
@@ -52,6 +54,11 @@ public class VirtualScroll : MonoBehaviour
 			}
 
             if (delta >= 0f && delta <= 1f) {
+                if (stickyEnds) {
+                    if (delta <= 0.04f || delta >= 0.96f) {
+                        delta = Mathf.Round(delta);
+                    }
+                }
                 scrollbar.value = delta;
             }
         }
