@@ -41,6 +41,7 @@ public class MapLoader : MonoBehaviour {
 	private float[] zoomPos;
 	private List<float> meshHighestMagnitude = new List<float>();
 	private bool isZooming = true;
+	private bool isLoading = false;
 
 	[SerializeField] float[] zoomRanges = { 50f, 100f, 200f, 500f, 1000f, 5000f, 10000f, 20000f, 50000f, 100000f, 200000f, 400000f };
 	[Range(1, 12)]public int zoomLevel = 1;
@@ -114,12 +115,18 @@ public class MapLoader : MonoBehaviour {
 		numSpherePointsMin = Mathf.RoundToInt(6 * Mathf.RoundToInt(Mathf.Pow(subdivisions, 2)) * Mathf.Pow(minResolution, 2));
 	}
 
-	public void Load() {
-		if (loaded == true) return;
+	public async void Load() {
+		if (loaded || isLoading) return;
+
+		isLoading = true;
+
+		await Task.Yield();
+
 		LoadData();
+
 		loaded = true;
+		isLoading = false;
 		UpdateMapRenderer(maxResolution);
-		//generated = true;
 	}
 
 	public void Reload() {
