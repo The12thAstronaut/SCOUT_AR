@@ -1,0 +1,5 @@
+Example first step
+	Find valve
+	Flip switch
+	Turn around
+Open door

@@ -1,6 +1,7 @@
 using Microsoft.MixedReality.Toolkit.UX;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml.Schema;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ public class ProcedureManager : MonoBehaviour
 
 	private float startTime;
 	private bool isSettingScroll;
+	private List<Procedure> procedures = new List<Procedure>();
 
 	// Start is called before the first frame update
 	void Start()
@@ -24,23 +26,18 @@ public class ProcedureManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		/*if (ready && !isSettingScroll) {
-			startTime = Time.time;
-			isSettingScroll = true;
-			ready = false;
-		}*/
-
-		/*if (isSettingScroll && procedureScrollList.gameObject.activeInHierarchy && Time.time - startTime > 10f) {
-			Debug.Log("loading procedures");
-			procedureScrollList.SetItemCount(numProcedures);
-			isSettingScroll = false;
-		}*/
+		
 	}
 
 	public void LoadProcedures() {
 		procedureScrollList.SetItemCount(numProcedures);
-		//isSettingScroll = true;
-		//startTime = Time.time;
+
+		string path = FileHelper.MakePath("Assets", "Data", "Procedures");
+		string[] files = Directory.GetFiles(path, "*.txt");
+
+		foreach (string file in files) {
+			procedures.Add(new Procedure(file));
+		}
 	}
 
 	private void PopulateProcedureButton(GameObject obj, int index) {
