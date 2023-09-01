@@ -18,12 +18,13 @@ public class ProcedureManager : MonoBehaviour
 	public VirtualizedScrollRectList procedureScrollList;
 	public TextMeshProUGUI stepReader;
 	public Color activeStepColor = Color.yellow;
-	
+	public Scrollbar stepScrollbar;
+	public GameObject stepReaderMenu;
+	public TextMeshProUGUI stepProgressText;
+
 	public string activeStepInstruction { get; set; }
 	public int activeStepIndex { get; set; }
 	public Procedure activeProcedure { get; private set; }
-	public Scrollbar stepScrollbar;
-	public GameObject stepReaderMenu;
 
 	private float startTime;
 	private bool isSettingScroll;
@@ -134,7 +135,7 @@ public class ProcedureManager : MonoBehaviour
 			line += "<color=#" + activeStepColor.ToHexString() + ">";
 		}
 
-		line += (index + 1) + "<indent=9%>|<indent=14%>";
+		line += (index + 1).ToString("D2") + "<indent=9%>|<indent=14%>";
 
 		line += new String(' ', activeSteps[index].Item2 * 5) + "> " + activeSteps[index].Item1;
 
@@ -160,6 +161,7 @@ public class ProcedureManager : MonoBehaviour
 		}
 
 		stepReader.text = readerText;
+		stepProgressText.text = "Progress: " + (activeProcedure.currentStep + 1).ToString("D2") + "/" + activeProcedure.totalSteps.ToString("D2");
 	}
 
 	private List<Tuple<string, int>> RetrieveSubsteps(ProcedureStep step, int tabLevel) {
