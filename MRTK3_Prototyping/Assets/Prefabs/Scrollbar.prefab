@@ -396,6 +396,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca92fcf6e2405534c90869554169a904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stickyEnds: 1
+  reverseScroll: 0
+  scrollSensitivity: 1
 --- !u!1 &675968976057184165
 GameObject:
   m_ObjectHideFlags: 0
@@ -455,7 +458,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4220fa33d0e48745b2cb5c52731e75e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 2419dcf62d6d5544690ba2031fe0b6da, type: 2}
+  m_Material: {fileID: 2100000, guid: ed3527748d7e7e5418a4acab7b5249b6, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}

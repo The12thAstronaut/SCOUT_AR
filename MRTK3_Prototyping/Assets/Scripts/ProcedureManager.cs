@@ -3,10 +3,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Xml.Schema;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 
 public class ProcedureManager : MonoBehaviour
@@ -15,11 +18,18 @@ public class ProcedureManager : MonoBehaviour
 	public VirtualizedScrollRectList procedureScrollList;
 	public TextMeshProUGUI stepReader;
 	public Color activeStepColor = Color.yellow;
+	
+	public string activeStepInstruction { get; set; }
+	public int activeStepIndex { get; set; }
+	public Procedure activeProcedure { get; private set; }
+	public Scrollbar stepScrollbar;
+	public GameObject stepReaderMenu;
 
 	private float startTime;
 	private bool isSettingScroll;
 	private List<Procedure> procedures = new List<Procedure>();
-	private List<string> activeSteps = new List<string>();
+	List<Tuple<string, int>> activeSteps = new List<Tuple<string, int>>();
+	private List<string> activeRichText = new List<string>();
 
 	// Start is called before the first frame update
 	void Start()
@@ -68,41 +78,84 @@ public class ProcedureManager : MonoBehaviour
 	}
 
 	public void ActivateProcedure(int index) {
-		List<Tuple<string, int>> stepTexts = new List<Tuple<string, int>>();
-		List<int> tabLevel = new List<int>();
 
-		foreach (ProcedureStep step in procedures[index].steps) {
-			stepTexts.Add(new Tuple<string, int>(step.instruction, 0));
-			if (step.substeps.Count != 0) stepTexts.AddRange(RetrieveSubsteps(step, 1));
-		}
+		activeProcedure = procedures[index];
 
 		activeSteps.Clear();
+		activeRichText.Clear();
 
-		for (int i = 0; i < stepTexts.Count; i++) {
-			string line = "";
-			if (i != 0) {
-				line += '\n';
-			}
-
-			if (i == procedures[index].currentStep) {
-				line += "<color=#" + activeStepColor.ToHexString() + ">";
-			}
-
-			line += i + "<indent=9%>|<indent=14%>";
-
-			line += new String(' ', stepTexts[i].Item2 * 5) + "> " + stepTexts[i].Item1;
-
-			line += "</indent></indent>";
-
-			if (i == procedures[index].currentStep) {
-				line += "</color>";
-			}
-			activeSteps.Add(line);
+		foreach (ProcedureStep step in procedures[index].steps) {
+			activeSteps.Add(new Tuple<string, int>(step.instruction, 0));
+			if (step.substeps.Count != 0) activeSteps.AddRange(RetrieveSubsteps(step, 1));
 		}
+
+		for (int i = 0; i < activeSteps.Count; i++) {
+			GenerateRichText(i);
+		}
+
+		UpdateReaderText();
+	}
+
+	public void NextStep() {
+		GoToStep(activeProcedure.currentStep + 1);
+	}
+
+	public void PrevStep() {
+		GoToStep(activeProcedure.currentStep - 1);
+	}
+
+	public void GoToStep(int stepNum) {
+		if (stepNum >= 0 && stepNum < activeProcedure.totalSteps) {
+			int temp = activeProcedure.currentStep;
+			activeProcedure.currentStep = stepNum;
+			GenerateRichText(temp);
+			GenerateRichText(stepNum);
+
+			UpdateReaderText();
+
+			// Updates step reader's scroll bar as you progress through tasks such that it's always visible.
+			float linesOnReader = 12;
+
+			if (activeProcedure.currentStep / linesOnReader >= 0.5f && (activeProcedure.totalSteps - activeProcedure.currentStep) / linesOnReader >= 0.5f) {
+
+				float perc = (activeProcedure.currentStep - linesOnReader / 2) / (activeProcedure.totalSteps - linesOnReader);
+				stepScrollbar.value = Mathf.Clamp01(1 - perc);
+			}
+		}
+	}
+
+	private void GenerateRichText(int index) {
+		string line = "";
+		if (index != 0) {
+			line += '\n';
+		}
+
+		if (index == activeProcedure.currentStep) {
+			line += "<color=#" + activeStepColor.ToHexString() + ">";
+		}
+
+		line += (index + 1) + "<indent=9%>|<indent=14%>";
+
+		line += new String(' ', activeSteps[index].Item2 * 5) + "> " + activeSteps[index].Item1;
+
+		line += "</indent></indent>";
+
+		if (index == activeProcedure.currentStep) {
+			line += "</color>";
+		}
+
+		if (activeRichText.Count - 1 >= index) {
+			activeRichText[index] = line;
+		} else {
+			activeRichText.Add(line);
+		}
+	}
+
+	private void UpdateReaderText() {
 
 		string readerText = "";
 
-		foreach (string line in activeSteps) {
+		foreach (string line in activeRichText) {
 			readerText += line;
 		}
 

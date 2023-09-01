@@ -20,24 +20,20 @@ public class Procedure
 
 		index = int.Parse(info[0]);
 
-		for (int i = 1; i < info.Length - 1; i++) {
+		for (int i = 1; i < info.Length; i++) {
 			procedureName += info[i] + " ";
 		}
 		procedureName.TrimEnd();
 
-		totalSteps = int.Parse(info[info.Length - 1]);
+		totalSteps = File.ReadAllLines(filePath).Length;
 		steps = new List<ProcedureStep>();
 		
 
 		using (StreamReader reader = new StreamReader(filePath)) {
 
-			string[] fileLines = new string[File.ReadAllLines(filePath).Length];
+			string[] fileLines = new string[totalSteps];
 			string line;
 			int i = 0;
-			//int prevTabLvl = 0;
-			//ProcedureStep lastProcedure = null;
-			//List<ProcedureStep> lastParent = null;
-			//List<ProcedureStep> lastHigherParent = null;
 
 			int currentStep = 0;
 
@@ -58,36 +54,11 @@ public class Procedure
 					steps[currentStep - 1].substeps[steps[currentStep - 1].substeps.Count - 1].substeps.Add(new ProcedureStep(line.Trim()));
 				}
 
-				/*if (i == 0) {
-					steps.Add(new ProcedureStep(line.Trim()));
-					lastProcedure = steps[i];
-					lastParent = steps;
-				}
-
-				if (tabLevel > prevTabLvl) {
-					lastProcedure.substeps.Add(new ProcedureStep(line.Trim()));
-					lastProcedure = lastProcedure.substeps[lastProcedure.substeps.Count - 1];
-					lastHigherParent = lastParent;
-					lastParent = lastProcedure.substeps;
-				} else if (tabLevel == prevTabLvl) {
-					lastParent.Add(new ProcedureStep(line.Trim()));
-					lastProcedure = lastParent[lastParent.Count - 1];
-				} else if (tabLevel < prevTabLvl) {
-					lastHigherParent.Add(new ProcedureStep(line.Trim()));
-					lastProcedure = lastHigherParent[lastHigherParent.Count - 1];
-					lastParent = lastHigherParent;
-
-				}*/
-
-
-				//ParseLogic(steps[].text);
-				//prevTabLvl = tabLevel;
 				i++;
 			}
 		}
 	}
 
-	
 }
 
 public class ProcedureStep {
