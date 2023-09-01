@@ -8,6 +8,9 @@ public class ProcedureSelectorButton : MonoBehaviour
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI stepText;
     public TextMeshProUGUI durationText;
+    public int procedureIndex { get; set; }
+
+    public ProcedureManager procedureManager { get; set; }
 
     // Start is called before the first frame update
     void Start()
@@ -19,5 +22,9 @@ public class ProcedureSelectorButton : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void SelectProcedure() {
+        procedureManager.ActivateProcedure(procedureIndex);
     }
 }

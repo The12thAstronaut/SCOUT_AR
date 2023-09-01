@@ -10,6 +10,8 @@ using UnityEngine.XR.Interaction.Toolkit;
 public class VirtualScroll : MonoBehaviour
 {
     public bool stickyEnds = true;
+    public bool reverseScroll = false;
+    [Range(0.2f, 1f)] public float scrollSensitivity = 1f;
 
     private Vector3 startPos;
     private Vector3 endPos;
@@ -23,8 +25,8 @@ public class VirtualScroll : MonoBehaviour
         RectTransform scrollRT = GetComponent<RectTransform>();
         scrollbar = GetComponent<Scrollbar>();
 
-		startPos = transform.localPosition + new Vector3(-scrollRT.sizeDelta.x, scrollRT.sizeDelta.y, 0);
-		endPos = transform.localPosition + new Vector3(scrollRT.sizeDelta.x, -scrollRT.sizeDelta.y, 0);
+		startPos = transform.localPosition + new Vector3(-scrollRT.sizeDelta.x, scrollRT.sizeDelta.y, 0) / scrollSensitivity;
+		endPos = transform.localPosition + new Vector3(scrollRT.sizeDelta.x, -scrollRT.sizeDelta.y, 0) / scrollSensitivity;
 	}
 
     // Update is called once per frame
@@ -59,6 +61,11 @@ public class VirtualScroll : MonoBehaviour
                         delta = Mathf.Round(delta);
                     }
                 }
+
+                if (reverseScroll) {
+                    delta = 1 - delta;
+                }
+
                 scrollbar.value = delta;
             }
         }
