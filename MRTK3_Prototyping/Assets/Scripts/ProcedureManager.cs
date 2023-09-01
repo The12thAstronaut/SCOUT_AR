@@ -1,20 +1,14 @@
 using Microsoft.MixedReality.Toolkit.UX;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Xml.Schema;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 
 public class ProcedureManager : MonoBehaviour
 {
-	public int numProcedures;
 	public VirtualizedScrollRectList procedureScrollList;
 	public TextMeshProUGUI stepReader;
 	public Color activeStepColor = Color.yellow;
@@ -25,9 +19,8 @@ public class ProcedureManager : MonoBehaviour
 	public string activeStepInstruction { get; set; }
 	public int activeStepIndex { get; set; }
 	public Procedure activeProcedure { get; private set; }
+	public int numProcedures { get; set; }
 
-	private float startTime;
-	private bool isSettingScroll;
 	private List<Procedure> procedures = new List<Procedure>();
 	List<Tuple<string, int>> activeSteps = new List<Tuple<string, int>>();
 	private List<string> activeRichText = new List<string>();
@@ -48,10 +41,12 @@ public class ProcedureManager : MonoBehaviour
 	}
 
 	public void LoadProcedures() {
-		procedureScrollList.SetItemCount(numProcedures + 1);
 
 		string path = FileHelper.MakePath("Assets", "Data", "Procedures");
 		string[] files = Directory.GetFiles(path, "*.txt");
+
+		numProcedures = Directory.GetFiles(path).Length / 2;
+		procedureScrollList.SetItemCount(numProcedures + 1);
 
 		foreach (string file in files) {
 			procedures.Add(new Procedure(file));
