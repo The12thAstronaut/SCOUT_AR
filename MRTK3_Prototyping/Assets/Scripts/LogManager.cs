@@ -1,20 +1,27 @@
 using Microsoft.MixedReality.Toolkit.UX;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 
 public class LogManager : MonoBehaviour
 {
 	public VirtualizedScrollRectList logScrollList;
 	public TextMeshProUGUI logReader;
+	public TMP_InputField logSubjectInputField;
+	public TMP_InputField logContentInputField;
+	public TextMeshProUGUI logDateTimeDisplay;
 
 	public int activeLogIndex { get; set; }
 	public Log activeLog { get; private set; }
 	public int numLogs { get; set; }
 
 	private List<Log> logs = new List<Log>();
+	private string dateTime = "";
+
 	// Start is called before the first frame update
 	void Start()
     {
@@ -27,7 +34,11 @@ public class LogManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (logDateTimeDisplay.gameObject.activeInHierarchy) {
+			dateTime = DateTime.Now.ToString("yyyy-MM-dd");
+			dateTime += " " + DateTime.Now.ToString("HH-mm-ss");
+			logDateTimeDisplay.text = dateTime;
+		}
     }
 
 	public void LoadLogs() {
@@ -55,11 +66,42 @@ public class LogManager : MonoBehaviour
 			button.logManager = this;
 			button.logIndex = index - 1;
 			button.nameText.text = logs[index - 1].logName;
+			button.dateTimeText.text = logs[index - 1].dateTime;
 			//button.stepText.text = logs[index - 1].currentStep + "/" + logs[index - 1].totalSteps;
 		}
 	}
 
 	private void DepopulateLogButton(GameObject obj, int index) {
 
+	}
+
+	public void SaveLogEntry() {
+#if WINDOWS_UWP
+		string path = Application.persistentDataPath + "/Logs/" + dateTime.Replace(' ', '_');
+
+		StreamWriter writer = new StreamWriter(path, false);
+
+		writer.WriteLine(logSubjectInputField.text);
+		writer.WriteLine(logContentInputField.text);
+
+		writer.Close();
+#endif
+#if UNITY_EDITOR
+		string path = FileHelper.MakePath("Assets", "Data", "Logs", dateTime.Replace(' ', '_') + ".txt");
+
+		if (!Directory.Exists(FileHelper.MakePath("Assets", "Data", "Logs"))) {
+			Directory.CreateDirectory(FileHelper.MakePath("Assets", "Data", "Logs"));
+		}
+
+		StreamWriter writer = new StreamWriter(path, true);
+
+		writer.WriteLine(logSubjectInputField.text);
+		writer.WriteLine(logContentInputField.text);
+
+		writer.Close();
+
+		AssetDatabase.ImportAsset(path);
+#endif
+		LoadLogs();
 	}
 }

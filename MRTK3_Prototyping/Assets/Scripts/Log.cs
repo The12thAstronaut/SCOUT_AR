@@ -1,21 +1,35 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class Log
 {
 	public int index;
 	public string logName { get; private set; }
+	public string logContentText { get; private set; }
+	public string dateTime { get; private set; }
 
 	public Log(string filePath) {
-		string[] info = filePath.Substring(filePath.LastIndexOf('\\') + 1).Split('_');
-		info[info.Length - 1] = info[info.Length - 1].Remove(info[info.Length - 1].Length - 4);
+		string[] dateInfo = filePath.Remove(filePath.Length - 4).Substring(filePath.LastIndexOf('\\') + 1).Split('_');
 
-		index = int.Parse(info[0]);
+		dateTime = dateInfo[0] + " " + dateInfo[1];
 
-		for (int i = 1; i < info.Length; i++) {
-			logName += info[i] + " ";
+		using (StreamReader reader = new StreamReader(filePath)) {
+
+			string line;
+			int i = 0;
+
+			while ((line = reader.ReadLine()) != null) {
+				if (i == 0) {
+					logName = line.TrimEnd();
+				} else if (i == 1) {
+					logContentText = line.TrimEnd();
+				}
+
+				i++;
+			}
+
 		}
-		logName.TrimEnd();
 	}
 }
