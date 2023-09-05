@@ -34,7 +34,6 @@ public class PositionMenu : MonoBehaviour
     {
 		if (isManipulated) {
 			ApplyConstraints();
-			Debug.Log("Applying constraint");
 		}
 
 		if (!isManipulated && !locked) {
@@ -47,12 +46,10 @@ public class PositionMenu : MonoBehaviour
 				focus.y = 0;
 				target = transform.parent.TransformPoint(dir.normalized * distance);
 
-				Debug.Log("Locked pos found");
 				lockedPosFound = true;
 			}
 			transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
 
-			//float dist = Vector3.Distance(transform.position, Camera.main.transform.position);
 			if (Vector3.Distance(transform.position, target) > 0.001f) {
 				transform.position = Vector3.MoveTowards(transform.position, target, pushStrength * Time.deltaTime);
 			} else {

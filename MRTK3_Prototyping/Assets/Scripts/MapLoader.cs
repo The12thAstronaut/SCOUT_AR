@@ -1,18 +1,9 @@
 using Seb.Meshing;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using UnityEngine;
-using static UnityEngine.Mesh;
 using System.Threading.Tasks;
-using Unity.VisualScripting;
 using TMPro;
-using static Microsoft.MixedReality.GraphicsTools.ProximityLight;
-using UnityEngine.UIElements;
-using UnityEngine.InputSystem.HID;
-using Unity.Mathematics;
 
 public class MapLoader : MonoBehaviour {
 
@@ -150,6 +141,8 @@ public class MapLoader : MonoBehaviour {
 
 		try { zoomPos[zoomLevel - 1] = zoomPos[zoomLevel - 2]; } catch {  }
 
+		transform.parent.GetComponent<RectTransform>().GetWorldCorners(mapWindowCorners);
+
 		for (int i = 0; i < 4; i++) {
 			while (!Physics.Raycast(mapWindowCorners[i], transform.parent.forward, 10000f, mapLayerMask)) {
 				SimpleMeshData meshData = new SimpleMeshData("temp");
@@ -167,48 +160,54 @@ public class MapLoader : MonoBehaviour {
 
 				zoomPos[zoomLevel - 1] = magnitude;
 				transform.GetChild(0).localPosition = new Vector3(0, 0, zoomPos[zoomLevel - 1] > 1 ? zoomPos[zoomLevel - 1] : 1);
+
 				await Task.Yield();
+				transform.parent.GetComponent<RectTransform>().GetWorldCorners(mapWindowCorners);
+
+				//FixDistance();
 			}
 		}
 
-		if (zoomRanges[zoomLevel - 1] < 50000f) {
-			RaycastHit[] hits = new RaycastHit[5];
-			Physics.Raycast(mapWindowCorners[0], transform.parent.forward, out hits[0], 10000f, mapLayerMask);
-			Physics.Raycast(mapWindowCorners[1], transform.parent.forward, out hits[1], 10000f, mapLayerMask);
-			Physics.Raycast(mapWindowCorners[2], transform.parent.forward, out hits[2], 10000f, mapLayerMask);
-			Physics.Raycast(mapWindowCorners[3], transform.parent.forward, out hits[3], 10000f, mapLayerMask);
-			Physics.Raycast(transform.position, transform.parent.forward, out hits[4], 10000f, mapLayerMask);
-
-			// Raycasts in opposite direction in case the map mesh is in front of the panel
-			for (int i = 0; i < hits.Length; i++) {
-				if (i < 4 && hits[i].point == Vector3.zero) {
-					Physics.Raycast(mapWindowCorners[i], -transform.parent.forward, out hits[i], 10000f, mapLayerMask);
-				}
-				if (i == 4 && hits[i].point == Vector3.zero) {
-					Physics.Raycast(transform.position, -transform.parent.forward, out hits[4], 10000f, mapLayerMask);
-				}
-			}
-
-			float dist = float.MaxValue;
-			int index = 0;
-			for (int i = 0; i < hits.Length; i++) {
-				if (hits[i].distance < dist) {
-					dist = hits[i].distance;
-					index = i;
-				}
-			}
-
-			zoomPos[zoomLevel - 1] = parentTransform.GetChild(1).InverseTransformPoint(hits[index].point).magnitude;
-			transform.GetChild(0).localPosition = new Vector3(0, 0, zoomPos[zoomLevel - 1] > 1 ? zoomPos[zoomLevel - 1] : 1);
-		}
+		FixDistance();
 
 		gridDistanceIndicator.UpdateIndicator();
-		isZooming = false;
+		//isZooming = false;
 
 		RaycastHit hit;
 		Physics.Raycast(transform.parent.transform.position, transform.parent.transform.forward, out hit, 10000f, mapLayerMask);
 		worldPosition = transform.parent.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(1).transform.InverseTransformPoint(hit.point);
 		generated = true;
+	}
+
+	private void FixDistance() {
+		RaycastHit[] hits = new RaycastHit[5];
+		Physics.Raycast(mapWindowCorners[0], transform.parent.forward, out hits[0], 10000f, mapLayerMask);
+		Physics.Raycast(mapWindowCorners[1], transform.parent.forward, out hits[1], 10000f, mapLayerMask);
+		Physics.Raycast(mapWindowCorners[2], transform.parent.forward, out hits[2], 10000f, mapLayerMask);
+		Physics.Raycast(mapWindowCorners[3], transform.parent.forward, out hits[3], 10000f, mapLayerMask);
+		Physics.Raycast(transform.position, transform.parent.forward, out hits[4], 10000f, mapLayerMask);
+
+		// Raycasts in opposite direction in case the map mesh is in front of the panel
+		for (int x = 0; x < hits.Length; x++) {
+			if (x < 4 && hits[x].point == Vector3.zero) {
+				Physics.Raycast(mapWindowCorners[x], -transform.parent.forward, out hits[x], 10000f, mapLayerMask);
+			}
+			if (x == 4 && hits[x].point == Vector3.zero) {
+				Physics.Raycast(transform.position, -transform.parent.forward, out hits[x], 10000f, mapLayerMask);
+			}
+		}
+
+		float dist = float.MaxValue;
+		int index = 0;
+		for (int x = 0; x < hits.Length; x++) {
+			if (hits[x].point != Vector3.zero && hits[x].distance < dist) {
+				dist = hits[x].distance;
+				index = x;
+			}
+		}
+
+		zoomPos[zoomLevel - 1] = parentTransform.GetChild(1).InverseTransformPoint(hits[index].point).magnitude;
+		transform.GetChild(0).localPosition = new Vector3(0, 0, zoomPos[zoomLevel - 1] > 1 ? zoomPos[zoomLevel - 1] : 1);
 	}
 
 	private void LoadData() {
@@ -292,8 +291,7 @@ public class MapLoader : MonoBehaviour {
 	}
 
 	public void ZoomIn() {
-		if (zoomLevel == 1 || isZooming) return;
-		isZooming = true;
+		if (zoomLevel == 1 || !generated) return;
 		zoomLevel--;
 		transform.GetChild(0).localPosition = new Vector3(0, 0, zoomPos[zoomLevel - 1] > 1 ? zoomPos[zoomLevel - 1] : 1);
 
@@ -303,15 +301,14 @@ public class MapLoader : MonoBehaviour {
 
 		//Debug.Log((zoomLevel + 3) / 4);
 		RemoveFarMeshes((zoomLevel + 3) / 4);
-		isZooming = false;
 	}
 
 	public void ZoomOut() {
-		if (zoomLevel == zoomRanges.Length || isZooming) return;
+		if (zoomLevel == zoomRanges.Length || !generated) return;
 		zoomLevel++;
-		isZooming = true;
 
 		UpdateMapSize();
+		zoomLevelIndicator.text = "Zoom Scale: " + zoomLevel;
 
 		if (zoomLevel >= 11) {
 			RemoveFarMeshes(-1);
@@ -319,8 +316,6 @@ public class MapLoader : MonoBehaviour {
 		} else {
 			UpdateMapRenderer(maxResolution);
 		}
-
-		zoomLevelIndicator.text = "Zoom Scale: " + zoomLevel;
 	}
 
 	private void UpdateMapSize() {
