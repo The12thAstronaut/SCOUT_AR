@@ -134,7 +134,7 @@ public class MapLoader : MonoBehaviour {
 		generated = false;
 		try { gridDistanceIndicator.UpdateIndicator(); } catch { }
 
-		await Task.Yield(); // This many is necessary
+		await Task.Yield();
 		await Task.Yield();
 		await Task.Yield();
 		await Task.Yield();
@@ -161,10 +161,8 @@ public class MapLoader : MonoBehaviour {
 				zoomPos[zoomLevel - 1] = magnitude;
 				transform.GetChild(0).localPosition = new Vector3(0, 0, zoomPos[zoomLevel - 1] > 1 ? zoomPos[zoomLevel - 1] : 1);
 
-				await Task.Yield();
+				//await Task.Yield();
 				transform.parent.GetComponent<RectTransform>().GetWorldCorners(mapWindowCorners);
-
-				//FixDistance();
 			}
 		}
 
