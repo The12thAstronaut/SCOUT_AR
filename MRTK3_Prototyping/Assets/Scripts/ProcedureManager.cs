@@ -15,6 +15,7 @@ public class ProcedureManager : MonoBehaviour
 	public Scrollbar stepScrollbar;
 	public GameObject stepReaderMenu;
 	public TextMeshProUGUI stepProgressText;
+	public Transform proceduresToggleCollection;
 
 	public string activeStepInstruction { get; set; }
 	public int activeStepIndex { get; set; }
@@ -66,16 +67,25 @@ public class ProcedureManager : MonoBehaviour
 			button.procedureIndex = index - 1;
 			button.nameText.text = procedures[index - 1].procedureName;
 			button.stepText.text = procedures[index - 1].currentStep + "/" + procedures[index - 1].totalSteps;
+
+			if (activeProcedure != null && button.procedureIndex == activeProcedure.index) {
+				obj.GetComponent<PressableButton>().ForceSetToggled(true);
+			}
 		}
 	}
 
 	private void DepopulateProcedureButton(GameObject obj, int index) {
-
+		obj.GetComponent<PressableButton>().ForceSetToggled(false);
+		obj.transform.Translate(0, 30000, 0);
 	}
 
 	public void ActivateProcedure(int index) {
 
 		activeProcedure = procedures[index];
+
+		foreach (Transform child in proceduresToggleCollection) {
+			if (child.GetComponent<ProcedureSelectorButton>().procedureIndex != activeProcedure.index) child.GetComponent<PressableButton>().ForceSetToggled(false);
+		}
 
 		activeSteps.Clear();
 		activeRichText.Clear();

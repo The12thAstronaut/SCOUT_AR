@@ -32,4 +32,10 @@ public class Log
 
 		}
 	}
+
+	public Log(string logName, string logContentText, string dateTime) {
+		this.logName = logName;
+		this.logContentText = logContentText;
+		this.dateTime = dateTime;
+	}
 }

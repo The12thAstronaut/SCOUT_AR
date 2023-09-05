@@ -14,6 +14,7 @@ public class LogManager : MonoBehaviour
 	public TMP_InputField logSubjectInputField;
 	public TMP_InputField logContentInputField;
 	public TextMeshProUGUI logDateTimeDisplay;
+	public Transform logToggleCollection;
 
 	public int activeLogIndex { get; set; }
 	public Log activeLog { get; private set; }
@@ -46,6 +47,7 @@ public class LogManager : MonoBehaviour
 		string path = FileHelper.MakePath("Assets", "Data", "Logs");
 		string[] files = Directory.GetFiles(path, "*.txt");
 
+		logs.Clear();
 		numLogs = Directory.GetFiles(path).Length / 2;
 		logScrollList.SetItemCount(numLogs + 1);
 
@@ -66,20 +68,25 @@ public class LogManager : MonoBehaviour
 			button.logManager = this;
 			button.logIndex = index - 1;
 			button.nameText.text = logs[index - 1].logName;
-			button.dateTimeText.text = logs[index - 1].dateTime;
-			//button.stepText.text = logs[index - 1].currentStep + "/" + logs[index - 1].totalSteps;
+			string[] dateTime = logs[index - 1].dateTime.Split(' ');
+			button.dateTimeText.text = dateTime[0] + " " + dateTime[1].Replace('-', ':');
+
+			if (activeLogIndex != default(int) && button.logIndex == activeLogIndex) {
+				obj.GetComponent<PressableButton>().ForceSetToggled(true);
+			}
 		}
 	}
 
 	private void DepopulateLogButton(GameObject obj, int index) {
-
+		obj.GetComponent<PressableButton>().ForceSetToggled(false);
+		obj.transform.Translate(0, 30000, 0);
 	}
 
 	public void SaveLogEntry() {
 #if WINDOWS_UWP
-		string path = Application.persistentDataPath + "/Logs/" + dateTime.Replace(' ', '_');
+		string path = Application.persistentDataPath + "/Logs/" + dateTime.Replace(' ', '_') + ".txt";
 
-		StreamWriter writer = new StreamWriter(path, false);
+		StreamWriter writer = new StreamWriter(path, true);
 
 		writer.WriteLine(logSubjectInputField.text);
 		writer.WriteLine(logContentInputField.text);
@@ -102,6 +109,9 @@ public class LogManager : MonoBehaviour
 
 		AssetDatabase.ImportAsset(path);
 #endif
-		LoadLogs();
+
+		numLogs++;
+		logs.Add(new Log(logSubjectInputField.text, logContentInputField.text, dateTime));
+		logScrollList.SetItemCount(numLogs + 1);
 	}
 }
