@@ -89,6 +89,7 @@ public class MapPin : MonoBehaviour {
 			if (manager.movedCount == 0) {
 				manager.UpdateGroupings();
 			}
+			SetBeingPlaced(false);
 		}
 
 		if (worldMarker.transform.GetComponent<TapToPlace>().IsBeingPlaced) {
@@ -162,6 +163,11 @@ public class MapPin : MonoBehaviour {
 			manager.targetedMarker = worldMarker;
 			manager.setTargetButton.ForceSetToggled(false);
 		} else {
+
+			if (manager.selectedMarker == manager.targetedMarker) {
+				manager.markerViewer.targetMarkerButton.ForceSetToggled(false);
+				manager.TargetSelected(true);
+			}
 			manager.selectedMarker = worldMarker;
 			manager.markerViewer.OpenViewer();
 		}

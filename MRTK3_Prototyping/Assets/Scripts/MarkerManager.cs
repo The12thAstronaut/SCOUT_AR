@@ -324,6 +324,7 @@ public class MarkerManager : MonoBehaviour {
 	}
 
 	public void TargetSelected(bool isTargeting) {
+		if (targetedMarker != null) targetedMarker.isTargeted = false;
 		selectedMarker.isTargeted = isTargeting;
 		targetedMarker = selectedMarker;
 		setTargetButton.ForceSetToggled(false);

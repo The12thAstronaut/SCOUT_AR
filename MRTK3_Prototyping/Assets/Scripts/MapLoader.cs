@@ -31,7 +31,6 @@ public class MapLoader : MonoBehaviour {
 	private List<MeshRenderer> meshRenderers = new List<MeshRenderer>();
 	private float[] zoomPos;
 	private List<float> meshHighestMagnitude = new List<float>();
-	private bool isZooming = true;
 	private bool isLoading = false;
 
 	[SerializeField] float[] zoomRanges = { 50f, 100f, 200f, 500f, 1000f, 5000f, 10000f, 20000f, 50000f, 100000f, 200000f, 400000f };
@@ -73,6 +72,7 @@ public class MapLoader : MonoBehaviour {
 	const int assignVertexHeightsKernel = 1;
 
 	private int mapLayerMask = 1 << 3;
+	private MarkerManager markerManager;
 
 	void Start() {
 		zoomPos = new float[zoomRanges.Length];
@@ -80,6 +80,9 @@ public class MapLoader : MonoBehaviour {
 		loaded = false;
 		generated = false;
 		Physics.IgnoreLayerCollision(0, 3);
+
+		markerManager = GameObject.Find("MarkerManager").GetComponent<MarkerManager>();
+
 		if (useStencil) {
 			mat = new Material(mat);
 			mat.SetFloat("_StencilComparison", 4);
@@ -314,6 +317,7 @@ public class MapLoader : MonoBehaviour {
 		} else {
 			UpdateMapRenderer(maxResolution);
 		}
+		markerManager.UpdateGroupings();
 	}
 
 	private void UpdateMapSize() {

@@ -68,7 +68,7 @@ public class SuitVital {
 	}
 
     public void SetValue() {
-		value = minVal + Mathf.PingPong(Time.time * (maxVal - minVal) / 4, maxVal - minVal);
+		value = minVal + Mathf.PingPong(Time.time * (maxVal - minVal) / 8, maxVal - minVal);
 
 		vitalsLabel.text = value.ToString(decimalFormat);
         slider.value = value;

@@ -13,6 +13,7 @@ public class MarkerViewer : MonoBehaviour
     public TMP_InputField descriptionInput;
     public GameObject iconPicker;
     public GameObject generalViewer;
+    public PressableButton targetMarkerButton;
 
     // Start is called before the first frame update
     void Start()
@@ -32,10 +33,16 @@ public class MarkerViewer : MonoBehaviour
 		nameInput.text = markerManager.selectedMarker.markerName;
 		descriptionInput.text = markerManager.selectedMarker.markerDescription;
 		iconPicker.GetComponent<ToggleCollection>().CurrentIndex = Array.IndexOf(markerManager.markerIconNames, markerManager.selectedMarker.currentIconName);
+
+        if (markerManager.selectedMarker == markerManager.targetedMarker) {
+            targetMarkerButton.ForceSetToggled(true);
+        }
 	}
 
     public void CloseViewer() {
-        gameObject.SetActive(false);
+		targetMarkerButton.ForceSetToggled(false);
+        markerManager.TargetSelected(true);
+		gameObject.SetActive(false);
 		generalViewer.SetActive(true);
 	}
 
