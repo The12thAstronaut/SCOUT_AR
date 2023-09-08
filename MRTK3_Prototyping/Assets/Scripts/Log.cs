@@ -9,11 +9,13 @@ public class Log
 	public string logName { get; private set; }
 	public string logContentText { get; private set; }
 	public string dateTime { get; private set; }
+	public bool imageAttached { get; private set; }
+	public bool videoAttached { get; private set; }
 
 	public Log(string filePath) {
 		string[] dateInfo = filePath.Remove(filePath.Length - 4).Substring(filePath.LastIndexOf('\\') + 1).Split('_');
 
-		dateTime = dateInfo[0] + " " + dateInfo[1];
+		dateTime = dateInfo[0] + " " + dateInfo[1].Replace('-', ':');
 
 		using (StreamReader reader = new StreamReader(filePath)) {
 

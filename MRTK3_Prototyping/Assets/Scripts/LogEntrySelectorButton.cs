@@ -25,10 +25,6 @@ public class LogEntrySelectorButton : MonoBehaviour {
     }
 
 	public void SelectLog() {
-		logManager.activeLogIndex = logIndex;
-
-		foreach (Transform child in logManager.logToggleCollection) {
-			if (child.GetComponent<LogEntrySelectorButton>().logIndex != logIndex) child.GetComponent<PressableButton>().ForceSetToggled(false);
-		}
+		logManager.SelectLog(logIndex);
 	}
 }

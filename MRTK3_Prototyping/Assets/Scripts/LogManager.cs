@@ -114,4 +114,26 @@ public class LogManager : MonoBehaviour
 		logs.Add(new Log(logSubjectInputField.text, logContentInputField.text, dateTime));
 		logScrollList.SetItemCount(numLogs + 1);
 	}
+
+	public void SelectLog(int index) {
+		activeLogIndex = index;
+		activeLog = logs[index];
+
+		foreach (Transform child in logToggleCollection) {
+			if (child.GetComponent<LogEntrySelectorButton>().logIndex != index) child.GetComponent<PressableButton>().ForceSetToggled(false);
+		}
+
+		dateTime = DateTime.Now.ToString("yyyy-MM-dd");
+		dateTime += " " + DateTime.Now.ToString("HH:mm:ss");
+
+		string readerText = "";
+
+		readerText += $"<size=6><color=#A4A4A4><indent=4%>Logged: {activeLog.dateTime}<indent=50%>Opened: {dateTime}</indent></indent></color></size>";
+
+		readerText += $"\n\n<color=#FFFFFF><size=140%><b>Subject: {activeLog.logName}</b></size>";
+
+		readerText += $"\n{activeLog.logContentText}";
+
+		logReader.text = readerText;
+	}
 }
