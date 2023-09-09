@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -15,13 +16,16 @@ public class LogManager : MonoBehaviour
 	public TMP_InputField logContentInputField;
 	public TextMeshProUGUI logDateTimeDisplay;
 	public Transform logToggleCollection;
+	public PressableButton closeCreatorButton;
 
 	public int activeLogIndex { get; set; }
 	public Log activeLog { get; private set; }
 	public int numLogs { get; set; }
+	public bool isEdittingLog { get; set; } = false;
 
 	private List<Log> logs = new List<Log>();
 	private string dateTime = "";
+	private bool updateReader = false;
 
 	// Start is called before the first frame update
 	void Start()
@@ -35,10 +39,23 @@ public class LogManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (logDateTimeDisplay.gameObject.activeInHierarchy) {
+        if (!isEdittingLog && logDateTimeDisplay.gameObject.activeInHierarchy) {
 			dateTime = DateTime.Now.ToString("yyyy-MM-dd");
 			dateTime += " " + DateTime.Now.ToString("HH-mm-ss");
 			logDateTimeDisplay.text = dateTime;
+		}
+
+		if (updateReader && logReader.gameObject.activeInHierarchy) {
+			SelectLog(activeLogIndex);
+
+			foreach (Transform child in logToggleCollection) {
+				LogEntrySelectorButton button = child.GetComponent<LogEntrySelectorButton>();
+				if (button.logIndex == activeLogIndex) {
+					button.nameText.text = activeLog.logName;
+				}
+			}
+
+			updateReader = false;
 		}
     }
 
@@ -84,9 +101,9 @@ public class LogManager : MonoBehaviour
 
 	public void SaveLogEntry() {
 #if WINDOWS_UWP
-		string path = Application.persistentDataPath + "/Logs/" + dateTime.Replace(' ', '_') + ".txt";
+		string path = Application.persistentDataPath + "/Logs/" + logDateTimeDisplay.text.Replace(' ', '_').Replace(':', '-') + ".txt";
 
-		StreamWriter writer = new StreamWriter(path, true);
+		StreamWriter writer = new StreamWriter(path, false);
 
 		writer.WriteLine(logSubjectInputField.text);
 		writer.WriteLine(logContentInputField.text);
@@ -94,13 +111,13 @@ public class LogManager : MonoBehaviour
 		writer.Close();
 #endif
 #if UNITY_EDITOR
-		string path = FileHelper.MakePath("Assets", "Data", "Logs", dateTime.Replace(' ', '_') + ".txt");
+		string path = FileHelper.MakePath("Assets", "Data", "Logs", logDateTimeDisplay.text.Replace(' ', '_').Replace(':', '-') + ".txt");
 
 		if (!Directory.Exists(FileHelper.MakePath("Assets", "Data", "Logs"))) {
 			Directory.CreateDirectory(FileHelper.MakePath("Assets", "Data", "Logs"));
 		}
 
-		StreamWriter writer = new StreamWriter(path, true);
+		StreamWriter writer = new StreamWriter(path, false);
 
 		writer.WriteLine(logSubjectInputField.text);
 		writer.WriteLine(logContentInputField.text);
@@ -109,13 +126,20 @@ public class LogManager : MonoBehaviour
 
 		AssetDatabase.ImportAsset(path);
 #endif
-
-		numLogs++;
-		logs.Add(new Log(logSubjectInputField.text, logContentInputField.text, dateTime));
-		logScrollList.SetItemCount(numLogs + 1);
+		if (!isEdittingLog) {
+			numLogs++;
+			logs.Add(new Log(logSubjectInputField.text, logContentInputField.text, logDateTimeDisplay.text));
+			logScrollList.SetItemCount(numLogs + 1);
+		} else {
+			activeLog.UpdateContent(logSubjectInputField.text, logContentInputField.text, logDateTimeDisplay.text);
+			updateReader = true;
+			isEdittingLog = false;
+		}
 	}
 
 	public void SelectLog(int index) {
+		closeCreatorButton.ForceSetToggled(true);
+
 		activeLogIndex = index;
 		activeLog = logs[index];
 
@@ -128,12 +152,20 @@ public class LogManager : MonoBehaviour
 
 		string readerText = "";
 
-		readerText += $"<size=6><color=#A4A4A4><indent=4%>Logged: {activeLog.dateTime}<indent=50%>Opened: {dateTime}</indent></indent></color></size>";
+		readerText += $"<u><size=6><color=#A4A4A4><indent=4%>Logged: {activeLog.dateTime}<indent=50%>Opened: {dateTime}</indent></indent></color></size></u>";
 
-		readerText += $"\n\n<color=#FFFFFF><size=140%><b>Subject: {activeLog.logName}</b></size>";
+		readerText += $"\n\n<u><color=#FFFFFF>Subject: <size=140%><b>{activeLog.logName}</b></size></u>";
 
 		readerText += $"\n{activeLog.logContentText}";
 
 		logReader.text = readerText;
+	}
+
+	public void EditLog() {
+		isEdittingLog = true;
+
+		logSubjectInputField.text = activeLog.logName;
+		logContentInputField.text = activeLog.logContentText;
+		logDateTimeDisplay.text = activeLog.dateTime;
 	}
 }
