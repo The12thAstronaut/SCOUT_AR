@@ -29,13 +29,12 @@ public class VitalInfoCard : MonoBehaviour
 	public TextMeshProUGUI minText;
 	public TextMeshProUGUI maxText;
 	public TextMeshProUGUI errorText;
-	public TextMeshProUGUI currentText;
+	public RectTransform valueRT;
 	public TextMeshProUGUI valueText;
 	public TextMeshProUGUI nameText;
 	
 
 	private float sliderWidth;
-	private RectTransform valueRT;
 
 	public float value;
 
@@ -47,12 +46,10 @@ public class VitalInfoCard : MonoBehaviour
 
 	public void Initialize() {
 		sliderWidth = slider.gameObject.GetComponent<RectTransform>().sizeDelta.x;
-		valueRT = currentText.gameObject.GetComponent<RectTransform>();
 
 		minText.text = minVal.ToString(decimalFormat);
 		maxText.text = maxVal.ToString(decimalFormat);
-		currentText.text = value.ToString(decimalFormat);
-		valueText.text = currentText.text;
+		valueText.text = value.ToString(decimalFormat);
 		nameText.text = vitalName;
 
 		RectTransform errorRT = errorText.gameObject.GetComponent<RectTransform>();
@@ -74,15 +71,14 @@ public class VitalInfoCard : MonoBehaviour
 		fillMat = Instantiate<Material>(slider.gameObject.GetNamedChild("SliderTrack").transform.GetChild(0).GetComponent<RawImage>().material);
 		slider.gameObject.GetNamedChild("SliderTrack").transform.GetChild(0).GetComponent<RawImage>().material = fillMat;
 
-		originalColor = fillMat.GetColor("_Color");
+	originalColor = fillMat.GetColor("_Color");
 		UpdateSlider();
 	}
 
 	// Update is called once per frame
 	void Update() {
 		valueRT.localPosition = new Vector3(((value - minVal) / (maxVal - minVal) - 0.5f) * sliderWidth, valueRT.localPosition.y, valueRT.localPosition.z);
-		currentText.text = value.ToString(decimalFormat);
-		valueText.text = currentText.text;
+		valueText.text = value.ToString(decimalFormat);
 		UpdateSlider();
 	}
 
@@ -101,10 +97,13 @@ public class VitalInfoCard : MonoBehaviour
 
 		if (nominalMax > errorMax && value <= errorMax) {
 			fillMat.SetColor("_Color", errorColor);
+			valueRT.GetComponent<Image>().color = errorColor;
 		} else if (nominalMax < errorMax && value >= errorMin) {
 			fillMat.SetColor("_Color", errorColor);
+			valueRT.GetComponent<Image>().color = errorColor;
 		} else {
 			fillMat.SetColor("_Color", originalColor);
+			valueRT.GetComponent<Image>().color = originalColor;
 		}
 	}
 }
