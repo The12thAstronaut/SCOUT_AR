@@ -10,13 +10,18 @@ public class VitalsManager : MonoBehaviour
 	public Color goodColor = new Color(0, 159, 15);
 	public GameObject warningPanel;
 
+	private float[] values;
+
 	// Start is called before the first frame update
 	void Start()
     {
-        foreach (SuitVital suitVital in suitVitals) {
-			suitVital.vitalsManager = this;
-			suitVital.SetBounds(errorColor, goodColor);
-            suitVital.SetValue();
+		values = new float[suitVitals.Length];
+
+		for (int i = 0; i < suitVitals.Length; i++) {
+			suitVitals[i].vitalsManager = this;
+			suitVitals[i].index = i;
+			suitVitals[i].SetBounds(errorColor, goodColor);
+			//suitVitals[i].SetValue();
         }
     }
 
@@ -25,16 +30,17 @@ public class VitalsManager : MonoBehaviour
     {
 		bool warningActive = false;
 		foreach (SuitVital suitVital in suitVitals) {
-			suitVital.SetValue();
+			//suitVital.SetValue();
 			if (suitVital.inWarning) warningActive = true;
 		}
 
-		if (warningActive) {
+		if (warningActive && !warningPanel.activeInHierarchy) {
 			warningPanel.SetActive(true);
 		} else {
 			warningPanel.SetActive(false);
 		}
 	}
+
 }
 
 [System.Serializable]
@@ -51,6 +57,8 @@ public class SuitVital {
 	public GameObject warningButton;
 	public string decimalFormat = "0.";
 	public bool inWarning = false;
+
+	public int index { get; set; }
 
 	public float maxVal => nominalMax > errorMax ? nominalMax : errorMax;
 	public float minVal => nominalMin < errorMin ? nominalMin : errorMin;
@@ -71,8 +79,9 @@ public class SuitVital {
 		vitalInfoCard.Initialize();
 	}
 
-    public void SetValue() {
+    public void SetValue(float newValue) {
 		value = minVal + Mathf.PingPong(Time.time * (maxVal - minVal) / 12/*(Random.Range(-8.0f, 8.0f))*/, maxVal - minVal);
+		value = newValue;
 
 		if (nominalMax > errorMax && value <= errorMax) {
 			inWarning = true;

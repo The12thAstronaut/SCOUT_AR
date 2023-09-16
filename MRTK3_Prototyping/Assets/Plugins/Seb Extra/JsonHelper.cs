@@ -16,6 +16,11 @@ public class JsonHelper
 		return JsonUtility.FromJson<Holder<T>>(jsonString).items;
 	}
 
+	public static List<T> ListFromJson<T>(string json) {
+		return JsonUtility.FromJson<List<T>>(json);
+		//return wrapper.result;
+	}
+
 	[System.Serializable]
 	public struct Holder<T>
 	{

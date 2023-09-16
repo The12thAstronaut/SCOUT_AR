@@ -7,6 +7,7 @@ public class TelemetryManager : MonoBehaviour {
 	public CoordinateDegrees longitudeLatitude;
 	public float moonBaseRadius = 1719145; // meters
 	public float moonMaxRadius = 1758957;
+	public ClientAPI clientAPI;
 
 	void Start()
     {
