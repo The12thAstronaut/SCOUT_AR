@@ -9,7 +9,7 @@ using Slider = Microsoft.MixedReality.Toolkit.UX.Slider;
 
 public class VitalInfoCard : MonoBehaviour
 {
-	public float nominalMax { get; set; }
+	/*public float nominalMax { get; set; }
 	public float nominalMin { get; set; }
 	public float errorMax { get; set; }
 	public float errorMin { get; set; }
@@ -18,7 +18,9 @@ public class VitalInfoCard : MonoBehaviour
 	public Color errorColor { get; set; }
 	public Color goodColor { get; set; }
 	public float maxVal { get; set; }
-	public float minVal { get; set; }
+	public float minVal { get; set; }*/
+
+	public SuitVital vitals { get; set; }
 
 	private Material fillMat;
 	private Color originalColor;
@@ -47,60 +49,57 @@ public class VitalInfoCard : MonoBehaviour
 	public void Initialize() {
 		sliderWidth = slider.gameObject.GetComponent<RectTransform>().sizeDelta.x;
 
-		minText.text = minVal.ToString(decimalFormat);
-		maxText.text = maxVal.ToString(decimalFormat);
-		valueText.text = value.ToString(decimalFormat);
-		nameText.text = vitalName;
+		minText.text = vitals.minVal.ToString(vitals.decimalFormat);
+		maxText.text = vitals.maxVal.ToString(vitals.decimalFormat);
+		valueText.text = value.ToString(vitals.decimalFormat);
+		nameText.text = vitals.name;
 
 		RectTransform errorRT = errorText.gameObject.GetComponent<RectTransform>();
-		if (nominalMax > errorMax) {
-			errorText.text = errorMax.ToString(decimalFormat);
-			errorRT.localPosition = new Vector3(((errorMax - minVal) / (maxVal - minVal) - 0.5f) * sliderWidth, errorRT.localPosition.y, errorRT.localPosition.z);
+		if (vitals.nominalMax > vitals.errorMax) {
+			errorText.text = vitals.errorMax.ToString(vitals.decimalFormat);
+			errorRT.localPosition = new Vector3(((vitals.errorMax - vitals.minVal) / (vitals.maxVal - vitals.minVal) - 0.5f) * sliderWidth, errorRT.localPosition.y, errorRT.localPosition.z);
 
-			maxText.color = goodColor;
-			maxText.transform.GetChild(0).GetComponent<TextMeshProUGUI>().color = goodColor;
-			minText.color = errorColor;
-			minText.transform.GetChild(0).GetComponent<TextMeshProUGUI>().color = errorColor;
+			maxText.color = vitals.vitalsManager.goodColor;
+			maxText.transform.GetChild(0).GetComponent<TextMeshProUGUI>().color = vitals.vitalsManager.goodColor;
+			minText.color = vitals.vitalsManager.errorColor;
+			minText.transform.GetChild(0).GetComponent<TextMeshProUGUI>().color = vitals.vitalsManager.errorColor;
 		} else {
-			errorText.text = errorMin.ToString(decimalFormat);
-			errorRT.localPosition = new Vector3(((errorMin - minVal) / (maxVal - minVal) - 0.5f) * sliderWidth, errorRT.localPosition.y, errorRT.localPosition.z);
+			errorText.text = vitals.errorMin.ToString(vitals.decimalFormat);
+			errorRT.localPosition = new Vector3(((vitals.errorMin - vitals.minVal) / (vitals.maxVal - vitals.minVal) - 0.5f) * sliderWidth, errorRT.localPosition.y, errorRT.localPosition.z);
 		}
 
-		valueRT.localPosition = new Vector3(((value - minVal) / (maxVal - minVal) - 0.5f) * sliderWidth, valueRT.localPosition.y, valueRT.localPosition.z);
+		valueRT.localPosition = new Vector3(((value - vitals.minVal) / (vitals.maxVal - vitals.minVal) - 0.5f) * sliderWidth, valueRT.localPosition.y, valueRT.localPosition.z);
 
 		fillMat = Instantiate<Material>(slider.gameObject.GetNamedChild("SliderTrack").transform.GetChild(0).GetComponent<RawImage>().material);
 		slider.gameObject.GetNamedChild("SliderTrack").transform.GetChild(0).GetComponent<RawImage>().material = fillMat;
 
-	originalColor = fillMat.GetColor("_Color");
+		originalColor = fillMat.GetColor("_Color");
 		UpdateSlider();
 	}
 
 	// Update is called once per frame
 	void Update() {
-		valueRT.localPosition = new Vector3(((value - minVal) / (maxVal - minVal) - 0.5f) * sliderWidth, valueRT.localPosition.y, valueRT.localPosition.z);
-		valueText.text = value.ToString(decimalFormat);
+		valueRT.localPosition = new Vector3(((value - vitals.minVal) / (vitals.maxVal - vitals.minVal) - 0.5f) * sliderWidth, valueRT.localPosition.y, valueRT.localPosition.z);
+		valueText.text = value.ToString(vitals.decimalFormat);
 		UpdateSlider();
 	}
 
 	private void ClampVal() {
-		if (value > maxVal) {
-			value = maxVal;
-		} else if (value < minVal) {
-			value = minVal;
+		if (value > vitals.maxVal) {
+			value = vitals.maxVal;
+		} else if (value < vitals.minVal) {
+			value = vitals.minVal;
 		}
 	}
 
 	private void UpdateSlider() {
 		ClampVal();
-		normalizedValue = (value - minVal) / (maxVal - minVal);
+		normalizedValue = (value - vitals.minVal) / (vitals.maxVal - vitals.minVal);
 		slider.Value = normalizedValue;
 
-		if (nominalMax > errorMax && value <= errorMax) {
-			fillMat.SetColor("_Color", errorColor);
-			valueRT.GetComponent<Image>().color = errorColor;
-		} else if (nominalMax < errorMax && value >= errorMin) {
-			fillMat.SetColor("_Color", errorColor);
-			valueRT.GetComponent<Image>().color = errorColor;
+		if (vitals.inWarning) {
+			fillMat.SetColor("_Color", vitals.vitalsManager.errorColor);
+			valueRT.GetComponent<Image>().color = vitals.vitalsManager.errorColor;
 		} else {
 			fillMat.SetColor("_Color", originalColor);
 			valueRT.GetComponent<Image>().color = originalColor;

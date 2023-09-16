@@ -12,17 +12,21 @@ public class PositionMenu : MonoBehaviour
 	public PressableButton pinButton;
 
     public bool isManipulated { get; set; } = false;
+	private bool isPinned { get; set; } = false;
+
     private float pushStrength = 1f;
     private bool lockedPosFound = false;
     private bool locked = false;
     private Vector3 dir;
 	private Vector3 target;
 	private SettingsManager settingsManager;
+	private ObjectManipulator manipulator;
 
     // Start is called before the first frame update
     void Start()
     {
 		if (settingsManager == null) settingsManager = GameObject.Find("SettingsManager").GetComponent<SettingsManager>();
+		if (manipulator == null) manipulator = transform.GetComponentInChildren<ObjectManipulator>();
 
 		locked = true;
 	}
@@ -30,6 +34,8 @@ public class PositionMenu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		if (isPinned) return;
+
 		if (isManipulated) {
 			ApplyConstraints();
 		}
@@ -87,5 +93,15 @@ public class PositionMenu : MonoBehaviour
 		// Needs smoothing?
 
 		transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
+	}
+
+	public void PinMenu(bool pinned) {
+		isPinned = pinned;
+		if (isPinned) {
+			manipulator.AllowedManipulations = Microsoft.MixedReality.Toolkit.TransformFlags.Move | Microsoft.MixedReality.Toolkit.TransformFlags.Rotate;
+		} else {
+			manipulator.AllowedManipulations = Microsoft.MixedReality.Toolkit.TransformFlags.Move;
+			ApplyConstraints();
+		}
 	}
 }
