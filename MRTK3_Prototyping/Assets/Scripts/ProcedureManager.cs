@@ -103,11 +103,11 @@ public class ProcedureManager : MonoBehaviour
 	}
 
 	public void NextStep() {
-		GoToStep(activeProcedure.currentStep + 1);
+		if (activeProcedure != null) GoToStep(activeProcedure.currentStep + 1);
 	}
 
 	public void PrevStep() {
-		GoToStep(activeProcedure.currentStep - 1);
+		if (activeProcedure != null) GoToStep(activeProcedure.currentStep - 1);
 	}
 
 	public void GoToStep(int stepNum) {

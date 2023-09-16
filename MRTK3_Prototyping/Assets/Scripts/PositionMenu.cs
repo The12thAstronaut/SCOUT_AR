@@ -1,4 +1,5 @@
 using Microsoft.MixedReality.Toolkit.SpatialManipulation;
+using Microsoft.MixedReality.Toolkit.UX;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -8,6 +9,7 @@ public class PositionMenu : MonoBehaviour
 {
     public float distance = 0.5f;
     public float angle = 0f;
+	public PressableButton pinButton;
 
     public bool isManipulated { get; set; } = false;
     private float pushStrength = 1f;
@@ -20,11 +22,7 @@ public class PositionMenu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-		settingsManager = GameObject.Find("SettingsManager").GetComponent<SettingsManager>();
-
-		Vector3 focus = Camera.main.transform.forward;
-		focus.y = 0;
-		transform.position = transform.parent.TransformPoint(focus.normalized * distance);
+		if (settingsManager == null) settingsManager = GameObject.Find("SettingsManager").GetComponent<SettingsManager>();
 
 		locked = true;
 	}
@@ -44,7 +42,7 @@ public class PositionMenu : MonoBehaviour
 
 				Vector3 focus = Camera.main.transform.forward;
 				focus.y = 0;
-				target = transform.parent.TransformPoint(dir.normalized * distance);
+				target = transform.parent.TransformPoint(dir.normalized * settingsManager.settings[0].value);
 
 				lockedPosFound = true;
 			}
@@ -71,10 +69,11 @@ public class PositionMenu : MonoBehaviour
 	}
 
 	public void OpenMenu() {
+		if (settingsManager == null) settingsManager = GameObject.Find("SettingsManager").GetComponent<SettingsManager>();
 		Vector3 focus = Camera.main.transform.forward;
 		focus.y = 0;
 
-		transform.position = transform.parent.TransformPoint(focus.normalized * distance);
+		transform.position = transform.parent.TransformPoint(focus.normalized * settingsManager.settings[0].value);
 		transform.rotation = Quaternion.Euler(0, Camera.main.transform.rotation.eulerAngles.y, 0);
 	}
 
