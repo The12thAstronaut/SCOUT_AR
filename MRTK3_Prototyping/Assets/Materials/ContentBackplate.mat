@@ -300,7 +300,7 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _Albedo_: {r: 0.0117647, g: 0.505882, b: 0.99607795, a: 1}
-    - _Base_Color_: {r: 0.11372524, g: 0.11372524, b: 0.32156837, a: 0.5019608}
+    - _Base_Color_: {r: 0.11372518, g: 0.11372518, b: 0.3215683, a: 1}
     - _Blob_Position_: {r: 0, g: 0, b: 0, a: 1}
     - _Blob_Position_2_: {r: 0, g: 0, b: 0, a: 1}
     - _BlurBackgroundRect: {r: 0, g: 0, b: 1, a: 1}
@@ -333,7 +333,7 @@ Material:
     - _HoverColorOverride: {r: 1, g: 1, b: 1, a: 1}
     - _InnerGlowColor: {r: 1, g: 1, b: 1, a: 0.75}
     - _Iridescence_Tint_: {r: 1, g: 1, b: 1, a: 1}
-    - _Line_Color_: {r: 0.3686275, g: 0.8588233, b: 0.85882354, a: 0.5019608}
+    - _Line_Color_: {r: 0.36862746, g: 0.8588233, b: 0.85882354, a: 1}
     - _OccludedColor: {r: 0, g: 0.5, b: 1, a: 1}
     - _ProximityLightCenterColorOverride: {r: 1, g: 0, b: 0, a: 0}
     - _ProximityLightMiddleColorOverride: {r: 0, g: 1, b: 0, a: 0.5}

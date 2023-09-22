@@ -9,6 +9,7 @@ public class VitalsManager : MonoBehaviour
 	public Color errorColor = new Color(188, 0, 0);
 	public Color goodColor = new Color(0, 159, 15);
 	public GameObject warningPanel;
+	public GameObject vitalsMenu;
 
 	private float[] values;
 
@@ -30,11 +31,11 @@ public class VitalsManager : MonoBehaviour
     {
 		bool warningActive = false;
 		foreach (SuitVital suitVital in suitVitals) {
-			//suitVital.SetValue();
+			suitVital.SetValue();
 			if (suitVital.inWarning) warningActive = true;
 		}
 
-		if (warningActive && !warningPanel.activeInHierarchy) {
+		if (warningActive && !vitalsMenu.activeSelf) {
 			warningPanel.SetActive(true);
 		} else {
 			warningPanel.SetActive(false);
@@ -80,7 +81,6 @@ public class SuitVital {
 	}
 
     public void SetValue(float newValue) {
-		value = minVal + Mathf.PingPong(Time.time * (maxVal - minVal) / 12/*(Random.Range(-8.0f, 8.0f))*/, maxVal - minVal);
 		value = newValue;
 
 		if (nominalMax > errorMax && value <= errorMax) {
@@ -101,4 +101,26 @@ public class SuitVital {
 			warningButton.SetActive(false);
 		}
     }
+
+	public void SetValue() {
+		value = minVal + Mathf.PingPong(Time.time * (maxVal - minVal) / 12/*(Random.Range(-8.0f, 8.0f))*/, maxVal - minVal);
+
+		if (nominalMax > errorMax && value <= errorMax) {
+			inWarning = true;
+		} else if (nominalMax < errorMax && value >= errorMin) {
+			inWarning = true;
+		} else {
+			inWarning = false;
+		}
+
+		vitalsLabel.text = value.ToString(decimalFormat);
+		slider.value = value;
+		vitalInfoCard.value = value;
+
+		if (inWarning) {
+			warningButton.SetActive(true);
+		} else {
+			warningButton.SetActive(false);
+		}
+	}
 }
