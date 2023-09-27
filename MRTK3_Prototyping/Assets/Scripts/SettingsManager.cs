@@ -67,8 +67,15 @@ public class SettingsManager : MonoBehaviour
 	public void UpdateGameSettings() {
 		foreach (PositionMenu obj in menus) {
 			obj.distance = settings[0].value;
+
+			float angle = Mathf.Atan(0.5f / 0.5f);
+			float newHalfSize = Mathf.Tan(angle) * settings[0].value;
+
+			//obj.transform.localScale = new Vector3(settings[2].value, settings[2].value, 1);
+			obj.transform.localScale = new Vector3(newHalfSize * 2, newHalfSize * 2, newHalfSize * 2);
+
 			obj.ChangeDistance();
-			obj.transform.localScale = new Vector3(settings[2].value, settings[2].value, 1);
+			obj.UpdateBackplates();
 		}
 
 		foreach (Follow obj in mainBar) {

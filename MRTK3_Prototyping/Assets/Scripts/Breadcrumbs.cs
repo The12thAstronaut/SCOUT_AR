@@ -29,7 +29,7 @@ public class Breadcrumbs : MonoBehaviour
     }
 
     private void CheckVertex() {
-        Vector3 point = trackedObject.position - trackedObject.up * (trackedObject.parent.position.y - trailYOffset);
+        Vector3 point = trackedObject.position - Vector3.up * (trackedObject.parent.position.y - trailYOffset);
 
 		if (Vector3.Distance(point, breadTrailPoints[breadTrailPoints.Count - 1]) > minVertexDistance) {
 
@@ -41,6 +41,6 @@ public class Breadcrumbs : MonoBehaviour
         }
 
         lineRenderer.positionCount = breadTrailPoints.Count;
-        lineRenderer.SetPositions(breadTrailPoints.ToArray());
+        lineRenderer.SetPosition(lineRenderer.positionCount - 1, breadTrailPoints[breadTrailPoints.Count - 1]);
     }
 }

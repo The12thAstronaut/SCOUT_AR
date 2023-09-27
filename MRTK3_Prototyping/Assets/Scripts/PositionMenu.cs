@@ -10,9 +10,12 @@ public class PositionMenu : MonoBehaviour
     public float distance = 0.5f;
     public float angle = 0f;
 	public PressableButton pinButton;
+	public MeshRenderer[] contentBackplates;
 
     public bool isManipulated { get; set; } = false;
 	private bool isPinned { get; set; } = false;
+
+	public Material contentBackplateMaterial;
 
     private float pushStrength = 1f;
     private bool lockedPosFound = false;
@@ -21,12 +24,24 @@ public class PositionMenu : MonoBehaviour
 	private Vector3 target;
 	private SettingsManager settingsManager;
 	private ObjectManipulator manipulator;
+	private float defaultBackplateMaterialRadius;
+	private float defaultBackplateMaterialWidth;
 
-    // Start is called before the first frame update
-    void Start()
+	// Start is called before the first frame update
+	void Start()
     {
+		contentBackplateMaterial = Instantiate<Material>(contentBackplateMaterial);
+
 		if (settingsManager == null) settingsManager = GameObject.Find("SettingsManager").GetComponent<SettingsManager>();
 		if (manipulator == null) manipulator = transform.GetComponentInChildren<ObjectManipulator>();
+
+		defaultBackplateMaterialRadius = contentBackplateMaterial.GetFloat("_Radius_");
+		defaultBackplateMaterialWidth = contentBackplateMaterial.GetFloat("_Line_Width_");
+
+		foreach (MeshRenderer backplate in contentBackplates) {
+			backplate.sharedMaterial = contentBackplateMaterial;
+			//contentBackplateMaterial = backplate.materials[0];
+		}
 
 		locked = true;
 	}
@@ -72,6 +87,15 @@ public class PositionMenu : MonoBehaviour
 
 	public void ChangeDistance() {
 		locked = false;
+	}
+
+	public void UpdateBackplates() {
+		float sizeFactor = transform.localScale.x / 1f;
+		Debug.Log(contentBackplateMaterial.GetFloat("_Radius_"));
+		Debug.Log(contentBackplateMaterial.GetFloat("_Line_Width_"));
+		contentBackplateMaterial.SetFloat("_Radius_", defaultBackplateMaterialRadius * sizeFactor);
+		contentBackplateMaterial.SetFloat("_Line_Width_", defaultBackplateMaterialWidth * sizeFactor);
+
 	}
 
 	public void OpenMenu() {

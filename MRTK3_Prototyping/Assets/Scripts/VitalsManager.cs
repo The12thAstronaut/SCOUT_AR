@@ -56,6 +56,7 @@ public class SuitVital {
     public VitalsSlider slider;
     public VitalInfoCard vitalInfoCard;
 	public GameObject warningButton;
+	public Transform mainBarFullText;
 	public string decimalFormat = "0.";
 	public bool inWarning = false;
 
@@ -72,6 +73,7 @@ public class SuitVital {
 		slider.errorMax = errorMax;
 		slider.errorMin = errorMin;
 		slider.errorColor = errorColor;
+		slider.goodColor = goodColor;
 		slider.minVal = minVal;
 		slider.maxVal = maxVal;
 		slider.value = value;
@@ -119,8 +121,18 @@ public class SuitVital {
 
 		if (inWarning) {
 			warningButton.SetActive(true);
+
+			foreach (TextMeshProUGUI text in mainBarFullText.GetComponentsInChildren<TextMeshProUGUI>()) {
+				text.color = vitalsManager.errorColor;
+			}
+
 		} else {
 			warningButton.SetActive(false);
+
+			foreach (TextMeshProUGUI text in mainBarFullText.GetComponentsInChildren<TextMeshProUGUI>()) {
+				text.color = vitalsManager.goodColor;
+			}
+
 		}
 	}
 }

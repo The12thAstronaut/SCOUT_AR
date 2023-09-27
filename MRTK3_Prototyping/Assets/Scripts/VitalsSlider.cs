@@ -16,11 +16,11 @@ public class VitalsSlider : MonoBehaviour
 	public float errorMax { get; set; }
 	public float errorMin { get; set; }
     public Color errorColor { get; set; }
+	public Color goodColor { get; set; }
 	public float maxVal { get; set; }
 	public float minVal { get; set; }
 
 	private Material mat;
-    private Color originalColor;
 
 	private float normalizedValue;
     private Slider slider;
@@ -34,7 +34,6 @@ public class VitalsSlider : MonoBehaviour
         mat = Instantiate<Material>(gameObject.GetNamedChild("SliderTrack").transform.GetChild(0).GetComponent<RawImage>().material);
         gameObject.GetNamedChild("SliderTrack").transform.GetChild(0).GetComponent<RawImage>().material = mat;
 
-		originalColor = mat.GetColor("_Color");
 		UpdateSlider();
 	}
 
@@ -62,7 +61,7 @@ public class VitalsSlider : MonoBehaviour
         } else if (nominalMax < errorMax && value >= errorMin) {
 			mat.SetColor("_Color", errorColor);
 		} else {
-			mat.SetColor("_Color", originalColor);
+			mat.SetColor("_Color", goodColor);
 		}
 	}
 }
