@@ -163,8 +163,7 @@ public class MapPin : MonoBehaviour {
 			manager.targetedMarker = worldMarker;
 			manager.setTargetButton.ForceSetToggled(false);
 		} else {
-
-			if (manager.selectedMarker == manager.targetedMarker) {
+			if (manager.selectedMarker != null && manager.selectedMarker == manager.targetedMarker) {
 				manager.markerViewer.targetMarkerButton.ForceSetToggled(false);
 				manager.TargetSelected(true);
 			}
