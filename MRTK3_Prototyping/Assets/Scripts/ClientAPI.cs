@@ -11,8 +11,12 @@ public class ClientAPI : MonoBehaviour
     public string url;
     public TMP_InputField urlInputField;
 
+    private IndicatorManager indicatorManager;
+
 	void Start() {
         urlInputField.text = url;
+
+        indicatorManager = FindObjectOfType<IndicatorManager>();
 	}
 
 	/*IEnumerator Start()
@@ -24,64 +28,63 @@ public class ClientAPI : MonoBehaviour
         }
     }*/
 
-	public IEnumerator Connect() {
+	public void Connect() {
         url = urlInputField.text;
-		while (true) {
-			yield return new WaitForSeconds(1.0f);
-			StartCoroutine(Get(url));
-		}
+		
+		StartCoroutine(GetTelemetry(url));
+		//}
 	}
 
-    public IEnumerator Get(string url)
+    public IEnumerator GetTelemetry(string url)
     {
-        using (UnityWebRequest www = UnityWebRequest.Get(url))
-        {
-            yield return www.SendWebRequest();
+        while (true) {
+            yield return new WaitForSeconds(1.0f);
 
-            if (www.result == UnityWebRequest.Result.ConnectionError)
-            {
-                Debug.Log(www.error);
-            }
-            else
-            {
-                if (www.isDone)
-                {
-                    // handle the result
-                    string result = System.Text.Encoding.UTF8.GetString(www.downloadHandler.data);
-                    //Debug.Log(result);     //used to see if values are being registered 
+            using (UnityWebRequest www = UnityWebRequest.Get(url)) {
+                yield return www.SendWebRequest();
 
-                    result = "{\"result\":[" + result + "]}";
+                if (www.result == UnityWebRequest.Result.ConnectionError) {
+                    Debug.Log(www.error);
+                    indicatorManager.TelemetryActive(false);
+                } else {
+                    if (www.isDone) {
+                        indicatorManager.TelemetryActive(true);
 
-                    List<Suit> data = JsonHelper.ListFromJson<Suit>(result);
+                        // handle the result
+                        string result = System.Text.Encoding.UTF8.GetString(www.downloadHandler.data);
+                        //Debug.Log(result);     //used to see if values are being registered 
 
-                    Suit suit_data = data[0];
+                        result = "{\"result\":[" + result + "]}";
 
-                    telemetryStream.SetBpmText(suit_data.heart_bpm);
-                    telemetryStream.SetPSubText(suit_data.p_sub);
-                    telemetryStream.SetPSuitText(suit_data.p_suit);
-                    telemetryStream.SetTSubText(suit_data.t_sub); // temperature
-                    telemetryStream.SetVFanText(suit_data.v_fan);
-                    telemetryStream.SetPO2Text(suit_data.p_o2);
-                    telemetryStream.SetRO2Text(suit_data.rate_o2);
-                    telemetryStream.SetPH2OGText(suit_data.p_h2o_g);
-                    telemetryStream.SetPH2OLText(suit_data.p_h2o_l);
-                    telemetryStream.SetPSOPText(suit_data.p_sop);
-                    telemetryStream.SetBatLifeText(suit_data.t_battery);
-                    telemetryStream.SetOxLifeText(suit_data.t_oxygen);
-                    telemetryStream.SetH2OLifeText(suit_data.t_water);
-                    telemetryStream.SetDateText(suit_data.create_date);
-                    telemetryStream.SetEvaTimeText(suit_data.timer);
-                    telemetryStream.SetPrimO2Text(suit_data.ox_primary);
-                    telemetryStream.SetSecondaryO2Text(suit_data.ox_secondary);
-                    telemetryStream.SetRSOPText(suit_data.rate_sop);
-                    telemetryStream.SetBattCapText(suit_data.cap_battery);
+                        List<Suit> data = JsonHelper.ListFromJson<Suit>(result);
+
+                        Suit suit_data = data[0];
+
+                        telemetryStream.SetBpmText(suit_data.heart_bpm);
+                        telemetryStream.SetPSubText(suit_data.p_sub);
+                        telemetryStream.SetPSuitText(suit_data.p_suit);
+                        telemetryStream.SetTSubText(suit_data.t_sub); // temperature
+                        telemetryStream.SetVFanText(suit_data.v_fan);
+                        telemetryStream.SetPO2Text(suit_data.p_o2);
+                        telemetryStream.SetRO2Text(suit_data.rate_o2);
+                        telemetryStream.SetPH2OGText(suit_data.p_h2o_g);
+                        telemetryStream.SetPH2OLText(suit_data.p_h2o_l);
+                        telemetryStream.SetPSOPText(suit_data.p_sop);
+                        telemetryStream.SetBatLifeText(suit_data.t_battery);
+                        telemetryStream.SetOxLifeText(suit_data.t_oxygen);
+                        telemetryStream.SetH2OLifeText(suit_data.t_water);
+                        telemetryStream.SetDateText(suit_data.create_date);
+                        telemetryStream.SetEvaTimeText(suit_data.timer);
+                        telemetryStream.SetPrimO2Text(suit_data.ox_primary);
+                        telemetryStream.SetSecondaryO2Text(suit_data.ox_secondary);
+                        telemetryStream.SetRSOPText(suit_data.rate_sop);
+                        telemetryStream.SetBattCapText(suit_data.cap_battery);
 
 
-                }
-                else
-                {
-                    //handle the problem
-                    Debug.Log("Error! data couldn't get.");
+                    } else {
+                        //handle the problem
+                        Debug.Log("Error! data couldn't get.");
+                    }
                 }
             }
         }
