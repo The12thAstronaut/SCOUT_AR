@@ -6,6 +6,7 @@ using TMPro;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem.Controls;
+using UnityEngine.UI;
 
 public class Compass : MonoBehaviour
 {
@@ -25,6 +26,9 @@ public class Compass : MonoBehaviour
 	public TelemetryManager telemetryManager;
 	public Transform sunTransform;
 	public float sunAzimuth { get; private set; } = 0;
+	public Transform bearingMarkerPrefab;
+	public int bearingMarkPer = 10;
+	public int bearingLabelPer = 30;
 
 	private Vector3[] cardinalDirections = { Vector3.forward, Vector3.left, Vector3.right, Vector3.back };
 	private string[] cardinalText = { "N", "W", "E", "S" };
@@ -39,7 +43,6 @@ public class Compass : MonoBehaviour
 
 	void Start() {
 		lineDrawers = new LineRenderer[numRings];
-		//lineDrawers = GetComponentsInChildren<LineRenderer>();
 		DrawCompass();
 	}
 
@@ -73,25 +76,10 @@ public class Compass : MonoBehaviour
 		}
 
 		for (int i = 0; i < 4; i++) {
-			Vector3 dirVec = cardinalDirections[i];
-			dirVec.y = dirVec.z;
-			dirVec.z = 0;
-
-			cardinalPoints[i].transform.localPosition = dirVec.normalized * radius * 1000f * (numRings + 1) / numRings;
 			cardinalPoints[i].transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
 		}
 
-		Vector3 sunVec = Quaternion.Euler(0, sunAzimuth, 0) * cardinalDirections[0];
-		sunVec.y = sunVec.z;
-		sunVec.z = 0;
-
-		sunTransform.localPosition = sunVec.normalized * radius * 1200f * (numRings + 1) / numRings;
 		sunTransform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
-
-
-		foreach (Transform mark in distanceMarkers) {
-			mark.localRotation = Quaternion.Euler(0, 0, -Camera.main.transform.rotation.eulerAngles.y + angle);
-		}
 	}
 
 	void DrawCompass() {
@@ -117,6 +105,7 @@ public class Compass : MonoBehaviour
 		}
 
 		lineDrawer.transform.localScale *= segmentRadius;
+		lineDrawer.transform.localRotation = Quaternion.identity;
 	}
 
 	public void LoadPins() {
@@ -139,11 +128,12 @@ public class Compass : MonoBehaviour
 	}
 
 	private void DrawMarkings() {
+		// Draw cardinal lines and distance markers
 		LineRenderer[] cardinalLines = lineMarkings.GetChild(0).GetComponentsInChildren<LineRenderer>();
 		for (int i = 0; i < cardinalLines.Length; i++) {
 			cardinalLines[i].positionCount = 2;
 			cardinalLines[i].SetPosition(0, new Vector3(radius / numRings * cardinalDirections[i].x, radius / numRings * cardinalDirections[i].z, 0) * 1000f);
-			cardinalLines[i].SetPosition(1, new Vector3(radius * (numRings + 1) / numRings * cardinalDirections[i].x, radius * (numRings + 1) / numRings * cardinalDirections[i].z, 0) * 1000f);
+			cardinalLines[i].SetPosition(1, new Vector3(radius * cardinalDirections[i].x, radius * cardinalDirections[i].z, 0) * 1000f);
 
 			for (int j = 0; j < numRings; j++) {
 				TextMeshProUGUI distMark = Instantiate(cardinalDirectionPrefab, transform.position, Quaternion.identity, lineMarkings).GetComponent<TextMeshProUGUI>();
@@ -157,6 +147,28 @@ public class Compass : MonoBehaviour
 				distMark.transform.localPosition = new Vector3(radius * (j + 1) / numRings * cardinalDirections[i].x, radius * (j + 1) / numRings * cardinalDirections[i].z, 0) * 1000f;
 			}
 		}
+
+		// Draw bearing markers
+		for (int i = 0; i < 360 / bearingMarkPer; i++) {
+			Transform bearingMarker = Instantiate(bearingMarkerPrefab, transform.position, Quaternion.identity, lineMarkings);
+
+			Vector3 dirVec = Quaternion.Euler(0, i * bearingMarkPer, 0) * cardinalDirections[0];
+			dirVec.y = dirVec.z;
+			dirVec.z = 0;
+			bearingMarker.localPosition = dirVec.normalized * radius * 940f * (numRings + 1) / numRings;
+			bearingMarker.localRotation = Quaternion.Euler(0, 0, -i * bearingMarkPer);
+
+			if (i % (bearingLabelPer / bearingMarkPer) != 0) {
+				bearingMarker.GetChild(1).gameObject.SetActive(false);
+
+				bearingMarker.GetChild(0).GetComponent<Image>().color = new Color(170f / 255f, 170f / 255f, 170f / 255f);
+				bearingMarker.GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(2, 10);
+				bearingMarker.GetChild(0).transform.localPosition = new Vector3(0, 3, 0);
+			} else {
+
+				bearingMarker.GetChild(1).GetComponent<TextMeshProUGUI>().text = (i * bearingMarkPer).ToString();
+			}
+		}
 	}
 
 	private void DrawCardinalDirections() {
@@ -165,6 +177,15 @@ public class Compass : MonoBehaviour
 			dirText.transform.localScale *= 2;
 			dirText.GetComponent<TextMeshProUGUI>().text = cardinalText[i];
 			cardinalPoints[i] = dirText;
+		}
+
+		for (int i = 0; i < 4; i++) {
+			Vector3 dirVec = cardinalDirections[i];
+			dirVec.y = dirVec.z;
+			dirVec.z = 0;
+
+			cardinalPoints[i].transform.localPosition = dirVec.normalized * radius * 1150f * (numRings + 1) / numRings;
+			cardinalPoints[i].transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
 		}
 	}
 
@@ -186,9 +207,22 @@ public class Compass : MonoBehaviour
 
 		float phi = Mathf.Acos(Mathf.Sin(latitude) * Mathf.Sin(solarDeclinationAngle * Mathf.Deg2Rad) + Mathf.Cos(latitude) * Mathf.Cos(solarDeclinationAngle * Mathf.Deg2Rad) * Mathf.Cos(hourAngle * Mathf.Deg2Rad)) * Mathf.Rad2Deg;
 
-		sunAzimuth = Mathf.Acos(-((Mathf.Sin(latitude) * Mathf.Cos(phi * Mathf.Deg2Rad) - Mathf.Sin(solarDeclinationAngle * Mathf.Deg2Rad)) / (Mathf.Cos(latitude) * Mathf.Sin(phi * Mathf.Deg2Rad)))) * Mathf.Rad2Deg;
+		//sunAzimuth = Mathf.Acos(-((Mathf.Sin(latitude) * Mathf.Cos(phi * Mathf.Deg2Rad) - Mathf.Sin(solarDeclinationAngle * Mathf.Deg2Rad)) / (Mathf.Cos(latitude) * Mathf.Sin(phi * Mathf.Deg2Rad)))) * Mathf.Rad2Deg;
 
-		//sunAzimuth = 180 + Mathf.Atan2(Mathf.Sin(hourAngle * Mathf.Deg2Rad), Mathf.Cos(hourAngle * Mathf.Deg2Rad) * Mathf.Sin(latitude) - Mathf.Tan(solarDeclinationAngle * Mathf.Deg2Rad) * Mathf.Cos(latitude)) * Mathf.Rad2Deg;
+		sunAzimuth = 180 + Mathf.Atan2(Mathf.Sin(hourAngle * Mathf.Deg2Rad), Mathf.Cos(hourAngle * Mathf.Deg2Rad) * Mathf.Sin(latitude) - Mathf.Tan(solarDeclinationAngle * Mathf.Deg2Rad) * Mathf.Cos(latitude)) * Mathf.Rad2Deg;
+
+		//Debug.Log(eqOfTime);
+		//Debug.Log(solarDeclinationAngle);
+		//Debug.Log(time_offset);
+		//Debug.Log(hourAngle);
+		//Debug.Log(phi);
+		//Debug.Log(sunAzimuth);
+
+		Vector3 sunVec = Quaternion.Euler(0, sunAzimuth, 0) * cardinalDirections[0];
+		sunVec.y = sunVec.z;
+		sunVec.z = 0;
+
+		sunTransform.localPosition = sunVec.normalized * radius * 1150f * (numRings + 1) / numRings;
 	}
 }
 
