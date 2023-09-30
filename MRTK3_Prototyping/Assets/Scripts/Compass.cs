@@ -1,9 +1,11 @@
 using Microsoft.MixedReality.Toolkit.UX;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.InputSystem.Controls;
 
 public class Compass : MonoBehaviour
 {
@@ -20,6 +22,9 @@ public class Compass : MonoBehaviour
 	public float distancePerRing = 2f;
 	public Transform lineMarkings;
 	public Color distanceMarkingColor;
+	public TelemetryManager telemetryManager;
+	public Transform sunTransform;
+	public float sunAzimuth { get; private set; } = 0;
 
 	private Vector3[] cardinalDirections = { Vector3.forward, Vector3.left, Vector3.right, Vector3.back };
 	private string[] cardinalText = { "N", "W", "E", "S" };
@@ -76,6 +81,14 @@ public class Compass : MonoBehaviour
 			cardinalPoints[i].transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
 		}
 
+		Vector3 sunVec = Quaternion.Euler(0, sunAzimuth, 0) * cardinalDirections[0];
+		sunVec.y = sunVec.z;
+		sunVec.z = 0;
+
+		sunTransform.localPosition = sunVec.normalized * radius * 1200f * (numRings + 1) / numRings;
+		sunTransform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
+
+
 		foreach (Transform mark in distanceMarkers) {
 			mark.localRotation = Quaternion.Euler(0, 0, -Camera.main.transform.rotation.eulerAngles.y + angle);
 		}
@@ -86,7 +99,8 @@ public class Compass : MonoBehaviour
 			lineDrawers[i] = Instantiate(compassRing, transform.position, Quaternion.identity, transform).GetComponent<LineRenderer>();
 			DrawCompassRing(lineDrawers[i], radius * (i + 1) / numRings);
 		}
-		DrawDirections();
+		DrawCardinalDirections();
+		InvokeRepeating("FindSolarDirection", 0, 10);
 		DrawMarkings();
 	}
 
@@ -94,12 +108,15 @@ public class Compass : MonoBehaviour
 		theta = 0f;
 		size = (int)((1f / thetaScale) + 1f);
 		lineDrawer.positionCount = size;
+
 		for (int i = 0; i < size; i++) {
 			theta += (2.0f * Mathf.PI * thetaScale);
-			float x = segmentRadius * Mathf.Cos(theta);
-			float y = segmentRadius * Mathf.Sin(theta);
+			float x = Mathf.Cos(theta);
+			float y = Mathf.Sin(theta);
 			lineDrawer.SetPosition(i, new Vector3(x, y, 0) * 1000f);
 		}
+
+		lineDrawer.transform.localScale *= segmentRadius;
 	}
 
 	public void LoadPins() {
@@ -142,13 +159,36 @@ public class Compass : MonoBehaviour
 		}
 	}
 
-	private void DrawDirections() {
+	private void DrawCardinalDirections() {
 		for (int i = 0; i < 4; i++) {
 			GameObject dirText = Instantiate(cardinalDirectionPrefab, transform.position, Quaternion.identity, lineMarkings);
 			dirText.transform.localScale *= 2;
 			dirText.GetComponent<TextMeshProUGUI>().text = cardinalText[i];
 			cardinalPoints[i] = dirText;
 		}
+	}
+
+	private void FindSolarDirection() {
+		DateTime dt = DateTime.Now;
+
+		float latitude = telemetryManager.longitudeLatitude.latitude * Mathf.Deg2Rad;
+
+		float solarDeclinationAngle = 23.45f * Mathf.Sin((360f / 365f) * (284 + dt.DayOfYear) * Mathf.Deg2Rad);
+
+		float B = 360f / 365f * (dt.DayOfYear - 1 - 81);
+		float eqOfTime = 9.87f * Mathf.Sin(2f * B * Mathf.Deg2Rad) - 7.67f * Mathf.Sin((B + 78.7f) * Mathf.Deg2Rad); // https://en.wikipedia.org/wiki/Equation_of_time
+		
+		float time_offset = eqOfTime + (4 * telemetryManager.longitudeLatitude.longitude) - (60 * DateTimeOffset.Now.Offset.Hours); // https://gml.noaa.gov/grad/solcalc/solareqns.PDF
+
+		float tst = (dt.Hour * 60) + dt.Minute + (dt.Second / 60f) + time_offset;
+
+		float hourAngle = (tst / 4f) - 180;
+
+		float phi = Mathf.Acos(Mathf.Sin(latitude) * Mathf.Sin(solarDeclinationAngle * Mathf.Deg2Rad) + Mathf.Cos(latitude) * Mathf.Cos(solarDeclinationAngle * Mathf.Deg2Rad) * Mathf.Cos(hourAngle * Mathf.Deg2Rad)) * Mathf.Rad2Deg;
+
+		sunAzimuth = Mathf.Acos(-((Mathf.Sin(latitude) * Mathf.Cos(phi * Mathf.Deg2Rad) - Mathf.Sin(solarDeclinationAngle * Mathf.Deg2Rad)) / (Mathf.Cos(latitude) * Mathf.Sin(phi * Mathf.Deg2Rad)))) * Mathf.Rad2Deg;
+
+		//sunAzimuth = 180 + Mathf.Atan2(Mathf.Sin(hourAngle * Mathf.Deg2Rad), Mathf.Cos(hourAngle * Mathf.Deg2Rad) * Mathf.Sin(latitude) - Mathf.Tan(solarDeclinationAngle * Mathf.Deg2Rad) * Mathf.Cos(latitude)) * Mathf.Rad2Deg;
 	}
 }
 
