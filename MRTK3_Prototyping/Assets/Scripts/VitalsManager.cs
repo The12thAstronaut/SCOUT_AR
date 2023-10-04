@@ -1,7 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
+using static Unity.VisualScripting.Member;
 
 public class VitalsManager : MonoBehaviour
 {
@@ -13,13 +16,16 @@ public class VitalsManager : MonoBehaviour
 
 	private float[] values;
 
+	private IndicatorManager indicatorManager;
+
 	// Start is called before the first frame update
-	void Start()
-    {
+	void Start() {
+		indicatorManager = FindObjectOfType<IndicatorManager>();
 		values = new float[suitVitals.Length];
 
 		for (int i = 0; i < suitVitals.Length; i++) {
 			suitVitals[i].vitalsManager = this;
+			suitVitals[i].indicatorManager = indicatorManager;
 			suitVitals[i].index = i;
 			suitVitals[i].SetBounds(errorColor, goodColor);
 			//suitVitals[i].SetValue();
@@ -61,11 +67,21 @@ public class SuitVital {
 	public bool inWarning = false;
 
 	public int index { get; set; }
+	public float slope { get; private set; }
+	public float yOffset { get; private set; }
+	public float timeToMin { get; private set; }
+
 
 	public float maxVal => nominalMax > errorMax ? nominalMax : errorMax;
 	public float minVal => nominalMin < errorMin ? nominalMin : errorMin;
 
+	public IndicatorManager indicatorManager { get; set; }
 	public VitalsManager vitalsManager { get; set; }
+
+	private float[] prevVals = new float[5];
+	private float[] prevTimes = new float[5];
+	private float[] prevTimesAtMin = new float[5];
+
 
 	public void SetBounds(Color errorColor, Color goodColor) {
 		slider.nominalMax = nominalMax;
@@ -81,9 +97,35 @@ public class SuitVital {
 		vitalInfoCard.vitals = this;
 		vitalInfoCard.Initialize();
 	}
+	public void SetValue(float newValue) {
+		Array.Copy(prevVals, 1, prevVals, 0, prevVals.Length - 1);
+		Array.Copy(prevTimes, 1, prevTimes, 0, prevTimes.Length - 1);
 
-    public void SetValue(float newValue) {
+		prevVals[prevVals.Length - 1] = newValue;
+		prevTimes[prevTimes.Length - 1] = Time.time;
+
 		value = newValue;
+
+		double b = 0;
+		double m = 0;
+
+		List<Vector2> points = new List<Vector2>();
+
+		for (int i = 0; i < prevVals.Length; i++) {
+			points.Add(new Vector2(prevVals[i], prevTimes[i]));
+		}
+
+		FindLinearLeastSquaresFit(points, out m, out b);
+		slope = (float)m;
+		yOffset = (float)b;
+
+		if (name.Equals("Battery Capacity")) {
+			Array.Copy(prevTimesAtMin, 1, prevTimesAtMin, 0, prevTimesAtMin.Length - 1);
+			prevTimesAtMin[prevTimesAtMin.Length - 1] = (minVal - yOffset) / slope;
+
+			timeToMin = prevTimesAtMin.Average() - Time.time;
+			indicatorManager.UpdateBatteryTimer(timeToMin);
+		}
 
 		if (nominalMax > errorMax && value <= errorMax) {
 			inWarning = true;
@@ -105,7 +147,34 @@ public class SuitVital {
     }
 
 	public void SetValue() {
+		Array.Copy(prevVals, 1, prevVals, 0, prevVals.Length - 1);
+		Array.Copy(prevTimes, 1, prevTimes, 0, prevTimes.Length - 1);
+
 		value = minVal + Mathf.PingPong(Time.time * (maxVal - minVal) / 12/*(Random.Range(-8.0f, 8.0f))*/, maxVal - minVal);
+
+		prevVals[prevVals.Length - 1] = value;
+		prevTimes[prevTimes.Length - 1] = Time.time;
+
+		double b = 0;
+		double m = 0;
+
+		List<Vector2> points = new List<Vector2>();
+
+		for (int i = 0; i < prevVals.Length; i++) {
+			points.Add(new Vector2(prevTimes[i], prevVals[i]));
+		}
+
+		FindLinearLeastSquaresFit(points, out m, out b);
+		slope = (float)m;
+		yOffset = (float)b;
+
+		if (name.Equals("Battery Capacity")) {
+			Array.Copy(prevTimesAtMin, 1, prevTimesAtMin, 0, prevTimesAtMin.Length - 1);
+			prevTimesAtMin[prevTimesAtMin.Length - 1] = (minVal - yOffset) / slope;
+
+			timeToMin = prevTimesAtMin.Average() - Time.time;
+			indicatorManager.UpdateBatteryTimer(timeToMin);
+		}
 
 		if (nominalMax > errorMax && value <= errorMax) {
 			inWarning = true;
@@ -134,5 +203,36 @@ public class SuitVital {
 			}
 
 		}
+	}
+
+	public static double ErrorSquared(List<Vector2> points, double m, double b) {
+		double total = 0;
+		foreach (Vector2 pt in points) {
+			double dy = pt.y - (m * pt.x + b);
+			total += dy * dy;
+		}
+		return total;
+	}
+
+	public static double FindLinearLeastSquaresFit(List<Vector2> points, out double m, out double b) {
+		// Perform the calculation.
+		// Find the values S1, Sx, Sy, Sxx, and Sxy.
+		double S1 = points.Count;
+		double Sx = 0;
+		double Sy = 0;
+		double Sxx = 0;
+		double Sxy = 0;
+		foreach (Vector2 pt in points) {
+			Sx += pt.x;
+			Sy += pt.y;
+			Sxx += pt.x * pt.x;
+			Sxy += pt.x * pt.y;
+		}
+
+		// Solve for m and b.
+		m = (Sxy * S1 - Sx * Sy) / (Sxx * S1 - Sx * Sx);
+		b = (Sxy * Sx - Sy * Sxx) / (Sx * Sx - S1 * Sxx);
+
+		return System.Math.Sqrt(ErrorSquared(points, m, b));
 	}
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -17,6 +18,7 @@ public class IndicatorManager : MonoBehaviour
     public TextMeshProUGUI speechIndicator;
     public Image alertIndicator;
     public TextMeshProUGUI telemetryIndicator;
+	public TextMeshProUGUI batteryIndicator;
 
     // Start is called before the first frame update
     void Start()
@@ -81,5 +83,12 @@ public class IndicatorManager : MonoBehaviour
 		} else {
 			telemetryIndicator.color = deactiveColor;
 		}
+	}
+
+	public void UpdateBatteryTimer(float timeLeft) {
+		Debug.Log(timeLeft);
+		Debug.Log(TimeSpan.FromSeconds(timeLeft));
+		//Debug.Log(TimeSpan.FromSeconds(timeLeft).ToString("mm:ss"));
+		batteryIndicator.text = TimeSpan.FromSeconds(timeLeft).ToString("mm\\:ss");
 	}
 }
