@@ -86,9 +86,8 @@ public class IndicatorManager : MonoBehaviour
 	}
 
 	public void UpdateBatteryTimer(float timeLeft) {
-		Debug.Log(timeLeft);
-		Debug.Log(TimeSpan.FromSeconds(timeLeft));
-		//Debug.Log(TimeSpan.FromSeconds(timeLeft).ToString("mm:ss"));
-		batteryIndicator.text = TimeSpan.FromSeconds(timeLeft).ToString("mm\\:ss");
+		if (!float.IsNaN(timeLeft)) {
+			batteryIndicator.text = TimeSpan.FromSeconds(timeLeft).ToString("mm\\:ss");
+		}
 	}
 }

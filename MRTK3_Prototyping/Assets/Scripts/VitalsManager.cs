@@ -37,7 +37,7 @@ public class VitalsManager : MonoBehaviour
     {
 		bool warningActive = false;
 		foreach (SuitVital suitVital in suitVitals) {
-			suitVital.SetValue();
+			//suitVital.SetValue();
 			if (suitVital.inWarning) warningActive = true;
 		}
 
