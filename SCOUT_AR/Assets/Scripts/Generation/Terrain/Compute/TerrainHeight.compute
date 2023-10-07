@@ -1,0 +1,110 @@
+// Takes raw height map [0, 1] and calculates actual world heights.
+// This includes smoothing out sharp peaks.
+// Saves result in texture.
+
+#pragma kernel ProcessHeights
+#include "Assets/Scripts/Shader Common/GeoMath.hlsl"
+
+Texture2D<float> RawHeightMapTop1;
+Texture2D<float> RawHeightMapTop2;
+Texture2D<float> RawHeightMapTop3;
+Texture2D<float> RawHeightMapTop4;
+Texture2D<float> RawHeightMapBottom1;
+Texture2D<float> RawHeightMapBottom2;
+Texture2D<float> RawHeightMapBottom3;
+Texture2D<float> RawHeightMapBottom4;
+Texture2DArray<float> RawHeightMap;
+SamplerState height_linear_clamp;
+RWTexture2D<float> WorldHeightMap;
+uint2 size;
+
+float sampleHeight(float2 uv) {
+    int xIndex = int(uv.x * 4);
+    int yIndex = int(uv.y * 2);
+	
+    if (xIndex == 4)
+    {
+        xIndex = 3;
+    }
+    if (yIndex == 2)
+    {
+        yIndex = 1;
+    }
+	
+    float x = uv.x * 4 - xIndex;
+    if (yIndex == 0)
+    {
+        float y = uv.y * 2;
+        if (xIndex == 0)
+        {
+            return RawHeightMapBottom1.SampleLevel(height_linear_clamp, float2(x, y), 0);
+        }
+        else if (xIndex == 1)
+        {
+            return RawHeightMapBottom2.SampleLevel(height_linear_clamp, float2(x, y), 0);
+        }
+        else if (xIndex == 2)
+        {
+            return RawHeightMapBottom3.SampleLevel(height_linear_clamp, float2(x, y), 0);
+        }
+        else
+        {
+            return RawHeightMapBottom4.SampleLevel(height_linear_clamp, float2(x, y), 0);
+        }
+    }
+    else
+    {
+        float y = uv.y * 2 - yIndex;
+        if (xIndex == 0)
+        {
+            return RawHeightMapTop1.SampleLevel(height_linear_clamp, float2(x, y), 0);
+        }
+        else if (xIndex == 1)
+        {
+            return RawHeightMapTop2.SampleLevel(height_linear_clamp, float2(x, y), 0);
+        }
+        else if (xIndex == 2)
+        {
+            return RawHeightMapTop3.SampleLevel(height_linear_clamp, float2(x, y), 0);
+        }
+        else
+        {
+            return RawHeightMapTop4.SampleLevel(height_linear_clamp, float2(x, y), 0);
+        }
+    }
+	//return RawHeightMap.SampleLevel(height_linear_clamp, uv, 0);
+}
+
+float calculateSmoothHeight(int2 index) {
+	float2 offset = float2(2, 1) / 16384 * 4.5;
+	float2 uv = index / float2(size.x - 1, size.y - 1);
+	float h0 = sampleHeight(uv);
+
+	if (h0 < 0.01) {
+		return h0;
+	}
+
+
+	float hN = sampleHeight(uv + float2(0,1) * offset);
+	float hS = sampleHeight(uv + float2(0,-1) * offset);
+	float hW = sampleHeight(uv + float2(-1,0) * offset);
+	float hE = sampleHeight(uv + float2(1,0) * offset);
+
+	float hNE = sampleHeight(uv + float2(1,1) * 0.707 * offset);
+	float hSW = sampleHeight(uv + float2(-1,-1) * 0.707 * offset);
+	float hNW = sampleHeight(uv + float2(-1,1) * 0.707 * offset);
+	float hSE = sampleHeight(uv + float2(1,-1) * 0.707 * offset);
+	
+	//return h0;
+	return lerp(h0, (hN + hS + hW + hE + hNE + hSW + hNW + hSE) / 8.0, 0.35);
+}
+
+[numthreads(8,8,1)]
+void ProcessHeights (uint3 id : SV_DispatchThreadID)
+{
+	if (id.x >= size.x || id.y >= size.y) { return; }
+
+	float smoothHeight = calculateSmoothHeight(id.xy);
+	WorldHeightMap[id.xy] = smoothHeight;
+	//WorldHeightMap[id.xy] = RawHeightMap[id.xy];
+}
