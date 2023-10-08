@@ -9,6 +9,7 @@ public class PositionMenu : MonoBehaviour
 {
     public float distance = 0.5f;
     public float angle = 0f;
+	public float yOffset = -0.1f;
 	public PressableButton pinButton;
 	public MeshRenderer[] contentBackplates;
 
@@ -59,15 +60,13 @@ public class PositionMenu : MonoBehaviour
 			if (!lockedPosFound) {
 				transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
 				dir = transform.position - Camera.main.transform.position;
-				dir.y = 0;
+				dir.y = yOffset;
 
-				Vector3 focus = Camera.main.transform.forward;
-				focus.y = 0;
 				target = transform.parent.TransformPoint(dir.normalized * settingsManager.settings[0].value);
 
 				lockedPosFound = true;
 			}
-			transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
+			transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position - transform.parent.transform.up * yOffset);
 
 			if (Vector3.Distance(transform.position, target) > 0.001f) {
 				transform.position = Vector3.MoveTowards(transform.position, target, pushStrength * Time.deltaTime);
@@ -75,7 +74,7 @@ public class PositionMenu : MonoBehaviour
 				transform.position = target;
 				lockedPosFound = false;
 				locked = true;
-				transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
+				transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position - transform.parent.transform.up * yOffset);
 			}
 		}
 	}
@@ -101,22 +100,26 @@ public class PositionMenu : MonoBehaviour
 	public void OpenMenu() {
 		if (settingsManager == null) settingsManager = GameObject.Find("SettingsManager").GetComponent<SettingsManager>();
 		Vector3 focus = Camera.main.transform.forward;
-		focus.y = 0;
+		focus.y = yOffset;
+
+		focus = transform.parent.TransformPoint(focus.normalized * settingsManager.settings[0].value) - Camera.main.transform.position;
+		focus.y = yOffset;
 
 		transform.position = transform.parent.TransformPoint(focus.normalized * settingsManager.settings[0].value);
-		transform.rotation = Quaternion.Euler(0, Camera.main.transform.rotation.eulerAngles.y, 0);
+
+		transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position - transform.parent.transform.up * yOffset);
 	}
 
 	private void ApplyConstraints() {
 		Vector3 constraintToPose = transform.position - Camera.main.transform.position;
-		constraintToPose.y = 0;
+		constraintToPose.y = yOffset;
 
 		constraintToPose = constraintToPose.normalized * settingsManager.settings[0].value;
 		transform.position = transform.parent.position + constraintToPose;
 
 		// Needs smoothing?
 
-		transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
+		transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position - transform.parent.transform.up * yOffset);
 	}
 
 	public void PinMenu(bool pinned) {
