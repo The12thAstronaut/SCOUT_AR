@@ -117,7 +117,7 @@ bool exceedsErrorThreshold(float3 spherePoint) {
 }
 
 
-[numthreads(1024,1,1)]
+[numthreads(64,1,1)]
 void CalculateVertices2D (uint3 id : SV_DispatchThreadID)
 {
 	if (id.x >= numSpherePoints) { return; }
@@ -151,7 +151,7 @@ RWStructuredBuffer<float3> Vertices;
 uint numVertices;
 
 // Convert 2D vertices (longitude/latitude coordinates) into 3D vertices (points on sphere)
-[numthreads(1024,1,1)]
+[numthreads(64,1,1)]
 void AssignVertexHeights (uint3 id : SV_DispatchThreadID)
 {
 	if (id.x >= numVertices) { return; }

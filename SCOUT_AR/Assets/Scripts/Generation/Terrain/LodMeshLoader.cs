@@ -98,6 +98,7 @@ public class LodMeshLoader : MonoBehaviour
 			meshRenderer.gameObject.AddComponent<MeshCollider>().sharedMesh = meshRenderer.gameObject.GetComponent<MeshFilter>().sharedMesh;
 			meshRenderer.transform.localScale = new Vector3(sizeMult, sizeMult, sizeMult);
 			meshRenderer.transform.localPosition = Vector3.zero;
+			meshRenderer.transform.localRotation = Quaternion.identity;
 		}
 
 		//return meshRenderer;

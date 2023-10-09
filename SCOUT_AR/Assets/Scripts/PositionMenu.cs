@@ -108,6 +108,8 @@ public class PositionMenu : MonoBehaviour
 		transform.position = transform.parent.TransformPoint(focus.normalized * settingsManager.settings[0].value);
 
 		transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position - transform.parent.transform.up * yOffset);
+
+		UpdateBackplates();
 	}
 
 	private void ApplyConstraints() {

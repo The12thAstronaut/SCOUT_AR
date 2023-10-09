@@ -662,7 +662,7 @@ PlayerSettings:
   m_MobileRenderingPath: 1
   metroPackageName: Template3D
   metroPackageVersion: 1.0.0.0
-  metroCertificatePath: C:\Users\rbrus\Documents\Unity Projects\SCOUT_AR\SCOUT_AR\Assets\WSATestCertificate.pfx
+  metroCertificatePath: Assets\WSATestCertificate.pfx
   metroCertificatePassword: 
   metroCertificateSubject: 12th Astronaut Lab
   metroCertificateIssuer: 12th Astronaut Lab
