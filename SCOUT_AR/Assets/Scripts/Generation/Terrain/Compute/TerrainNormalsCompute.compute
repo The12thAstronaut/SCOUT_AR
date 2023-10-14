@@ -54,7 +54,7 @@ float3 calculateNormal(float3 spherePos) {
 	return normalize(triNormalSum);
 }
 
-[numthreads(64,1,1)]
+[numthreads(4,1,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
 	if (id.x >= numVerts) { return; }

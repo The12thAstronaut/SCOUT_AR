@@ -90,8 +90,6 @@ public class PositionMenu : MonoBehaviour
 
 	public void UpdateBackplates() {
 		float sizeFactor = transform.localScale.x / 1f;
-		Debug.Log(contentBackplateMaterial.GetFloat("_Radius_"));
-		Debug.Log(contentBackplateMaterial.GetFloat("_Line_Width_"));
 		contentBackplateMaterial.SetFloat("_Radius_", defaultBackplateMaterialRadius * sizeFactor);
 		contentBackplateMaterial.SetFloat("_Line_Width_", defaultBackplateMaterialWidth * sizeFactor);
 

@@ -1,4 +1,4 @@
-#pragma kernel CalculateVertices2D
+//#pragma kernel CalculateVertices2D
 #pragma kernel AssignVertexHeights
 #include "Assets/Scripts/Shader Common/GeoMath.hlsl"
 
@@ -116,8 +116,8 @@ bool exceedsErrorThreshold(float3 spherePoint) {
 	return error >= errorThreshold || (h > maxH + errorThreshold/2);
 }
 
-
-[numthreads(64,1,1)]
+/*
+[numthreads(4,1,1)]
 void CalculateVertices2D (uint3 id : SV_DispatchThreadID)
 {
 	if (id.x >= numSpherePoints) { return; }
@@ -143,15 +143,15 @@ void CalculateVertices2D (uint3 id : SV_DispatchThreadID)
     if (exceedsErrorThreshold(spherePoint))
     {
         InnerVertices2D.Append(coord.xy);
-    }*/
-}
+    }
+}*/
 
 // ---- Assign vertex heights ----
 RWStructuredBuffer<float3> Vertices;
 uint numVertices;
 
 // Convert 2D vertices (longitude/latitude coordinates) into 3D vertices (points on sphere)
-[numthreads(64,1,1)]
+[numthreads(4,1,1)]
 void AssignVertexHeights (uint3 id : SV_DispatchThreadID)
 {
 	if (id.x >= numVertices) { return; }

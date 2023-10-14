@@ -6,6 +6,10 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Threading.Tasks;
+#if WINDOWS_UWP
+using Windows.Storage;
+#endif
 
 public class ProcedureManager : MonoBehaviour
 {
@@ -41,17 +45,36 @@ public class ProcedureManager : MonoBehaviour
 		
 	}
 
-	public void LoadProcedures() {
-
+	public async void LoadProcedures() {
+#if UNITY_EDITOR
 		string path = FileHelper.MakePath("Assets", "Data", "Procedures");
 		string[] files = Directory.GetFiles(path, "*.txt");
 
 		numProcedures = Directory.GetFiles(path).Length / 2;
-		procedureScrollList.SetItemCount(numProcedures + 1);
 
 		foreach (string file in files) {
 			procedures.Add(new Procedure(file));
 		}
+#endif
+#if WINDOWS_UWP
+		StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("Procedures", CreationCollisionOption.OpenIfExists);
+		
+		IReadOnlyList<IStorageItem> itemsInFolder = await storageFolder.GetItemsAsync();
+
+		numProcedures = itemsInFolder.Count;
+
+		foreach (IStorageItem item in itemsInFolder)
+		{
+			if(item.IsOfType(StorageItemTypes.Folder)) {
+				Debug.Log("Folder: " + item.Name);
+				numProcedures--;
+			} else {
+				Debug.Log("File: " + item.Name + ", " + item.DateCreated);
+				procedures.Add(new Procedure(item.Name));
+			}
+		}
+#endif
+		procedureScrollList.SetItemCount(numProcedures + 1);
 	}
 
 	private void PopulateProcedureButton(GameObject obj, int index) {

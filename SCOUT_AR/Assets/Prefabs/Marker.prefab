@@ -332,8 +332,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.125, y: 0.25, z: 0.0125}
-  m_Center: {x: 0, y: 0.04, z: 0}
+  m_Size: {x: 0.25, y: 0.4, z: 0.025}
+  m_Center: {x: 0, y: 0.06, z: 0}
 --- !u!114 &4557755062300258695
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -506,7 +506,6 @@ MonoBehaviour:
   disabledInteractorTypes:
   - reference: Microsoft.MixedReality.Toolkit.IGazeInteractor, Microsoft.MixedReality.Toolkit.Core
   - reference: Microsoft.MixedReality.Toolkit.IPokeInteractor, Microsoft.MixedReality.Toolkit.Core
-  - reference: Microsoft.MixedReality.Toolkit.IGrabInteractor, Microsoft.MixedReality.Toolkit.Core
   <ToggleMode>k__BackingField: 0
   <SelectThreshold>k__BackingField: 0.9
   <DeselectThreshold>k__BackingField: 0.1
@@ -529,20 +528,7 @@ MonoBehaviour:
         m_Calls: []
   <OnClicked>k__BackingField:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 4557755062300258699}
-        m_TargetAssemblyTypeName: Microsoft.MixedReality.Toolkit.SpatialManipulation.TapToPlace,
-          Microsoft.MixedReality.Toolkit.SpatialManipulation
-        m_MethodName: StartPlacement
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   <OnEnabled>k__BackingField:
     m_PersistentCalls:
       m_Calls: []

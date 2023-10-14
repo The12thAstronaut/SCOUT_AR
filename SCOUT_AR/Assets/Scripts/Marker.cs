@@ -106,6 +106,7 @@ public class Marker : MonoBehaviour
 
 	public void StartPlacement() {
 		//mapMarker.SetHandDetectors(false);
+		manager.isPlacing = true;
 	}
 
 	public void StopPlacement() {

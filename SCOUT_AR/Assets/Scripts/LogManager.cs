@@ -7,6 +7,10 @@ using System.Reflection;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using System.Threading.Tasks;
+#if WINDOWS_UWP
+using Windows.Storage;
+#endif
 
 public class LogManager : MonoBehaviour
 {
@@ -22,6 +26,8 @@ public class LogManager : MonoBehaviour
 	public Log activeLog { get; private set; }
 	public int numLogs { get; set; }
 	public bool isEdittingLog { get; set; } = false;
+
+	public TextMeshProUGUI alertText;
 
 	private List<Log> logs = new List<Log>();
 	private string dateTime = "";
@@ -59,18 +65,39 @@ public class LogManager : MonoBehaviour
 		}
     }
 
-	public void LoadLogs() {
+	public async void LoadLogs() {
+		logs.Clear();
 
+#if UNITY_EDITOR
 		string path = FileHelper.MakePath("Assets", "Data", "Logs");
 		string[] files = Directory.GetFiles(path, "*.txt");
 
-		logs.Clear();
 		numLogs = Directory.GetFiles(path).Length / 2;
-		logScrollList.SetItemCount(numLogs + 1);
 
 		foreach (string file in files) {
 			logs.Add(new Log(file));
 		}
+#endif
+#if WINDOWS_UWP
+		StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("Logs", CreationCollisionOption.OpenIfExists);
+		
+		IReadOnlyList<IStorageItem> itemsInFolder = await storageFolder.GetItemsAsync();
+
+		numLogs = itemsInFolder.Count;
+
+		foreach (IStorageItem item in itemsInFolder)
+		{
+			if(item.IsOfType(StorageItemTypes.Folder)) {
+				Debug.Log("Folder: " + item.Name);
+				numLogs--;
+			} else {
+				Debug.Log("File: " + item.Name + ", " + item.DateCreated);
+				logs.Add(new Log(item.Name));
+			}
+		}
+#endif
+
+		logScrollList.SetItemCount(numLogs + 1);
 	}
 
 	private void PopulateLogButton(GameObject obj, int index) {
@@ -99,16 +126,28 @@ public class LogManager : MonoBehaviour
 		obj.transform.Translate(0, 30000, 0);
 	}
 
-	public void SaveLogEntry() {
+	public async void SaveLogEntry() {
 #if WINDOWS_UWP
-		string path = Application.persistentDataPath + "/Logs/" + logDateTimeDisplay.text.Replace(' ', '_').Replace(':', '-') + ".txt";
+		string fileName = logDateTimeDisplay.text.Replace(' ', '_').Replace(':', '-') + ".txt";
 
-		StreamWriter writer = new StreamWriter(path, false);
+		StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("Logs", CreationCollisionOption.OpenIfExists);
+		StorageFile file = await storageFolder.CreateFileAsync(fileName, CreationCollisionOption.OpenIfExists);
 
-		writer.WriteLine(logSubjectInputField.text);
-		writer.WriteLine(logContentInputField.text);
+		var stream = await file.OpenAsync(FileAccessMode.ReadWrite);
 
-		writer.Close();
+		using (var outputStream = stream.GetOutputStreamAt(0)) {
+			using (var dataWriter = new Windows.Storage.Streams.DataWriter(outputStream)) {
+				//dataWriter.UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding.Utf8;
+                //dataWriter.ByteOrder = Windows.Storage.Streams.ByteOrder.LittleEndian;
+				dataWriter.WriteString(logSubjectInputField.text);
+				dataWriter.WriteString(logContentInputField.text);
+
+				await dataWriter.StoreAsync();
+				await outputStream.FlushAsync();
+			}
+		}
+		stream.Dispose();
+
 #endif
 #if UNITY_EDITOR
 		string path = FileHelper.MakePath("Assets", "Data", "Logs", logDateTimeDisplay.text.Replace(' ', '_').Replace(':', '-') + ".txt");
@@ -135,6 +174,8 @@ public class LogManager : MonoBehaviour
 			updateReader = true;
 			isEdittingLog = false;
 		}
+
+		alertText.text = "Log Saved";
 	}
 
 	public void SelectLog(int index) {

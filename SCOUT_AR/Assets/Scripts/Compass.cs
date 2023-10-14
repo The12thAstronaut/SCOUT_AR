@@ -143,6 +143,7 @@ public class Compass : MonoBehaviour
 				distanceMarkers.Add(distMark.transform);
 
 				distMark.transform.localPosition = new Vector3(radius * (j + 1) / numRings * cardinalDirections[i].x, radius * (j + 1) / numRings * cardinalDirections[i].z, 0) * 1000f;
+				distMark.transform.localRotation = Quaternion.identity;
 			}
 		}
 

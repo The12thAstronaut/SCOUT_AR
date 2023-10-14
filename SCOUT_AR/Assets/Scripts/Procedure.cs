@@ -2,6 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
+#if WINDOWS_UWP
+using Windows.Storage;
+#endif
 
 public class Procedure
 {
@@ -25,9 +29,57 @@ public class Procedure
 		}
 		procedureName.TrimEnd();
 
-		totalSteps = File.ReadAllLines(filePath).Length;
 		steps = new List<ProcedureStep>();
-		
+
+
+		LoadProcedure(filePath);
+	}
+
+	private async void LoadProcedure(string filePath) {
+#if WINDOWS_UWP
+		StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.GetFolderAsync("Procedures");
+		StorageFile sampleFile = await storageFolder.GetFileAsync(filePath);
+
+		var stream = await sampleFile.OpenAsync(FileAccessMode.Read);
+
+		using (var inputStream = stream.GetInputStreamAt(0)) {
+			using (var dataReader = new Windows.Storage.Streams.DataReader(inputStream)) {
+				dataReader.UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding.Utf8;
+                dataReader.ByteOrder = Windows.Storage.Streams.ByteOrder.LittleEndian;
+
+				await dataReader.LoadAsync((uint)stream.Size);
+
+				List<string> fileLines = new List<string>();
+
+				int i = 0;
+				int currentStep = 0;
+
+				while (dataReader.UnconsumedBufferLength > 0)
+                {
+                    uint bytesToRead = dataReader.ReadUInt32();
+                    fileLines.Add(dataReader.ReadString(bytesToRead));
+
+					int tabLevel = 0;
+					foreach (Char c in fileLines[i]) {
+						if (c == '\t') tabLevel++;
+					}
+
+					if (tabLevel == 0) {
+						steps.Add(new ProcedureStep(fileLines[i].Trim()));
+						currentStep++;
+					} else if (tabLevel == 1) {
+						steps[currentStep - 1].substeps.Add(new ProcedureStep(fileLines[i].Trim()));
+					} else if (tabLevel == 2) {
+						steps[currentStep - 1].substeps[steps[currentStep - 1].substeps.Count - 1].substeps.Add(new ProcedureStep(fileLines[i].Trim()));
+					}
+
+					i++;
+                }
+			}
+		}
+#endif
+#if UNITY_EDITOR
+		totalSteps = File.ReadAllLines(filePath).Length;
 
 		using (StreamReader reader = new StreamReader(filePath)) {
 
@@ -57,6 +109,7 @@ public class Procedure
 				i++;
 			}
 		}
+#endif
 	}
 
 }
