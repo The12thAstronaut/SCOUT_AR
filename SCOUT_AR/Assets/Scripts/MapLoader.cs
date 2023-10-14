@@ -123,7 +123,7 @@ public class MapLoader : MonoBehaviour {
 
 		loaded = true;
 		isLoading = false;
-		UpdateMapRenderer(maxResolution);
+		//UpdateMapRenderer(maxResolution);
 	}
 
 	public void Reload() {
@@ -188,8 +188,8 @@ public class MapLoader : MonoBehaviour {
 		SimpleMeshData meshData = new SimpleMeshData("temp");
 		await Task.Run(() => meshData = CubeSphere.GenerateMesh(resolution, subdivisions, keys[count++]/*, centerPoint, zoomRanges[zoomLevel - 1] / moonBaseRadius*/));
 		//meshData = AssignMeshHeights(meshData);
-		meshRenderers.Add(CreateMapMesh(meshData));
-		await Task.Run(() => meshHighestMagnitude.Add(CalculateHighestVector(meshData)));
+		//meshRenderers.Add(CreateMapMesh(meshData));
+		//await Task.Run(() => meshHighestMagnitude.Add(CalculateHighestVector(meshData)));
 
 
 		float magnitude = 0f;
@@ -201,7 +201,7 @@ public class MapLoader : MonoBehaviour {
 		transform.GetChild(0).localPosition = new Vector3(0, 0, zoomPos[zoomLevel - 1] > 1 ? zoomPos[zoomLevel - 1] : 1);
 		transform.parent.GetComponent<RectTransform>().GetWorldCorners(mapWindowCorners);
 
-		FixDistance();
+		//FixDistance();
 
 		gridDistanceIndicator.UpdateIndicator();
 		//isZooming = false;
@@ -337,7 +337,7 @@ public class MapLoader : MonoBehaviour {
 	}
 
 	public void ZoomOut() {
-		if (zoomLevel == zoomRanges.Length || !generated) return;
+		/*if (zoomLevel == zoomRanges.Length || !generated) return;
 		zoomLevel++;
 
 		UpdateMapSize();
@@ -349,7 +349,7 @@ public class MapLoader : MonoBehaviour {
 		} else {
 			UpdateMapRenderer(maxResolution);
 		}
-		markerManager.UpdateGroupings();
+		markerManager.UpdateGroupings();*/
 	}
 
 	private void UpdateMapSize() {
