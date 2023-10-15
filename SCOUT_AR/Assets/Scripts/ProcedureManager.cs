@@ -46,6 +46,7 @@ public class ProcedureManager : MonoBehaviour
 	}
 
 	public async void LoadProcedures() {
+		procedures.Clear();
 #if UNITY_EDITOR
 		string path = FileHelper.MakePath("Assets", "Data", "Procedures");
 		string[] files = Directory.GetFiles(path, "*.txt");

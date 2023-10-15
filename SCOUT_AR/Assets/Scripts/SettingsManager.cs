@@ -7,6 +7,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.XR.ARFoundation;
 
 public class SettingsManager : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class SettingsManager : MonoBehaviour
     public Follow[] mainBar;
     public PositionMenu[] menus;
 	public FuzzyGazeInteractor gazeInteractor;
+	public ARMeshManager meshManager;
 
 	public Slider[] sliders;
 
@@ -92,6 +94,14 @@ public class SettingsManager : MonoBehaviour
 	public void ActivateSliders() {
 		enable = false;
 		startTime = Time.time;
+	}
+
+	public void EnableSpatialMesh() {
+		meshManager.meshPrefab.GetComponent<MeshRenderer>().enabled = true;
+	}
+
+	public void DisableSpatialMesh() {
+		meshManager.meshPrefab.GetComponent<MeshRenderer>().enabled = false;
 	}
 }
 
