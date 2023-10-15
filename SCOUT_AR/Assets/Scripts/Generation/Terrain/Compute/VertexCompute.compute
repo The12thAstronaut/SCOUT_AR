@@ -151,7 +151,7 @@ RWStructuredBuffer<float3> Vertices;
 uint numVertices;
 
 // Convert 2D vertices (longitude/latitude coordinates) into 3D vertices (points on sphere)
-[numthreads(4,1,1)]
+[numthreads(16,1,1)]
 void AssignVertexHeights (uint3 id : SV_DispatchThreadID)
 {
 	if (id.x >= numVertices) { return; }

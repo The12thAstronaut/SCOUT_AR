@@ -38,8 +38,7 @@ public class MapPin : MonoBehaviour {
         mapWindow.GetLocalCorners(mapCorners);
 		gameObject.layer = LayerMask.NameToLayer("UI");
 		if (mapParent == null) {
-			//mapParent = mapLoader.transform.GetChild(0).GetChild(0);
-			mapParent = mapLoader.transform.parent;
+			mapParent = mapLoader.transform.GetChild(0).GetChild(0);
 		}
 
 		if (!isGroupMarker && worldMarker.mapMarker == null) {
@@ -120,7 +119,6 @@ public class MapPin : MonoBehaviour {
     public void StopPlacement() {
         Vector3 pos = mapWindow.transform.InverseTransformPoint(transform.TransformPoint(transform.position));
 
-		mapParent = mapLoader.transform.parent;
 		if (pos.x * pos.x < (mapWindow.sizeDelta.x / 2) * (mapWindow.sizeDelta.x / 2) && pos.y * pos.y < (mapWindow.sizeDelta.y / 2) * (mapWindow.sizeDelta.y / 2)) {
 			Debug.Log(mapParent);
 			moonPos = mapParent.GetChild(3/*1*/).InverseTransformPoint(transform.position);

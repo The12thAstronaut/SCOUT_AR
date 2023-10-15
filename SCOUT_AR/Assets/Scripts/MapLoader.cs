@@ -90,8 +90,6 @@ public class MapLoader : MonoBehaviour {
 		if (loadOnStart) {
 			Load();
 		}
-
-		//Load();
 		
 	}
 
@@ -123,7 +121,7 @@ public class MapLoader : MonoBehaviour {
 
 		loaded = true;
 		isLoading = false;
-		//UpdateMapRenderer(maxResolution);
+		UpdateMapRenderer(maxResolution);
 	}
 
 	public void Reload() {
@@ -157,7 +155,7 @@ public class MapLoader : MonoBehaviour {
 
 		transform.parent.GetComponent<RectTransform>().GetWorldCorners(mapWindowCorners);
 
-		/*for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			int x = 0;
 			while (!Physics.Raycast(mapWindowCorners[i], transform.parent.forward, 10000f, mapLayerMask)) {
 				if (x++ > 3) return;
@@ -183,25 +181,9 @@ public class MapLoader : MonoBehaviour {
 				await Task.Yield();
 				transform.parent.GetComponent<RectTransform>().GetWorldCorners(mapWindowCorners);
 			}
-		}*/
-
-		SimpleMeshData meshData = new SimpleMeshData("temp");
-		await Task.Run(() => meshData = CubeSphere.GenerateMesh(resolution, subdivisions, keys[count++]/*, centerPoint, zoomRanges[zoomLevel - 1] / moonBaseRadius*/));
-		//meshData = AssignMeshHeights(meshData);
-		//meshRenderers.Add(CreateMapMesh(meshData));
-		//await Task.Run(() => meshHighestMagnitude.Add(CalculateHighestVector(meshData)));
-
-
-		float magnitude = 0f;
-		foreach (float mag in meshHighestMagnitude) {
-			if (mag > magnitude) magnitude = mag;
 		}
 
-		zoomPos[zoomLevel - 1] = magnitude;
-		transform.GetChild(0).localPosition = new Vector3(0, 0, zoomPos[zoomLevel - 1] > 1 ? zoomPos[zoomLevel - 1] : 1);
-		transform.parent.GetComponent<RectTransform>().GetWorldCorners(mapWindowCorners);
-
-		//FixDistance();
+		FixDistance();
 
 		gridDistanceIndicator.UpdateIndicator();
 		//isZooming = false;
@@ -337,7 +319,7 @@ public class MapLoader : MonoBehaviour {
 	}
 
 	public void ZoomOut() {
-		/*if (zoomLevel == zoomRanges.Length || !generated) return;
+		if (zoomLevel == zoomRanges.Length || !generated) return;
 		zoomLevel++;
 
 		UpdateMapSize();
@@ -349,7 +331,7 @@ public class MapLoader : MonoBehaviour {
 		} else {
 			UpdateMapRenderer(maxResolution);
 		}
-		markerManager.UpdateGroupings();*/
+		markerManager.UpdateGroupings();
 	}
 
 	private void UpdateMapSize() {

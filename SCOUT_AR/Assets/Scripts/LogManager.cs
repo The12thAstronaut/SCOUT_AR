@@ -27,8 +27,6 @@ public class LogManager : MonoBehaviour
 	public int numLogs { get; set; }
 	public bool isEdittingLog { get; set; } = false;
 
-	public TextMeshProUGUI alertText;
-
 	private List<Log> logs = new List<Log>();
 	private string dateTime = "";
 	private bool updateReader = false;
@@ -174,8 +172,6 @@ public class LogManager : MonoBehaviour
 			updateReader = true;
 			isEdittingLog = false;
 		}
-
-		alertText.text = "Log Saved";
 	}
 
 	public void SelectLog(int index) {

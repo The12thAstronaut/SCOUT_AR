@@ -48,7 +48,7 @@ public class Compass : MonoBehaviour
 		Vector3 target = transform.position - Camera.main.transform.position;
 		float angle = Vector2.SignedAngle(new Vector2(Camera.main.transform.forward.x, Camera.main.transform.forward.z), new Vector2(target.x, target.z));
 
-		transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
+		transform.parent.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
 		transform.localRotation = Quaternion.Euler(0, 0, Camera.main.transform.rotation.eulerAngles.y - angle);
 
 		foreach (CompassPin pin in compassPins) {
@@ -76,6 +76,11 @@ public class Compass : MonoBehaviour
 
 		for (int i = 0; i < 4; i++) {
 			cardinalPoints[i].transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
+		}
+
+		foreach (Transform distanceMarker in distanceMarkers) {
+
+			distanceMarker.localRotation = Quaternion.Euler(0, 0, -(Camera.main.transform.rotation.eulerAngles.y - angle));
 		}
 
 		sunTransform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
@@ -184,7 +189,7 @@ public class Compass : MonoBehaviour
 			dirVec.y = dirVec.z;
 			dirVec.z = 0;
 
-			cardinalPoints[i].transform.localPosition = dirVec.normalized * radius * 1150f * (numRings + 1) / numRings;
+			cardinalPoints[i].transform.localPosition = dirVec.normalized * radius * 1180f * (numRings + 1) / numRings;
 			cardinalPoints[i].transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
 		}
 	}
