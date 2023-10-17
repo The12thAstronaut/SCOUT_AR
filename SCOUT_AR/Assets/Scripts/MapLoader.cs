@@ -69,7 +69,7 @@ public class MapLoader : MonoBehaviour {
 
 	ComputeBuffer spherePointsBuffer;
 
-	const int assignVertexHeightsKernel = 1;
+	const int assignVertexHeightsKernel = 0;
 
 	private int mapLayerMask = 1 << 3;
 	private MarkerManager markerManager;
@@ -156,12 +156,10 @@ public class MapLoader : MonoBehaviour {
 		transform.parent.GetComponent<RectTransform>().GetWorldCorners(mapWindowCorners);
 
 		for (int i = 0; i < 4; i++) {
-			int x = 0;
-			while (!Physics.Raycast(mapWindowCorners[i], transform.parent.forward, 10000f, mapLayerMask)) {
-				if (x++ > 3) return;
+			while (!Physics.Raycast(mapWindowCorners[i], transform.parent.forward, 10f, mapLayerMask)) {
 				SimpleMeshData meshData = new SimpleMeshData("temp");
-				await Task.Run(() => meshData = CubeSphere.GenerateMesh(resolution, subdivisions, keys[count++]));
-				//meshData = AssignMeshHeights(meshData);
+				await Task.Run(() => meshData = CubeSphere.GenerateMesh(resolution, subdivisions, keys[count]));
+				meshData = AssignMeshHeights(meshData, meshCenters[keys[count++]]);
 				meshRenderers.Add(CreateMapMesh(meshData));
 
 				await Task.Run(() => meshHighestMagnitude.Add(CalculateHighestVector(meshData)));
@@ -173,7 +171,7 @@ public class MapLoader : MonoBehaviour {
 				}
 
 				zoomPos[zoomLevel - 1] = magnitude;
-				transform.GetChild(0).localPosition = new Vector3(0, 0, zoomPos[zoomLevel - 1] > 1 ? zoomPos[zoomLevel - 1] : 1);
+				//transform.GetChild(0).localPosition = new Vector3(0, 0, zoomPos[zoomLevel - 1] > 1 ? zoomPos[zoomLevel - 1] : 1);
 
 				await Task.Yield();
 				await Task.Yield();
@@ -183,7 +181,7 @@ public class MapLoader : MonoBehaviour {
 			}
 		}
 
-		FixDistance();
+		//FixDistance();
 
 		gridDistanceIndicator.UpdateIndicator();
 		//isZooming = false;
@@ -222,16 +220,16 @@ public class MapLoader : MonoBehaviour {
 		}
 
 		zoomPos[zoomLevel - 1] = parentTransform.GetChild(1).InverseTransformPoint(hits[index].point).magnitude;
-		transform.GetChild(0).localPosition = new Vector3(0, 0, zoomPos[zoomLevel - 1] > 1 ? zoomPos[zoomLevel - 1] : 1);
+		//transform.GetChild(0).localPosition = new Vector3(0, 0, zoomPos[zoomLevel - 1] > 1 ? zoomPos[zoomLevel - 1] : 1);
 	}
 
 	private void LoadData() {
 		transform.GetChild(0).localPosition = Vector3.zero;
 		transform.GetChild(0).localRotation = Quaternion.identity;
 
-		float scale = mapSize * 2000000f / zoomRanges[zoomLevel - 1];
-		transform.localScale = new Vector3(scale, scale, scale);
-		parentTransform.GetChild(0).localScale = new Vector3(1 / scale, 1 / scale, 1 / scale);
+		//float scale = mapSize * 2000000f / zoomRanges[zoomLevel - 1];
+		//transform.localScale = new Vector3(scale, scale, scale);
+		//parentTransform.GetChild(0).localScale = new Vector3(1 / scale, 1 / scale, 1 / scale);
 
 		cornerPoints = CubeSphere.CreateCornerPoints(maxResolution, subdivisions);
 		for (int i = 0; i < cornerPoints.Length / 4; i++) {
@@ -308,7 +306,7 @@ public class MapLoader : MonoBehaviour {
 	public void ZoomIn() {
 		if (zoomLevel == 1 || !generated) return;
 		zoomLevel--;
-		transform.GetChild(0).localPosition = new Vector3(0, 0, zoomPos[zoomLevel - 1] > 1 ? zoomPos[zoomLevel - 1] : 1);
+		//transform.GetChild(0).localPosition = new Vector3(0, 0, zoomPos[zoomLevel - 1] > 1 ? zoomPos[zoomLevel - 1] : 1);
 
 		UpdateMapSize();
 
@@ -335,7 +333,8 @@ public class MapLoader : MonoBehaviour {
 	}
 
 	private void UpdateMapSize() {
-		float scale = mapSize * 2000000f / zoomRanges[zoomLevel - 1];
+		//float scale = mapSize * 2000000f / zoomRanges[zoomLevel - 1];
+		float scale = zoomRanges[0] / zoomRanges[zoomLevel - 1];
 
 		transform.localScale = new Vector3(scale, scale, scale);
 
@@ -350,12 +349,12 @@ public class MapLoader : MonoBehaviour {
 		}
 	}
 
-	private SimpleMeshData AssignMeshHeights(SimpleMeshData mesh) {
+	private SimpleMeshData AssignMeshHeights(SimpleMeshData mesh, Vector3 meshCenter) {
 
-		/*spherePointsBuffer = ComputeHelper.CreateStructuredBuffer<Vector3>(mesh.vertices.Length);
+		spherePointsBuffer = ComputeHelper.CreateStructuredBuffer<Vector3>(mesh.vertices.Length);
 		spherePointsBuffer.SetData(mesh.vertices);
 
-		vertexCompute.SetInt("numSpherePoints", spherePointsBuffer.count);
+		/*vertexCompute.SetInt("numSpherePoints", spherePointsBuffer.count);
 
 		// Assign heights to vertices:
 		// At this stage, vertices are all points on unit sphere.
@@ -363,17 +362,21 @@ public class MapLoader : MonoBehaviour {
 
 		ComputeBuffer vertexBuffer = ComputeHelper.CreateStructuredBuffer(mesh.vertices);
 		vertexCompute.SetBuffer(assignVertexHeightsKernel, "Vertices", vertexBuffer);
-		vertexCompute.SetInt("numVertices", vertexBuffer.count);*/
+		vertexCompute.SetInt("numVertices", vertexBuffer.count);
 
 		// Run the compute shader to assign heights, and then fetch the results
-		//ComputeHelper.Dispatch(vertexCompute, vertexBuffer.count, kernelIndex: assignVertexHeightsKernel);
+		ComputeHelper.Dispatch(vertexCompute, vertexBuffer.count, kernelIndex: assignVertexHeightsKernel);*/
 		Vector3[] vertices = mesh.vertices;//ComputeHelper.ReadDataFromBuffer<Vector3>(vertexBuffer, isAppendBuffer: false);
 
 		// Modify heights based on world radius and height multiplier
 		for (int i = 0; i < vertices.Length; i++) {
 			float heightT = vertices[i].magnitude - 1; // vertex magnitude is calculated in compute shader as 1 + heightT
 			float height = Mathf.Max(minHeight, heightSettings.heightMultiplier * heightT);
-			vertices[i] = vertices[i].normalized * (heightSettings.worldRadius + height);
+			vertices[i] = vertices[i].normalized;// * (heightSettings.worldRadius + height);
+
+			float scaleFactor = mapSize * 2000000f / zoomRanges[0];
+			vertices[i] -= meshCenter.normalized;// * (heightSettings.worldRadius * (1 + heightSettings.heightMultiplier));
+			vertices[i] *= scaleFactor;
 		}
 
 		// Normals
@@ -384,8 +387,8 @@ public class MapLoader : MonoBehaviour {
 		meshNormalsCompute.SetFloat("heightMultiplier", heightSettings.heightMultiplier);
 		ComputeBuffer normalsBuffer = ComputeHelper.CreateStructuredBuffer<Vector3>(vertexBuffer.count);
 		meshNormalsCompute.SetBuffer(0, "Normals", normalsBuffer);
-		//ComputeHelper.Dispatch(meshNormalsCompute, vertexBuffer.count);*/
-		Vector3[] normals = mesh.normals;//ComputeHelper.ReadDataFromBuffer<Vector3>(normalsBuffer, false);
+		ComputeHelper.Dispatch(meshNormalsCompute, vertexBuffer.count);*/
+		Vector3[] normals = mesh.normals;// ComputeHelper.ReadDataFromBuffer<Vector3>(normalsBuffer, false);
 
 		//Release
 		//ComputeHelper.Release(vertexBuffer, normalsBuffer, spherePointsBuffer);

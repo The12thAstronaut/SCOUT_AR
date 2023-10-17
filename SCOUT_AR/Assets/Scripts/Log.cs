@@ -33,7 +33,8 @@ public class Log
 
 	private async void LoadLog(string filePath) {
 #if WINDOWS_UWP
-		StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.GetFolderAsync("Logs");
+		//StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.GetFolderAsync("Logs");
+		StorageFolder storageFolder = await KnownFolders.Documents.GetFolderAsync("Logs");
 
 		StorageFile sampleFile = await storageFolder.GetFileAsync(filePath);
 
