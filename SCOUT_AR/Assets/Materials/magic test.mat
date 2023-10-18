@@ -10,7 +10,6 @@ Material:
   m_Name: magic test
   m_Shader: {fileID: 4800000, guid: df5380aa6ab293c4fafbb942ed5da93f, type: 3}
   m_ValidKeywords:
-  - _ADDITIVE_ON
   - _EDGE_SMOOTHING_AUTOMATIC
   - _SPECULAR_HIGHLIGHTS
   - _UI_CLIP_RECT_ROUNDED
@@ -21,9 +20,9 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: 2000
   stringTagMap:
-    RenderType: Fade
+    RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -68,10 +67,10 @@ Material:
     - _ColorMask: 15
     - _ColorWriteMask: 15
     - _CullMode: 0
-    - _CustomMode: 2
+    - _CustomMode: 0
     - _Cutoff: 0.5
     - _DirectionalLight: 0
-    - _DstBlend: 1
+    - _DstBlend: 0
     - _EdgeSmoothingMode: 1
     - _EdgeSmoothingValue: 0.25
     - _EnableChannelMap: 0
@@ -106,7 +105,7 @@ Material:
     - _Max_Intensity_: 0.5
     - _Metallic: 0
     - _MipmapBias: -2
-    - _Mode: 4
+    - _Mode: 0
     - _Motion_: 0
     - _NearLightFade: 0
     - _NearPlaneFade: 0
@@ -131,7 +130,7 @@ Material:
     - _SphericalHarmonics: 0
     - _SrcBlend: 1
     - _Stencil: 2
-    - _StencilComp: 4
+    - _StencilComp: 0
     - _StencilComparison: 0
     - _StencilOp: 0
     - _StencilOperation: 0
@@ -147,7 +146,7 @@ Material:
     - _ZOffsetFactor: 0
     - _ZOffsetUnits: 0
     - _ZTest: 4
-    - _ZWrite: 0
+    - _ZWrite: 1
     - unity_GUIZTestMode: 4
     m_Colors:
     - _BlurBackgroundRect: {r: 0, g: 0, b: 1, a: 1}
@@ -155,7 +154,7 @@ Material:
     - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
     - _ClipRectRadii: {r: 10, g: 10, b: 10, a: 10}
     - _ClippingBorderColor: {r: 1, g: 0.2, b: 0, a: 1}
-    - _Color: {r: 1, g: 0.69275033, b: 0.495283, a: 0.3137255}
+    - _Color: {r: 0.5283019, g: 0.30981812, b: 0.16696332, a: 1}
     - _Color_: {r: 0.48160002, g: 0.67080003, b: 0.86, a: 1}
     - _EmissiveColor: {r: 0, g: 0, b: 0, a: 1}
     - _EnvironmentColorX: {r: 1, g: 0, b: 0, a: 1}

@@ -155,12 +155,12 @@ public class MapLoader : MonoBehaviour {
 
 		transform.parent.GetComponent<RectTransform>().GetWorldCorners(mapWindowCorners);
 
-		for (int i = 0; i < 4; i++) {
-			while (!Physics.Raycast(mapWindowCorners[i], transform.parent.forward, 10f, mapLayerMask)) {
+		/*for (int i = 0; i < 4; i++) {
+			while (!Physics.Raycast(mapWindowCorners[i], transform.parent.forward, 10000f, mapLayerMask)) {
 				SimpleMeshData meshData = new SimpleMeshData("temp");
 				await Task.Run(() => meshData = CubeSphere.GenerateMesh(resolution, subdivisions, keys[count]));
 				meshData = AssignMeshHeights(meshData, meshCenters[keys[count++]]);
-				meshRenderers.Add(CreateMapMesh(meshData));
+				//meshRenderers.Add(CreateMapMesh(meshData));
 
 				await Task.Run(() => meshHighestMagnitude.Add(CalculateHighestVector(meshData)));
 
@@ -179,7 +179,31 @@ public class MapLoader : MonoBehaviour {
 				await Task.Yield();
 				transform.parent.GetComponent<RectTransform>().GetWorldCorners(mapWindowCorners);
 			}
+		}*/
+
+		SimpleMeshData meshData = new SimpleMeshData("temp");
+		await Task.Run(() => meshData = CubeSphere.GenerateMesh(resolution, subdivisions, keys[count]));
+		meshData = AssignMeshHeights(meshData, meshCenters[keys[count++]]);
+		meshRenderers.Add(CreateMapMesh(meshData));
+
+		await Task.Run(() => meshHighestMagnitude.Add(CalculateHighestVector(meshData)));
+
+
+		float magnitude = 0f;
+		foreach (float mag in meshHighestMagnitude) {
+			if (mag > magnitude) magnitude = mag;
 		}
+
+		zoomPos[zoomLevel - 1] = magnitude;
+		//transform.GetChild(0).localPosition = new Vector3(0, 0, zoomPos[zoomLevel - 1] > 1 ? zoomPos[zoomLevel - 1] : 1);
+
+		await Task.Yield();
+		await Task.Yield();
+		await Task.Yield();
+		await Task.Yield();
+		transform.parent.GetComponent<RectTransform>().GetWorldCorners(mapWindowCorners);
+
+
 
 		//FixDistance();
 
@@ -188,7 +212,7 @@ public class MapLoader : MonoBehaviour {
 
 		RaycastHit hit;
 		Physics.Raycast(transform.parent.transform.position, transform.parent.transform.forward, out hit, 10000f, mapLayerMask);
-		worldPosition = transform.parent.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(1).transform.InverseTransformPoint(hit.point);
+		//worldPosition = transform.parent.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(1).transform.InverseTransformPoint(hit.point);
 		generated = true;
 	}
 
@@ -351,10 +375,10 @@ public class MapLoader : MonoBehaviour {
 
 	private SimpleMeshData AssignMeshHeights(SimpleMeshData mesh, Vector3 meshCenter) {
 
-		spherePointsBuffer = ComputeHelper.CreateStructuredBuffer<Vector3>(mesh.vertices.Length);
+		/*spherePointsBuffer = ComputeHelper.CreateStructuredBuffer<Vector3>(mesh.vertices.Length);
 		spherePointsBuffer.SetData(mesh.vertices);
 
-		/*vertexCompute.SetInt("numSpherePoints", spherePointsBuffer.count);
+		vertexCompute.SetInt("numSpherePoints", spherePointsBuffer.count);
 
 		// Assign heights to vertices:
 		// At this stage, vertices are all points on unit sphere.
@@ -370,13 +394,13 @@ public class MapLoader : MonoBehaviour {
 
 		// Modify heights based on world radius and height multiplier
 		for (int i = 0; i < vertices.Length; i++) {
-			float heightT = vertices[i].magnitude - 1; // vertex magnitude is calculated in compute shader as 1 + heightT
-			float height = Mathf.Max(minHeight, heightSettings.heightMultiplier * heightT);
-			vertices[i] = vertices[i].normalized;// * (heightSettings.worldRadius + height);
+			//float heightT = vertices[i].magnitude - 1; // vertex magnitude is calculated in compute shader as 1 + heightT
+			//float height = Mathf.Max(minHeight, heightSettings.heightMultiplier * heightT);
+			//vertices[i] = vertices[i].normalized;// * (heightSettings.worldRadius + height);
 
 			float scaleFactor = mapSize * 2000000f / zoomRanges[0];
-			vertices[i] -= meshCenter.normalized;// * (heightSettings.worldRadius * (1 + heightSettings.heightMultiplier));
 			vertices[i] *= scaleFactor;
+			vertices[i] -= meshCenters[keys[0]] * scaleFactor;// * (heightSettings.worldRadius * (1 + heightSettings.heightMultiplier));
 		}
 
 		// Normals

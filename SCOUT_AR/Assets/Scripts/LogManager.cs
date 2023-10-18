@@ -77,8 +77,7 @@ public class LogManager : MonoBehaviour
 		}
 #endif
 #if WINDOWS_UWP
-		//StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("Logs", CreationCollisionOption.OpenIfExists);
-		StorageFolder storageFolder = await KnownFolders.DocumentsLibrary.CreateFolderAsync("Logs", CreationCollisionOption.OpenIfExists);
+		StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("Logs", CreationCollisionOption.OpenIfExists);
 
 		IReadOnlyList<IStorageItem> itemsInFolder = await storageFolder.GetItemsAsync();
 
@@ -129,8 +128,7 @@ public class LogManager : MonoBehaviour
 #if WINDOWS_UWP
 		string fileName = logDateTimeDisplay.text.Replace(' ', '_').Replace(':', '-') + ".txt";
 
-		//StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("Logs", CreationCollisionOption.OpenIfExists);
-		StorageFolder storageFolder = await KnownFolders.DocumentsLibrary.CreateFolderAsync("Logs", CreationCollisionOption.OpenIfExists);
+		StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("Logs", CreationCollisionOption.OpenIfExists);
 		StorageFile file = await storageFolder.CreateFileAsync(fileName, CreationCollisionOption.OpenIfExists);
 
 		var stream = await file.OpenAsync(FileAccessMode.ReadWrite);
