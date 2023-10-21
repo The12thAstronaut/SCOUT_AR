@@ -84,6 +84,7 @@ public class MapLoader : MonoBehaviour {
 
 		if (useStencil) {
 			mat = new Material(mat);
+			mat.SetFloat("_StencilComp", 4);
 			mat.SetFloat("_StencilComparison", 4);
 		}
 		
@@ -155,12 +156,15 @@ public class MapLoader : MonoBehaviour {
 
 		transform.parent.GetComponent<RectTransform>().GetWorldCorners(mapWindowCorners);
 
-		/*for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			while (!Physics.Raycast(mapWindowCorners[i], transform.parent.forward, 10000f, mapLayerMask)) {
 				SimpleMeshData meshData = new SimpleMeshData("temp");
 				await Task.Run(() => meshData = CubeSphere.GenerateMesh(resolution, subdivisions, keys[count]));
 				meshData = AssignMeshHeights(meshData, meshCenters[keys[count++]]);
-				//meshRenderers.Add(CreateMapMesh(meshData));
+				meshRenderers.Add(CreateMapMesh(meshData));
+
+				float scaleFactor = mapSize * 2000000f / zoomRanges[0];
+				meshRenderers[meshRenderers.Count - 1].transform.localPosition -= meshCenters[keys[0]] * scaleFactor;
 
 				await Task.Run(() => meshHighestMagnitude.Add(CalculateHighestVector(meshData)));
 
@@ -179,12 +183,15 @@ public class MapLoader : MonoBehaviour {
 				await Task.Yield();
 				transform.parent.GetComponent<RectTransform>().GetWorldCorners(mapWindowCorners);
 			}
-		}*/
+		}
 
-		SimpleMeshData meshData = new SimpleMeshData("temp");
+		/*SimpleMeshData meshData = new SimpleMeshData("temp");
 		await Task.Run(() => meshData = CubeSphere.GenerateMesh(resolution, subdivisions, keys[count]));
 		meshData = AssignMeshHeights(meshData, meshCenters[keys[count++]]);
 		meshRenderers.Add(CreateMapMesh(meshData));
+
+		float scaleFactor = mapSize * 2000000f / zoomRanges[0];
+		meshRenderers[meshRenderers.Count - 1].transform.localPosition -= meshCenters[keys[0]] * scaleFactor;
 
 		await Task.Run(() => meshHighestMagnitude.Add(CalculateHighestVector(meshData)));
 
@@ -201,7 +208,7 @@ public class MapLoader : MonoBehaviour {
 		await Task.Yield();
 		await Task.Yield();
 		await Task.Yield();
-		transform.parent.GetComponent<RectTransform>().GetWorldCorners(mapWindowCorners);
+		transform.parent.GetComponent<RectTransform>().GetWorldCorners(mapWindowCorners);*/
 
 
 
@@ -400,7 +407,7 @@ public class MapLoader : MonoBehaviour {
 
 			float scaleFactor = mapSize * 2000000f / zoomRanges[0];
 			vertices[i] *= scaleFactor;
-			vertices[i] -= meshCenters[keys[0]] * scaleFactor;// * (heightSettings.worldRadius * (1 + heightSettings.heightMultiplier));
+			//vertices[i] -= meshCenters[keys[0]] * scaleFactor;// * (heightSettings.worldRadius * (1 + heightSettings.heightMultiplier));
 		}
 
 		// Normals
