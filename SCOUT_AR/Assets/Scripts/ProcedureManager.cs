@@ -7,6 +7,11 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Threading.Tasks;
+using Slider = Microsoft.MixedReality.Toolkit.UX.Slider;
+using System.Reflection;
+using UnityEngine.UIElements;
+
+
 #if WINDOWS_UWP
 using Windows.Storage;
 #endif
@@ -20,11 +25,19 @@ public class ProcedureManager : MonoBehaviour
 	public GameObject stepReaderMenu;
 	public TextMeshProUGUI stepProgressText;
 	public Transform proceduresToggleCollection;
+	public Transform taskWristPanel;
+	public Slider taskProgressSlider;
+	public RectTransform taskSliderIndicator;
+	public TextMeshProUGUI taskProgressText;
+	public TextMeshProUGUI taskText;
+
 
 	public string activeStepInstruction { get; set; }
 	public int activeStepIndex { get; set; }
 	public Procedure activeProcedure { get; private set; }
 	public int numProcedures { get; set; }
+
+	private float sliderWidth;
 
 	private List<Procedure> procedures = new List<Procedure>();
 	List<Tuple<string, int>> activeSteps = new List<Tuple<string, int>>();
@@ -35,6 +48,8 @@ public class ProcedureManager : MonoBehaviour
     {
 		procedureScrollList.OnVisible = PopulateProcedureButton;
 		procedureScrollList.OnInvisible = DepopulateProcedureButton;
+
+		sliderWidth = taskProgressSlider.gameObject.GetComponent<RectTransform>().sizeDelta.x;
 
 		LoadProcedures();
 	}
@@ -123,6 +138,22 @@ public class ProcedureManager : MonoBehaviour
 			GenerateRichText(i);
 		}
 
+		GoToStep(activeProcedure.currentStep);
+
+		//UpdateReaderText();
+	}
+
+	public void DeactivateProcedure(int index) {
+
+		activeProcedure = null;
+
+		foreach (Transform child in proceduresToggleCollection) {
+			child.GetComponent<PressableButton>().ForceSetToggled(false);
+		}
+
+		activeSteps.Clear();
+		activeRichText.Clear();
+
 		UpdateReaderText();
 	}
 
@@ -151,6 +182,20 @@ public class ProcedureManager : MonoBehaviour
 				float perc = (activeProcedure.currentStep - linesOnReader / 2) / (activeProcedure.totalSteps - linesOnReader);
 				stepScrollbar.value = Mathf.Clamp01(1 - perc);
 			}
+
+			// Update Task Wrist Panel
+			taskText.text = activeSteps[activeProcedure.currentStep].Item1;
+			taskProgressSlider.Value = (activeProcedure.currentStep + 1f) / activeProcedure.totalSteps;
+			taskSliderIndicator.localPosition = new Vector3((activeProcedure.currentStep / activeProcedure.totalSteps - 0.5f) * sliderWidth, taskSliderIndicator.localPosition.y, taskSliderIndicator.localPosition.z);
+			taskProgressText.text = activeProcedure.currentStep.ToString("D2") + "/" + activeProcedure.totalSteps.ToString();
+		}
+	}
+
+	public void SetTaskVisibility(bool visible) {
+		if (activeProcedure != null && visible) {
+			taskWristPanel.gameObject.SetActive(true);
+		} else {
+			taskWristPanel.gameObject.SetActive(false);
 		}
 	}
 

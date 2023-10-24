@@ -33,7 +33,7 @@ public class MapLoader : MonoBehaviour {
 	private List<float> meshHighestMagnitude = new List<float>();
 	private bool isLoading = false;
 
-	[SerializeField] float[] zoomRanges = { 50f, 100f, 200f, 500f, 1000f, 5000f, 10000f, 20000f, 50000f, 100000f, 200000f, 400000f };
+	[SerializeField] public float[] zoomRanges = { 50f, 100f, 200f, 500f, 1000f, 5000f, 10000f, 20000f, 50000f, 100000f, 200000f, 400000f };
 	[Range(1, 12)]public int zoomLevel = 1;
 
 	/*public ComputeShader mapCompute;
@@ -152,6 +152,8 @@ public class MapLoader : MonoBehaviour {
 		await Task.Yield();
 		await Task.Yield();
 
+		float scaleFactor = mapSize * 2000000f / zoomRanges[0];
+
 		try { zoomPos[zoomLevel - 1] = zoomPos[zoomLevel - 2]; } catch {  }
 
 		transform.parent.GetComponent<RectTransform>().GetWorldCorners(mapWindowCorners);
@@ -163,8 +165,7 @@ public class MapLoader : MonoBehaviour {
 				meshData = AssignMeshHeights(meshData, meshCenters[keys[count++]]);
 				meshRenderers.Add(CreateMapMesh(meshData));
 
-				float scaleFactor = mapSize * 2000000f / zoomRanges[0];
-				meshRenderers[meshRenderers.Count - 1].transform.localPosition -= meshCenters[keys[0]] * scaleFactor;
+				meshRenderers[meshRenderers.Count - 1].transform.localPosition = /*meshCenters[keys[0]]*/-centerPoint * scaleFactor;
 
 				await Task.Run(() => meshHighestMagnitude.Add(CalculateHighestVector(meshData)));
 
@@ -219,7 +220,9 @@ public class MapLoader : MonoBehaviour {
 
 		RaycastHit hit;
 		Physics.Raycast(transform.parent.transform.position, transform.parent.transform.forward, out hit, 10000f, mapLayerMask);
-		//worldPosition = transform.parent.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(1).transform.InverseTransformPoint(hit.point);
+		worldPosition = transform.parent.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(1).transform.InverseTransformPoint(hit.point);
+		//meshRenderers[meshRenderers.Count - 1].transform.localPosition -= parentTransform.GetChild(1).InverseTransformPoint(transform.position) - worldPosition;
+
 		generated = true;
 	}
 

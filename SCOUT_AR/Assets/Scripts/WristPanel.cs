@@ -33,8 +33,9 @@ public class WristPanel : MonoBehaviour
         transform.GetChild(0).LookAt(Camera.main.transform);
         float angle = -transform.GetChild(0).localEulerAngles.x;
 
-		transform.GetChild(0).localRotation = Quaternion.Euler(0, -67, 27f);
-        transform.GetChild(0).rotation *= Quaternion.AngleAxis(angle, transform.GetChild(0).right);
+		//transform.GetChild(0).localRotation = Quaternion.Euler(0, -67, 27f);
+		transform.GetChild(0).localRotation = Quaternion.Euler(167f, 0f, 124f);
+		//transform.GetChild(0).rotation *= Quaternion.AngleAxis(angle, transform.GetChild(0).right);
 
         // Setting position
 		transform.localPosition = transform.GetChild(0).up * heightOffset + transform.GetChild(0).right * armOffset;

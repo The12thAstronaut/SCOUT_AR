@@ -40,8 +40,10 @@ public class MarkerViewer : MonoBehaviour
 	}
 
     public void CloseViewer() {
-		targetMarkerButton.ForceSetToggled(false);
-        markerManager.TargetSelected(true);
+        if (markerManager.selectedMarker.isTargeted) {
+			targetMarkerButton.ForceSetToggled(false);
+			markerManager.TargetSelected(true);
+		}
 		gameObject.SetActive(false);
 		generalViewer.SetActive(true);
 	}

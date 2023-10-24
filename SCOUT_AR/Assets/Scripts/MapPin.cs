@@ -83,7 +83,7 @@ public class MapPin : MonoBehaviour {
 			worldMarker.transform.position = Camera.main.transform.position + new Vector3(dist * Mathf.Cos(angleFromRight * Mathf.Deg2Rad), manager.markerYOffset, dist * Mathf.Sin(angleFromRight * Mathf.Deg2Rad));
 		}
 
-		if (worldMarker.movedWhileMapClosed && (passedTime += Time.deltaTime) > .01f) {
+		if (worldMarker.movedWhileMapClosed && (passedTime += Time.deltaTime) > .1f) {
 			manager.movedCount--;
 			worldMarker.UpdateLongLat();
 			if (manager.movedCount == 0) {
@@ -105,13 +105,10 @@ public class MapPin : MonoBehaviour {
 
 	public void PositionFromLocalMarker() {
 		unitSpherePos = GeoMaths.CoordinateToPoint(longLat);
-		//Debug.Log(unitSpherePos.x);
-		//Debug.Log(longLat.longitude + " : " + longLat.latitude);
+
 		RaycastHit hit;
-		//Physics.Raycast(mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 1) / manager.telemetryManager.moonBaseRadius)), -mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 1) / manager.telemetryManager.moonBaseRadius)) + mapParent.GetChild(1).TransformPoint(Vector3.zero), out hit, manager.telemetryManager.moonMaxRadius - manager.telemetryManager.moonBaseRadius + 1f, Physics.IgnoreRaycastLayer);
-		Physics.Raycast(mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 100) / manager.telemetryManager.moonBaseRadius)), -mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 100) / manager.telemetryManager.moonBaseRadius)) + mapParent.GetChild(1).TransformPoint(Vector3.zero), out hit, manager.telemetryManager.moonMaxRadius - manager.telemetryManager.moonBaseRadius + 100f, mapLayerMask);
-		//Debug.DrawRay(mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 10) / manager.telemetryManager.moonBaseRadius)), -mapParent.GetChild(1).TransformPoint(unitSpherePos * ((manager.telemetryManager.moonMaxRadius + 10) / manager.telemetryManager.moonBaseRadius)) + mapParent.GetChild(1).TransformPoint(Vector3.zero));
-		//Debug.Log(hit.transform.name + ": " + hit.transform.position);
+		Physics.Raycast(mapParent.GetChild(1).TransformPoint(unitSpherePos * (mapLoader.mapSize * 2000000f / mapLoader.zoomRanges[0]) * ((manager.telemetryManager.moonMaxRadius + 100) / manager.telemetryManager.moonBaseRadius)), -mapParent.GetChild(1).TransformPoint(unitSpherePos * (mapLoader.mapSize * 2000000f / mapLoader.zoomRanges[0]) * ((manager.telemetryManager.moonMaxRadius + 100) / manager.telemetryManager.moonBaseRadius)) + mapParent.GetChild(1).TransformPoint(Vector3.zero), out hit, (manager.telemetryManager.moonMaxRadius - manager.telemetryManager.moonBaseRadius + 100f) * (mapLoader.mapSize * 2000000f / mapLoader.zoomRanges[0]), mapLayerMask);
+
 		transform.position = hit.point;
 		transform.rotation = mapWindow.rotation;
 	}
@@ -120,8 +117,7 @@ public class MapPin : MonoBehaviour {
         Vector3 pos = mapWindow.transform.InverseTransformPoint(transform.TransformPoint(transform.position));
 
 		if (pos.x * pos.x < (mapWindow.sizeDelta.x / 2) * (mapWindow.sizeDelta.x / 2) && pos.y * pos.y < (mapWindow.sizeDelta.y / 2) * (mapWindow.sizeDelta.y / 2)) {
-			Debug.Log(mapParent);
-			moonPos = mapParent.GetChild(3/*1*/).InverseTransformPoint(transform.position);
+			moonPos = mapParent.GetChild(/*3*/1).InverseTransformPoint(transform.position);
 			unitSpherePos = moonPos.normalized;
 			longLat = GeoMaths.PointToCoordinate(unitSpherePos);
 
@@ -130,7 +126,7 @@ public class MapPin : MonoBehaviour {
 
 			//SetHandDetectors(true);
 
-			Debug.Log(longLat.longitude + ", " + longLat.latitude);
+			Debug.Log(longLat.ConvertToDegrees().longitude + ", " + longLat.ConvertToDegrees().latitude);
 		} else {
             manager.isPlacing = false;
 

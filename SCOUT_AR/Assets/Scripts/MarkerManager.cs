@@ -317,7 +317,8 @@ public class MarkerManager : MonoBehaviour {
 			Vector3 unitSpherePos = avgPoint.normalized;
 			Transform mapParent = mapLoader.transform.GetChild(0).GetChild(0);
 			RaycastHit hit;
-			Physics.Raycast(mapParent.GetChild(1).TransformPoint(unitSpherePos * ((telemetryManager.moonMaxRadius + 1) / telemetryManager.moonBaseRadius)), -mapParent.GetChild(1).TransformPoint(unitSpherePos * ((telemetryManager.moonMaxRadius + 1) / telemetryManager.moonBaseRadius)) + mapParent.GetChild(1).TransformPoint(Vector3.zero), out hit, telemetryManager.moonMaxRadius - telemetryManager.moonBaseRadius + 1f, mapLayerMask);
+			Physics.Raycast(mapParent.GetChild(1).TransformPoint(unitSpherePos * (mapLoader.mapSize * 2000000f / mapLoader.zoomRanges[0]) * ((telemetryManager.moonMaxRadius + 100) / telemetryManager.moonBaseRadius)), -mapParent.GetChild(1).TransformPoint(unitSpherePos * (mapLoader.mapSize * 2000000f / mapLoader.zoomRanges[0]) * ((telemetryManager.moonMaxRadius + 100) / telemetryManager.moonBaseRadius)) + mapParent.GetChild(1).TransformPoint(Vector3.zero), out hit, (telemetryManager.moonMaxRadius - telemetryManager.moonBaseRadius + 100f) * (mapLoader.mapSize * 2000000f / mapLoader.zoomRanges[0]), mapLayerMask);
+
 			group.groupMapMarker.transform.position = hit.point;
 
 		}

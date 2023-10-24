@@ -1447,6 +1447,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mapParent: {fileID: 0}
+  test: {fileID: 919132149155446097, guid: 10456a0bea08f424d991c20845b342b6, type: 3}
 --- !u!1 &9096015655695397038
 GameObject:
   m_ObjectHideFlags: 0

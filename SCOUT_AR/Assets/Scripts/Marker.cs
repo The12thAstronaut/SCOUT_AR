@@ -119,7 +119,7 @@ public class Marker : MonoBehaviour
 		}
 
 		//mapMarker.SetHandDetectors(true);
-		Debug.Log(mapMarker.longLat.longitude + ", " + mapMarker.longLat.latitude);
+		Debug.Log(mapMarker.longLat.ConvertToDegrees().longitude + ", " + mapMarker.longLat.ConvertToDegrees().latitude);
 	}
 
 	public void UpdateInfo() {
