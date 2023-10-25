@@ -8,6 +8,8 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using System.Threading.Tasks;
+using Microsoft.MixedReality.Toolkit.Subsystems;
+using Microsoft.MixedReality.Toolkit;
 #if WINDOWS_UWP
 using Windows.Storage;
 #endif
@@ -21,6 +23,7 @@ public class LogManager : MonoBehaviour
 	public TextMeshProUGUI logDateTimeDisplay;
 	public Transform logToggleCollection;
 	public PressableButton closeCreatorButton;
+	public AudioSource audioSource;
 
 	public int activeLogIndex { get; set; }
 	public Log activeLog { get; private set; }
@@ -31,9 +34,13 @@ public class LogManager : MonoBehaviour
 	private string dateTime = "";
 	private bool updateReader = false;
 
+	private TextToSpeechSubsystem textToSpeechSubsystem;
+
 	// Start is called before the first frame update
 	void Start()
     {
+		textToSpeechSubsystem = XRSubsystemHelpers.GetFirstRunningSubsystem<TextToSpeechSubsystem>();
+
 		logScrollList.OnVisible = PopulateLogButton;
 		logScrollList.OnInvisible = DepopulateLogButton;
 
@@ -198,11 +205,29 @@ public class LogManager : MonoBehaviour
 		logReader.text = readerText;
 	}
 
-	public void EditLog() {
+	public void ClearLogEditor() {
+		logSubjectInputField.text = "";
+		logContentInputField.text = "";
+	}
+
+	public async void EditLog() {
 		isEdittingLog = true;
+		await Task.Yield();
 
 		logSubjectInputField.text = activeLog.logName;
 		logContentInputField.text = activeLog.logContentText;
 		logDateTimeDisplay.text = activeLog.dateTime;
+	}
+
+	public void TTSLogContent() {
+		if (activeLog != null & textToSpeechSubsystem != null) {
+			textToSpeechSubsystem.TrySpeak("Log Name: " + activeLog.logName + "\n\n" + activeLog.logContentText, audioSource);
+		}
+	}
+
+	public void TTSLogEditor() {
+		if (textToSpeechSubsystem != null) {
+			textToSpeechSubsystem.TrySpeak("Log Name: " + logSubjectInputField.text + "\n\n" + logContentInputField.text, audioSource);
+		}
 	}
 }
