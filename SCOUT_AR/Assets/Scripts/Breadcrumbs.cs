@@ -9,8 +9,11 @@ public class Breadcrumbs : MonoBehaviour
     public float minVertexDistance = 2.0f;
     public float checkTime = 2.0f;
     public int maxVertices = 10000;
+    public GameObject footprintPrefab;
     public Transform trackedObject;
+    public Transform footprintCollection;
     public List<Vector3> breadTrailPoints { get; private set; } = new List<Vector3>();
+    public List<Transform> trailFootprints { get; private set; } = new List<Transform>();
 
     private LineRenderer lineRenderer;
     // Start is called before the first frame update
@@ -28,6 +31,11 @@ public class Breadcrumbs : MonoBehaviour
         
     }
 
+    public void SetVisible(bool visible) {
+        //lineRenderer.enabled = visible;
+        footprintCollection.gameObject.SetActive(visible);
+    }
+
     private void CheckVertex() {
         Vector3 point = trackedObject.position - Vector3.up * (trackedObject.parent.position.y - trailYOffset);
 
@@ -37,10 +45,20 @@ public class Breadcrumbs : MonoBehaviour
                 breadTrailPoints.RemoveAt(0);
             }
 
-            breadTrailPoints.Add(point);
-        }
+            if(trailFootprints.Count > maxVertices) {
+                trailFootprints.RemoveAt(0);
+            }
 
-        lineRenderer.positionCount = breadTrailPoints.Count;
-        lineRenderer.SetPosition(lineRenderer.positionCount - 1, breadTrailPoints[breadTrailPoints.Count - 1]);
+            breadTrailPoints.Add(point);
+
+			lineRenderer.positionCount = breadTrailPoints.Count;
+			lineRenderer.SetPosition(lineRenderer.positionCount - 1, breadTrailPoints[breadTrailPoints.Count - 1]);
+
+			Vector3 cameraDir = Camera.main.transform.forward;
+			cameraDir.y = 0;
+			Transform footprint = Instantiate(footprintPrefab, point, Quaternion.LookRotation(cameraDir), footprintCollection).transform;
+
+            trailFootprints.Add(footprint);
+		}
     }
 }

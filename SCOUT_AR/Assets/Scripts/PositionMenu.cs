@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.XR.ARFoundation;
 
 public class PositionMenu : MonoBehaviour
 {
@@ -25,6 +26,7 @@ public class PositionMenu : MonoBehaviour
 	private Vector3 target;
 	private SettingsManager settingsManager;
 	private ObjectManipulator manipulator;
+	private ARAnchor menuAnchor;
 	private float defaultBackplateMaterialRadius;
 	private float defaultBackplateMaterialWidth;
 
@@ -35,6 +37,7 @@ public class PositionMenu : MonoBehaviour
 
 		if (settingsManager == null) settingsManager = GameObject.Find("SettingsManager").GetComponent<SettingsManager>();
 		if (manipulator == null) manipulator = transform.GetComponentInChildren<ObjectManipulator>();
+		if (menuAnchor == null) menuAnchor = transform.GetComponent<ARAnchor>();
 
 		defaultBackplateMaterialRadius = contentBackplateMaterial.GetFloat("_Radius_");
 		defaultBackplateMaterialWidth = contentBackplateMaterial.GetFloat("_Line_Width_");
@@ -125,8 +128,10 @@ public class PositionMenu : MonoBehaviour
 	public void PinMenu(bool pinned) {
 		isPinned = pinned;
 		if (isPinned) {
+			menuAnchor.enabled = true;
 			manipulator.AllowedManipulations = Microsoft.MixedReality.Toolkit.TransformFlags.Move | Microsoft.MixedReality.Toolkit.TransformFlags.Rotate;
 		} else {
+			menuAnchor.enabled = false;
 			manipulator.AllowedManipulations = Microsoft.MixedReality.Toolkit.TransformFlags.Move;
 			ApplyConstraints();
 		}

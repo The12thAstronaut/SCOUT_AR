@@ -10,6 +10,10 @@ using System.Threading.Tasks;
 using Slider = Microsoft.MixedReality.Toolkit.UX.Slider;
 using System.Reflection;
 using UnityEngine.UIElements;
+using Microsoft.MixedReality.Toolkit.Subsystems;
+using Microsoft.MixedReality.Toolkit;
+
+
 
 
 #if WINDOWS_UWP
@@ -30,7 +34,7 @@ public class ProcedureManager : MonoBehaviour
 	public RectTransform taskSliderIndicator;
 	public TextMeshProUGUI taskProgressText;
 	public TextMeshProUGUI taskText;
-
+	public AudioSource audioSource;
 
 	public string activeStepInstruction { get; set; }
 	public int activeStepIndex { get; set; }
@@ -43,9 +47,12 @@ public class ProcedureManager : MonoBehaviour
 	List<Tuple<string, int>> activeSteps = new List<Tuple<string, int>>();
 	private List<string> activeRichText = new List<string>();
 
+	private TextToSpeechSubsystem textToSpeechSubsystem;
+
 	// Start is called before the first frame update
-	void Start()
-    {
+	void Start() {
+		textToSpeechSubsystem = XRSubsystemHelpers.GetFirstRunningSubsystem<TextToSpeechSubsystem>();
+
 		procedureScrollList.OnVisible = PopulateProcedureButton;
 		procedureScrollList.OnInvisible = DepopulateProcedureButton;
 
@@ -186,7 +193,8 @@ public class ProcedureManager : MonoBehaviour
 			// Update Task Wrist Panel
 			taskText.text = activeSteps[activeProcedure.currentStep].Item1;
 			taskProgressSlider.Value = (activeProcedure.currentStep + 1f) / activeProcedure.totalSteps;
-			taskSliderIndicator.localPosition = new Vector3((activeProcedure.currentStep / activeProcedure.totalSteps - 0.5f) * sliderWidth, taskSliderIndicator.localPosition.y, taskSliderIndicator.localPosition.z);
+			sliderWidth = taskProgressSlider.gameObject.GetComponent<RectTransform>().sizeDelta.x;
+			taskSliderIndicator.localPosition = new Vector3(((activeProcedure.currentStep + 1f) / activeProcedure.totalSteps - 0.5f) * sliderWidth, taskSliderIndicator.localPosition.y, taskSliderIndicator.localPosition.z);
 			taskProgressText.text = activeProcedure.currentStep.ToString("D2") + "/" + activeProcedure.totalSteps.ToString();
 		}
 	}
@@ -196,6 +204,12 @@ public class ProcedureManager : MonoBehaviour
 			taskWristPanel.gameObject.SetActive(true);
 		} else {
 			taskWristPanel.gameObject.SetActive(false);
+		}
+	}
+
+	public void TTSProcedureStep() {
+		if (activeProcedure != null & textToSpeechSubsystem != null) {
+			textToSpeechSubsystem.TrySpeak("Step " + (activeProcedure.currentStep + 1) + "\n\n" + activeSteps[activeProcedure.currentStep].Item1, audioSource);
 		}
 	}
 
