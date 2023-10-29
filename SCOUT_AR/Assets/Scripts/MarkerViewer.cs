@@ -14,6 +14,7 @@ public class MarkerViewer : MonoBehaviour
     public GameObject iconPicker;
     public GameObject generalViewer;
     public PressableButton targetMarkerButton;
+    public PressableButton mapButton;
 
     // Start is called before the first frame update
     void Start()
@@ -28,6 +29,8 @@ public class MarkerViewer : MonoBehaviour
     }
 
     public void OpenViewer() {
+        mapButton.ForceSetToggled(true);
+
 		generalViewer.SetActive(false);
 		gameObject.SetActive(true);
 		nameInput.text = markerManager.selectedMarker.markerName;

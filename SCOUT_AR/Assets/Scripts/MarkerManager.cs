@@ -204,6 +204,7 @@ public class MarkerManager : MonoBehaviour {
 			infoCard.transform.GetChild(2).GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = markers[index].markerName;
 			infoCard.transform.GetChild(2).GetChild(0).GetChild(3).GetComponent<TextMeshProUGUI>().text = $"{markers[index].distance.ToString("0.##")} m";
 			infoCard.transform.GetComponent<MarkerInfoCard>().marker = markers[index];
+			markers[index].markerInfoCard = infoCard.transform.GetComponent<MarkerInfoCard>();
 			infoCard.transform.GetComponent<MarkerInfoCard>().index = index;
 			infoCard.transform.GetComponent<MarkerInfoCard>().markerManager = this;
 			infoCard.transform.GetComponent<MarkerInfoCard>().infoCardIcon.CurrentIconName = markers[index].currentIconName;

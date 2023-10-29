@@ -15,12 +15,14 @@ public class Marker : MonoBehaviour
 	public MapPin mapMarker { get; set; }
 	public FontIconSelector markerIcon;
 	public TextMeshProUGUI markerIconColor;
+	public MarkerInfoCard markerInfoCard { get; set; }
 	public int index { get; set; }
 	public string currentIconName { get; set; }
 	
 	public bool movedWhileMapClosed { get; set; }
 
 	public bool isTargeted { get; set; }
+
 
 	// Start is called before the first frame update
 	void Start() {
@@ -83,6 +85,10 @@ public class Marker : MonoBehaviour
 		float newLongitude = manager.telemetryManager.longitudeLatitude.longitude + (relativePos.x / manager.telemetryManager.moonBaseRadius) * (180f / Mathf.PI) / Mathf.Cos(manager.telemetryManager.longitudeLatitude.latitude * Mathf.PI / 180f);
 		mapMarker.longLat = new Coordinate(newLongitude * Mathf.Deg2Rad, newLatitude * Mathf.Deg2Rad);
 
+		if (markerInfoCard != null) {
+			markerInfoCard.UpdateLongLatText();
+		}
+
 		if (mapMarker.mapParent.gameObject.activeInHierarchy) {
 			mapMarker.PositionFromLocalMarker();
 		} else {
@@ -125,6 +131,10 @@ public class Marker : MonoBehaviour
 	public void UpdateInfo() {
 		//if (mapMarker != null && manager.mapWindow.gameObject.activeInHierarchy) mapMarker.markerIcon.CurrentIconName = currentIconName;
 		markerIcon.CurrentIconName = currentIconName;
+		if (markerInfoCard != null) {
+			markerInfoCard.infoCardIcon.CurrentIconName = currentIconName;
+			markerInfoCard.markerName.text = markerName;
+		}
 		transform.GetChild(1).transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = markerName;
 	}
 }
