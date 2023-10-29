@@ -35,11 +35,13 @@ public class LogManager : MonoBehaviour
 	private bool updateReader = false;
 
 	private TextToSpeechSubsystem textToSpeechSubsystem;
+	private DictationSubsystem dictationSubsystem;
 
 	// Start is called before the first frame update
 	void Start()
     {
 		textToSpeechSubsystem = XRSubsystemHelpers.GetFirstRunningSubsystem<TextToSpeechSubsystem>();
+		//dictationSubsystem = XRSubsystemHelpers.GetFirstRunningSubsystem<DictationSubsystem>();
 
 		logScrollList.OnVisible = PopulateLogButton;
 		logScrollList.OnInvisible = DepopulateLogButton;
@@ -228,6 +230,60 @@ public class LogManager : MonoBehaviour
 	public void TTSLogEditor() {
 		if (textToSpeechSubsystem != null) {
 			textToSpeechSubsystem.TrySpeak("Log Name: " + logSubjectInputField.text + "\n\n" + logContentInputField.text, audioSource);
+		}
+	}
+
+	public void VoiceInputContent() {
+
+	}
+
+	/// <summary>
+	/// Start dictation on a DictationSubsystem.
+	/// </summary>
+	public void StartRecognition() {
+		// Make sure there isn't an ongoing recognition session
+		StopRecognition();
+
+		dictationSubsystem = XRSubsystemHelpers.GetFirstRunningSubsystem<DictationSubsystem>();
+		if (dictationSubsystem != null) {
+			dictationSubsystem.Recognizing += DictationSubsystem_Recognizing;
+			dictationSubsystem.Recognized += DictationSubsystem_Recognized;
+			dictationSubsystem.RecognitionFinished += DictationSubsystem_RecognitionFinished;
+			dictationSubsystem.RecognitionFaulted += DictationSubsystem_RecognitionFaulted;
+			dictationSubsystem.StartDictation();
+		} else {
+			//OnRecognitionFaulted.Invoke("Cannot find a running DictationSubsystem. Please check the MRTK profile settings " +
+			//	"(Project Settings -> MRTK3) and/or ensure a DictationSubsystem is running.");
+		}
+	}
+
+	private void DictationSubsystem_RecognitionFaulted(DictationSessionEventArgs obj) {
+		//OnRecognitionFaulted.Invoke("Recognition faulted. Reason: " + obj.ReasonString);
+	}
+
+	private void DictationSubsystem_RecognitionFinished(DictationSessionEventArgs obj) {
+		//OnRecognitionFinished.Invoke("Recognition finished. Reason: " + obj.ReasonString);
+	}
+
+	private void DictationSubsystem_Recognized(DictationResultEventArgs obj) {
+		//OnSpeechRecognized.Invoke("Recognized:" + obj.Result);
+	}
+
+	private void DictationSubsystem_Recognizing(DictationResultEventArgs obj) {
+		//OnSpeechRecognizing.Invoke("Recognizing:" + obj.Result);
+	}
+
+	/// <summary>
+	/// Stop dictation on the current DictationSubsystem.
+	/// </summary>
+	public void StopRecognition() {
+		if (dictationSubsystem != null) {
+			dictationSubsystem.StopDictation();
+			dictationSubsystem.Recognizing -= DictationSubsystem_Recognizing;
+			dictationSubsystem.Recognized -= DictationSubsystem_Recognized;
+			dictationSubsystem.RecognitionFinished -= DictationSubsystem_RecognitionFinished;
+			dictationSubsystem.RecognitionFaulted -= DictationSubsystem_RecognitionFaulted;
+			dictationSubsystem = null;
 		}
 	}
 }

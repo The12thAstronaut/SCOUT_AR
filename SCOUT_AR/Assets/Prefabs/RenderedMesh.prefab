@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7518300017817157109}
   m_Layer: 6
   m_Name: RenderedMesh
-  m_TagString: Untagged
+  m_TagString: AR Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

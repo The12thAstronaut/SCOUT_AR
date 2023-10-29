@@ -1,0 +1,44 @@
+Ensure that all switches are set to off
+Power on EMU-1
+	Switch EMU-1 Power to ON
+	When the SUIT is booted (emu1_is_booted), proceed
+Prepare UIA
+	Switch O2 Vent to OPEN
+	When UIA Supply Pressure (uia_ < 23 psi, proceed
+	Switch O2 Vent to CLOSE
+Purge N2
+	Switch O2 Supply to OPEN
+	When UIA Supply Pressure is > 3000 psi, proceed
+	Switch O2 Supply to CLOSE
+	Switch O2 Vent to OPEN
+	When UIA Supply Pressure is < 23 psi, proceed
+	Switch O2 Vent to CLOSE
+Initial O2 Pressurization
+	Switch O2 Supply to OPEN
+	When UIA Supply Pressure is > 1500 psi, proceed
+	Switch O2 Supply to CLOSE
+Fill EMU Water
+	Dump wastewater
+		Switch EV-1 Waste to
+		When water level if < 5%, proceed
+		Switch EV-1 Waste to CLOSE
+	Refill EMU Water
+		Switch EV-1 Supply to OPEN
+		When water level is > 95%, proceed
+		Switch EV-1 Supply to CLOSE
+Depressurize Airlock to 10.2 psi
+	Switch Depress Pump to ON
+	IF the pump faults:
+		Switch the Depress Pump to OFF
+		When the fault goes away, proceed
+		Switch the Depress Pump to ON
+	When airlock pressure is < 10.2 psi, proceed
+Complete EMU Pressurization
+	Switch O2 Supply to OPEN
+	When UIA Supply Pressure > 3000 psi, proceed
+	Switch O2 Supply to CLOSE
+Complete Airlock Depressurization
+	Switch Depress Pump to ON
+	When airlock pressure is < 0.1 psi, proceed
+	Switch Depress Pump to OFF
+UIA Procedures are complete, exit the airlock

@@ -357,7 +357,7 @@ public class MapLoader : MonoBehaviour {
 		UpdateMapSize();
 		zoomLevelIndicator.text = "Zoom Scale: " + zoomLevel;
 
-		if (zoomLevel >= 11) {
+		if (zoomRanges[zoomLevel - 1] >= 50000f) {
 			RemoveFarMeshes(-1);
 			UpdateMapRenderer(minResolution);
 		} else {

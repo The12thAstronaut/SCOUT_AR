@@ -16,7 +16,6 @@ public class SettingsManager : MonoBehaviour
     public Follow[] mainBar;
     public PositionMenu[] menus;
 	public FuzzyGazeInteractor gazeInteractor;
-	public ARMeshManager meshManager;
 
 	public Slider[] sliders;
 
@@ -97,11 +96,17 @@ public class SettingsManager : MonoBehaviour
 	}
 
 	public void EnableSpatialMesh() {
-		meshManager.meshPrefab.GetComponent<MeshRenderer>().enabled = true;
+		GameObject[] terrain = GameObject.FindGameObjectsWithTag("AR Terrain");
+		foreach (GameObject obj in terrain) {
+			obj.transform.GetComponent<MeshRenderer>().enabled = true;
+		}
 	}
 
 	public void DisableSpatialMesh() {
-		meshManager.meshPrefab.GetComponent<MeshRenderer>().enabled = false;
+		GameObject[] terrain = GameObject.FindGameObjectsWithTag("AR Terrain");
+		foreach (GameObject obj in terrain) {
+			obj.transform.GetComponent<MeshRenderer>().enabled = false;
+		}
 	}
 }
 

@@ -30,6 +30,14 @@ public class SpeechManager : MonoBehaviour
     {
         
     }
+
+    public void StartPhraseRecognition() {
+        keywordRecognitionSubsystem.Start();
+    }
+
+	public void StopPhraseRecognition() {
+		keywordRecognitionSubsystem.Stop();
+	}
 }
 
 [System.Serializable]
