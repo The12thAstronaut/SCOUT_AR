@@ -36,6 +36,8 @@ public class ProcedureManager : MonoBehaviour
 	public TextMeshProUGUI taskText;
 	public AudioSource audioSource;
 
+	public TextMeshProUGUI temp;
+
 	public string activeStepInstruction { get; set; }
 	public int activeStepIndex { get; set; }
 	public Procedure activeProcedure { get; private set; }
@@ -89,11 +91,10 @@ public class ProcedureManager : MonoBehaviour
 		foreach (IStorageItem item in itemsInFolder)
 		{
 			if(item.IsOfType(StorageItemTypes.Folder)) {
-				Debug.Log("Folder: " + item.Name);
 				numProcedures--;
 			} else {
-				Debug.Log("File: " + item.Name + ", " + item.DateCreated);
 				procedures.Add(new Procedure(item.Name));
+				temp.text = item.Name + procedures[procedures.Count - 1].procedureName + procedures[procedures.Count - 1].steps[0].text;
 			}
 		}
 #endif
@@ -174,9 +175,9 @@ public class ProcedureManager : MonoBehaviour
 
 	public void GoToStep(int stepNum) {
 		if (stepNum >= 0 && stepNum < activeProcedure.totalSteps) {
-			int temp = activeProcedure.currentStep;
+			int lastStepNum = activeProcedure.currentStep;
 			activeProcedure.currentStep = stepNum;
-			GenerateRichText(temp);
+			GenerateRichText(lastStepNum);
 			GenerateRichText(stepNum);
 
 			UpdateReaderText();

@@ -29,10 +29,13 @@ public class PositionMenu : MonoBehaviour
 	private ARAnchor menuAnchor;
 	private float defaultBackplateMaterialRadius;
 	private float defaultBackplateMaterialWidth;
+	private Transform menuManager;
 
 	// Start is called before the first frame update
 	void Start()
     {
+		menuManager = transform.parent;
+
 		contentBackplateMaterial = Instantiate<Material>(contentBackplateMaterial);
 
 		if (settingsManager == null) settingsManager = GameObject.Find("SettingsManager").GetComponent<SettingsManager>();
@@ -99,6 +102,8 @@ public class PositionMenu : MonoBehaviour
 	}
 
 	public void OpenMenu() {
+		pinButton.ForceSetToggled(false);
+
 		if (settingsManager == null) settingsManager = GameObject.Find("SettingsManager").GetComponent<SettingsManager>();
 		Vector3 focus = Camera.main.transform.forward;
 		focus.y = yOffset;
@@ -130,9 +135,11 @@ public class PositionMenu : MonoBehaviour
 		if (isPinned) {
 			menuAnchor.enabled = true;
 			manipulator.AllowedManipulations = Microsoft.MixedReality.Toolkit.TransformFlags.Move | Microsoft.MixedReality.Toolkit.TransformFlags.Rotate;
+			transform.parent = null;
 		} else {
 			menuAnchor.enabled = false;
 			manipulator.AllowedManipulations = Microsoft.MixedReality.Toolkit.TransformFlags.Move;
+			transform.parent = menuManager;
 			ApplyConstraints();
 		}
 	}

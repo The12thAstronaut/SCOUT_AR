@@ -34,7 +34,7 @@ public class MapLoader : MonoBehaviour {
 	private bool isLoading = false;
 
 	[SerializeField] public float[] zoomRanges = { 50f, 100f, 200f, 500f, 1000f, 5000f, 10000f, 20000f, 50000f, 100000f, 200000f, 400000f };
-	[Range(1, 12)]public int zoomLevel = 1;
+	[Range(1, 14)]public int zoomLevel = 1;
 
 	/*public ComputeShader mapCompute;
 

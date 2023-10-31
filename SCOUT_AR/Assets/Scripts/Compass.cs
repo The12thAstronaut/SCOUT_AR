@@ -254,7 +254,9 @@ public class Compass : MonoBehaviour
 		terrain = GameObject.FindGameObjectsWithTag("AR Terrain");
 		isInsideRange = new bool[terrain.Length];
 
-		Vector3 cameraPos = Camera.main.transform.position + Vector3.up * Camera.main.transform.position.y;
+		//nearEnvironmentCollection.localPosition = new Vector3(0f, 0f, -2f * Camera.main.transform.position.y * radius * 1000 / (numRings * distancePerRing));
+
+		Vector3 cameraPos = Camera.main.transform.position;// + Vector3.up * Camera.main.transform.position.y;
 		for (int i = 0; i < terrain.Length; i++) {
 			isInsideRange[i] = false;
 
@@ -268,6 +270,7 @@ public class Compass : MonoBehaviour
 
 			if (isInsideRange[i]) {
 				nearEnvironment.Add(Instantiate(terrain[i], nearEnvironmentCollection, false).transform);
+				nearEnvironment[nearEnvironment.Count - 1].GetComponent<MeshRenderer>().enabled = true;
 				nearEnvironment[nearEnvironment.Count - 1].GetComponent<MeshRenderer>().sharedMaterial = environmentMat;
 				nearEnvironment[nearEnvironment.Count - 1].GetComponent<MeshFilter>().mesh.Optimize();
 				nearEnvironment[nearEnvironment.Count - 1].localScale *= radius * 1000 / (numRings * distancePerRing);
@@ -285,7 +288,9 @@ public class Compass : MonoBehaviour
 
 	private void MoveNearEnvironment() {
 
-		Vector3 cameraPos = Camera.main.transform.position + Vector3.up * Camera.main.transform.position.y;
+		Vector3 cameraPos = Camera.main.transform.position;// + Vector3.up * Camera.main.transform.position.y;
+
+		//nearEnvironmentCollection.localPosition = new Vector3(0f, 0f, -2f * Camera.main.transform.position.y * radius * 1000 / (numRings * distancePerRing));
 
 		for (int i = 0; i < terrain.Length; i++) {
 

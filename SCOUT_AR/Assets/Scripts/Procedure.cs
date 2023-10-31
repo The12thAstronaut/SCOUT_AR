@@ -44,8 +44,8 @@ public class Procedure
 
 		using (var inputStream = stream.GetInputStreamAt(0)) {
 			using (var dataReader = new Windows.Storage.Streams.DataReader(inputStream)) {
-				dataReader.UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding.Utf8;
-                dataReader.ByteOrder = Windows.Storage.Streams.ByteOrder.LittleEndian;
+				//dataReader.UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding.Utf8;
+                //dataReader.ByteOrder = Windows.Storage.Streams.ByteOrder.LittleEndian;
 
 				await dataReader.LoadAsync((uint)stream.Size);
 
