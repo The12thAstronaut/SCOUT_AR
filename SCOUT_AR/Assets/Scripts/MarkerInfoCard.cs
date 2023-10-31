@@ -31,7 +31,7 @@ public class MarkerInfoCard : MonoBehaviour
 		if (marker == null) {
 			return;
 		}
-		distanceText.text = $"{marker.distance.ToString("0.##")} m";
+		distanceText.text = $"Distance: {marker.distance.ToString("0.##")} m";
 	}
 
 	public void UpdateLongLatText() {

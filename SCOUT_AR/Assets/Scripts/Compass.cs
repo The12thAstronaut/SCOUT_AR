@@ -42,6 +42,9 @@ public class Compass : MonoBehaviour
 	private GameObject[] cardinalPoints = new GameObject[4];
 	private List<Transform> distanceMarkers = new List<Transform>();
 	private List<Transform> nearEnvironment = new List<Transform>();
+	private GameObject[] terrain;
+	private bool[] isInsideRange;
+	private bool hasNearEnvironment = false;
 
 	void Start() {
 		lineDrawers = new LineRenderer[numRings];
@@ -88,6 +91,10 @@ public class Compass : MonoBehaviour
 		}
 
 		sunTransform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
+
+		if (hasNearEnvironment) {
+			MoveNearEnvironment();
+		}
 	}
 
 	void DrawCompass() {
@@ -99,7 +106,7 @@ public class Compass : MonoBehaviour
 		InvokeRepeating("FindSolarDirection", 0, 10);
 		DrawMarkings();
 
-		InvokeRepeating("UpdateNearEnvironment", 5, 10);
+		InvokeRepeating("UpdateNearEnvironment", 4, 10);
 	}
 
 	void DrawCompassRing(LineRenderer lineDrawer, float segmentRadius) {
@@ -244,8 +251,8 @@ public class Compass : MonoBehaviour
 		}
 		nearEnvironment.Clear();
 
-		GameObject[] terrain = GameObject.FindGameObjectsWithTag("AR Terrain");
-		bool[] isInsideRange = new bool[terrain.Length];
+		terrain = GameObject.FindGameObjectsWithTag("AR Terrain");
+		isInsideRange = new bool[terrain.Length];
 
 		Vector3 cameraPos = Camera.main.transform.position + Vector3.up * Camera.main.transform.position.y;
 		for (int i = 0; i < terrain.Length; i++) {
@@ -263,13 +270,32 @@ public class Compass : MonoBehaviour
 				nearEnvironment.Add(Instantiate(terrain[i], nearEnvironmentCollection, false).transform);
 				nearEnvironment[nearEnvironment.Count - 1].GetComponent<MeshRenderer>().sharedMaterial = environmentMat;
 				nearEnvironment[nearEnvironment.Count - 1].GetComponent<MeshFilter>().mesh.Optimize();
-				//nearEnvironment[nearEnvironment.Count - 1].localRotation *= Quaternion.AngleAxis(-90f, nearEnvironmentCollection.right);
-				nearEnvironment[nearEnvironment.Count - 1].localScale *= radius * 100;
+				nearEnvironment[nearEnvironment.Count - 1].localScale *= radius * 1000 / (numRings * distancePerRing);
 				nearEnvironment[nearEnvironment.Count - 1].localPosition *= radius * 1000 / (numRings * distancePerRing);
 				nearEnvironment[nearEnvironment.Count - 1].gameObject.tag = "Compass Terrain";
 			}
 
 			terrain[i].transform.position += cameraPos;
+		}
+
+		if (nearEnvironment.Count > 0) {
+			hasNearEnvironment = true;
+		}
+	}
+
+	private void MoveNearEnvironment() {
+
+		Vector3 cameraPos = Camera.main.transform.position + Vector3.up * Camera.main.transform.position.y;
+
+		for (int i = 0; i < terrain.Length; i++) {
+
+			int count = 0;
+			if (isInsideRange[i]) {
+				nearEnvironment[count].localPosition = terrain[i].transform.position - cameraPos;
+				nearEnvironment[count].localRotation = terrain[i].transform.rotation;
+				nearEnvironment[count].localPosition *= radius * 1000 / (numRings * distancePerRing);
+				count++;
+			}
 		}
 	}
 }
