@@ -75,5 +75,6 @@ public class MarkerViewer : MonoBehaviour
     public void MoveMarker() {
         markerManager.mapMarkers[markerManager.selectedMarker.index].SetBeingPlaced(true);
 		markerManager.mapMarkers[markerManager.selectedMarker.index].GetComponent<TapToPlace>().StartPlacement();
+		markerManager.mapMarkers[markerManager.selectedMarker.index].GetComponent<TapToPlace>().StartPlacement();
 	}
 }

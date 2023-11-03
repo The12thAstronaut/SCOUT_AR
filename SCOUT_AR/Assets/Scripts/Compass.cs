@@ -56,7 +56,8 @@ public class Compass : MonoBehaviour
 		float angle = Vector2.SignedAngle(new Vector2(Camera.main.transform.forward.x, Camera.main.transform.forward.z), new Vector2(target.x, target.z));
 
 		transform.parent.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
-		transform.localRotation = Quaternion.Euler(0, 0, Camera.main.transform.rotation.eulerAngles.y - angle);
+		transform.localRotation = Quaternion.Euler(0f, 0f, Camera.main.transform.rotation.eulerAngles.y - angle);
+		lineMarkings.localRotation = Quaternion.Euler(0f, 0f, -telemetryManager.northAngle);
 
 		foreach (CompassPin pin in compassPins) {
 			Vector3 pinVec = pin.refMarker.transform.position - transform.position;

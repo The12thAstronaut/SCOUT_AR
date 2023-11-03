@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: MagicWindowBackplate
+  m_Name: CompassMagicWindow
   m_Shader: {fileID: 4800000, guid: c331f6c43a2ef0945864cb668f2653c9, type: 3}
   m_ValidKeywords:
   - _ALPHABLEND_ON
@@ -181,7 +181,7 @@ Material:
     - _StencilComparison: 7
     - _StencilOperation: 2
     - _StencilReadMask: 255
-    - _StencilReference: 2
+    - _StencilReference: 1
     - _StencilWriteMask: 255
     - _TriplanarMappingBlendSharpness: 6.43
     - _UVSec: 0

@@ -219,9 +219,13 @@ public class MapLoader : MonoBehaviour {
 		//isZooming = false;
 
 		RaycastHit hit;
-		Physics.Raycast(transform.parent.transform.position, transform.parent.transform.forward, out hit, 10000f, mapLayerMask);
-		worldPosition = transform.parent.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(1).transform.InverseTransformPoint(hit.point);
+		Physics.Raycast(transform.parent.position, transform.forward, out hit, 10000f, mapLayerMask);
+		worldPosition = transform.GetChild(0).GetChild(0).GetChild(1).InverseTransformPoint(hit.point);
 		//meshRenderers[meshRenderers.Count - 1].transform.localPosition -= parentTransform.GetChild(1).InverseTransformPoint(transform.position) - worldPosition;
+
+		GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+		cube.transform.position = transform.GetChild(0).GetChild(0).GetChild(1).TransformPoint(worldPosition);
+		cube.transform.localScale *= 0.01f;
 
 		generated = true;
 	}
@@ -309,8 +313,8 @@ public class MapLoader : MonoBehaviour {
 		Array.Sort(distances, keys);
 
 		RaycastHit hit;
-		Physics.Raycast(transform.parent.transform.position, transform.parent.transform.forward, out hit, 100f, mapLayerMask);
-		try { worldPosition = transform.parent.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(1).transform.InverseTransformPoint(hit.point); } catch { }
+		Physics.Raycast(transform.parent.position, transform.forward, out hit, 100f, mapLayerMask);
+		try { worldPosition = transform.GetChild(0).GetChild(0).GetChild(1).InverseTransformPoint(hit.point); } catch { }
 	}
 
 	float CalculateHighestVector(SimpleMeshData meshData) {

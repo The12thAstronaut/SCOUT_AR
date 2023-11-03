@@ -81,6 +81,8 @@ public class Marker : MonoBehaviour
 	public void UpdateLongLat() {
 		movedWhileMapClosed = false;
 		Vector3 relativePos = transform.position - Camera.main.transform.position;
+		relativePos = Quaternion.AngleAxis(-manager.telemetryManager.northAngle, Vector3.up) * relativePos;
+
 		float newLatitude = manager.telemetryManager.longitudeLatitude.latitude + (relativePos.z / manager.telemetryManager.moonBaseRadius) * (180f / Mathf.PI);
 		float newLongitude = manager.telemetryManager.longitudeLatitude.longitude + (relativePos.x / manager.telemetryManager.moonBaseRadius) * (180f / Mathf.PI) / Mathf.Cos(manager.telemetryManager.longitudeLatitude.latitude * Mathf.PI / 180f);
 		mapMarker.longLat = new Coordinate(newLongitude * Mathf.Deg2Rad, newLatitude * Mathf.Deg2Rad);
@@ -95,19 +97,6 @@ public class Marker : MonoBehaviour
 			movedWhileMapClosed = true;
 			manager.movedCount++;
 		}
-
-		/*
-		Vector3 pos = mapLoader.transform.GetChild(0).GetChild(0).GetChild(1).transform.InverseTransformPoint(transform.position);
-		float angle = Mathf.Atan2(Vector3.Magnitude(Vector3.Cross(mapLoader.worldPosition, pos)), Vector3.Dot(mapLoader.worldPosition, pos));
-		float dist = (angle * 1719145f);
-
-		float angleFromRight = Mathf.Atan2(pos.y - mapLoader.worldPosition.y, pos.x - mapLoader.worldPosition.x) * Mathf.Rad2Deg;
-		//float angleDepth = Mathf.Atan2(pos.z - mapLoader.worldPosition.z, pos.y - mapLoader.worldPosition.y) * Mathf.Rad2Deg;
-		//float angleDepth = Vector3.SignedAngle(mapLoader.worldPosition, pos, Vector3.forward);
-		//Debug.Log(angleDepth);
-
-		worldMarker.transform.position = Camera.main.transform.position + new Vector3(dist * Mathf.Cos(angleFromRight * Mathf.Deg2Rad), manager.markerYOffset, dist * Mathf.Sin(angleFromRight * Mathf.Deg2Rad));
-		*/
 	}
 
 	public void StartPlacement() {

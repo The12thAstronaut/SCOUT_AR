@@ -1398,16 +1398,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateLinkedTransform: 0
-  moveLerpTime: 0.01
-  rotateLerpTime: 0.01
+  moveLerpTime: 0.12
+  rotateLerpTime: 0.12
   scaleLerpTime: 0
   maintainScaleOnInitialization: 1
   smoothing: 1
   lifetime: 0
   placementActionReference: {fileID: -6131295136447488360, guid: 18c412191cdc9274897f101c7fd5316f, type: 3}
   autoStart: 1
-  defaultPlacementDistance: 0.6
-  maxRaycastDistance: 10
+  defaultPlacementDistance: 1
+  maxRaycastDistance: 20
   surfaceNormalOffset: 0
   useDefaultSurfaceNormalOffset: 1
   keepOrientationVertical: 1
@@ -1447,7 +1447,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mapParent: {fileID: 0}
-  test: {fileID: 919132149155446097, guid: 10456a0bea08f424d991c20845b342b6, type: 3}
 --- !u!1 &9096015655695397038
 GameObject:
   m_ObjectHideFlags: 0

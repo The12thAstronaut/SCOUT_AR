@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class MapPin : MonoBehaviour {
     public GameObject rightHandDetector { get; set; }
@@ -27,6 +28,7 @@ public class MapPin : MonoBehaviour {
 	public Transform mapParent;
 	public bool isGroupMarker { get; set; }
 	public int groupIndex { get; set; }
+	public bool queuedReposition { get; set; } = false;
 
 	private int mapLayerMask = 1 << 3;
 	private bool waitNextFrame = true;
@@ -72,15 +74,11 @@ public class MapPin : MonoBehaviour {
 			unitSpherePos = moonPos.normalized;
 			longLat = GeoMaths.PointToCoordinate(unitSpherePos);
 
-			float angle = Mathf.Atan2(Vector3.Magnitude(Vector3.Cross(mapLoader.worldPosition, moonPos)), Vector3.Dot(mapLoader.worldPosition, moonPos));
-			float dist = (angle * manager.telemetryManager.moonBaseRadius);
+			PositionLocalMarker();
 
-			float angleFromRight = Mathf.Atan2(moonPos.y - mapLoader.worldPosition.y, moonPos.x - mapLoader.worldPosition.x) * Mathf.Rad2Deg;
-			//float angleDepth = Mathf.Atan2(pos.z - mapLoader.worldPosition.z, pos.y - mapLoader.worldPosition.y) * Mathf.Rad2Deg;
-			//float angleDepth = Vector3.SignedAngle(mapLoader.worldPosition, pos, Vector3.forward);
-			//Debug.Log(angleDepth);
+			//float angle = Mathf.Atan2(Vector3.Magnitude(Vector3.Cross(mapLoader.worldPosition, moonPos)), Vector3.Dot(mapLoader.worldPosition, moonPos));
+			//float dist = (angle * manager.telemetryManager.moonBaseRadius);
 
-			worldMarker.transform.position = Camera.main.transform.position + new Vector3(dist * Mathf.Cos(angleFromRight * Mathf.Deg2Rad), manager.markerYOffset, dist * Mathf.Sin(angleFromRight * Mathf.Deg2Rad));
 		}
 
 		if (worldMarker.movedWhileMapClosed && (passedTime += Time.deltaTime) > .1f) {
@@ -101,7 +99,27 @@ public class MapPin : MonoBehaviour {
 		} else {
 			markerColor.color = Color.white;
 		}
+
+		if (queuedReposition) {
+			PositionLocalMarker();
+			queuedReposition = false;
+		}
     }
+
+	public void PositionLocalMarker() {
+		if (mapParent == null) {
+			mapParent = mapLoader.transform.GetChild(0).GetChild(0);
+		}
+
+		//moonPos = mapParent.GetChild(1).InverseTransformPoint(transform.position);
+		//unitSpherePos = moonPos.normalized;
+		//longLat = GeoMaths.PointToCoordinate(unitSpherePos);
+
+		float relativeZ = (longLat.latitude / Mathf.Deg2Rad - manager.telemetryManager.longitudeLatitude.latitude) * manager.telemetryManager.moonBaseRadius / Mathf.Rad2Deg;
+		float relativeX = (longLat.longitude / Mathf.Deg2Rad - manager.telemetryManager.longitudeLatitude.longitude) * Mathf.Cos(manager.telemetryManager.longitudeLatitude.latitude * Mathf.Deg2Rad) * manager.telemetryManager.moonBaseRadius / Mathf.Rad2Deg;
+
+		worldMarker.transform.position = Camera.main.transform.position + Quaternion.AngleAxis(manager.telemetryManager.northAngle, Vector3.up) * new Vector3(relativeX, manager.markerYOffset, relativeZ);
+	}
 
 	public void PositionFromLocalMarker() {
 		unitSpherePos = GeoMaths.CoordinateToPoint(longLat);
@@ -126,7 +144,6 @@ public class MapPin : MonoBehaviour {
 
 			//SetHandDetectors(true);
 
-			Debug.Log(longLat.ConvertToDegrees().longitude + ", " + longLat.ConvertToDegrees().latitude);
 		} else {
             manager.isPlacing = false;
 
@@ -147,6 +164,8 @@ public class MapPin : MonoBehaviour {
 		//await Task.Delay(1000);
 		transform.GetComponent<PressableButton>().enabled = !isPlacing;
 		manager.isPlacing = isPlacing;
+
+		PositionLocalMarker();
 	}
 
 	public void SelectMarker() {

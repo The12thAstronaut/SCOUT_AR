@@ -336,6 +336,12 @@ public class MarkerManager : MonoBehaviour {
 		isTargetingPin = true;
 		targetDeltaTime = 0;
 	}
+
+	public void ResetLocalMarkers() {
+		foreach (MapPin pin in mapMarkers) {
+			pin.PositionLocalMarker();
+		}
+	}
 }
 
 public struct MarkerGroup {

@@ -5,26 +5,39 @@ using UnityEngine;
 using UnityEngine.Events;
 
 public class TelemetryManager : MonoBehaviour {
-	public Vector3 unitSpherePos {  get; private set; }
 	public CoordinateDegrees longitudeLatitude;
 	public float moonBaseRadius = 1719145; // meters
 	public float moonMaxRadius = 1758957;
 	public ClientAPI clientAPI;
 	public TextMeshProUGUI coordinatesDisplayText;
 
+	public Vector3 unitSpherePos { get; private set; }
+	public Vector3 northVector { get; private set; }
+	public float northAngle { get; private set; }
+
 	public UnityEvent onLocationUpdate;
+	public UnityEvent onNorthUpdate;
 
 	void Start()
     {
 		InvokeRepeating("UpdatePosition", 0f, 5f);
-    }
+		northVector = Vector3.forward;
+		northAngle = Vector3.SignedAngle(Vector3.forward, northVector, Vector3.up);
+	}
 
     void Update()
     {
         
     }
 
+	public void SetNorth() {
+		Vector3 northVec = Camera.main.transform.forward;
+		northVec.y = 0;
+		northVector = northVec.normalized;
+		northAngle = Vector3.SignedAngle(Vector3.forward, northVector, Vector3.up);
 
+		onNorthUpdate.Invoke();
+	}
 
     private void UpdatePosition() {
 #if WINDOWS_UWP

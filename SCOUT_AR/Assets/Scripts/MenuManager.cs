@@ -19,13 +19,12 @@ public class MenuManager : MonoBehaviour
     public void OpenMenu(Transform menu) {
         menu.gameObject.SetActive(true);
         PositionMenu menuPositioner = menu.GetComponent<PositionMenu>();
-        menuPositioner.pinButton.ForceSetToggled(false);
         menuPositioner.OpenMenu();
     }
 
 	public void CloseMenu(Transform menu) {
 		PositionMenu menuPositioner = menu.GetComponent<PositionMenu>();
-		menuPositioner.pinButton.ForceSetToggled(true);
+		menuPositioner.pinButton.ForceSetToggled(false);
 		menu.gameObject.SetActive(false);
 	}
 }
