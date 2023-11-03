@@ -97,7 +97,7 @@ public class MarkerManager : MonoBehaviour {
 	}
 
 	public void CreateAnchorPlace() {
-        if (!isPlacing && inputName.text != "") {
+        if (!isPlacing) {
 			isPlacing = true;
 
 			GameObject marker = CreateLocalMarker();
@@ -111,21 +111,17 @@ public class MarkerManager : MonoBehaviour {
 			mapMarker.SetBeingPlaced(false);
 
 			mapMarkers.Add(mapMarker);
-
-		} else {
-			Debug.Log("No name entered");
 		}
     }
 
 	public void CreateAnchorDrop() {
-		if (!isPlacing && inputName.text != "") {
+		if (!isPlacing) {
 			//isPlacing = true;
 
 			GameObject marker = CreateLocalMarker();
 			marker.GetComponent<TapToPlace>().StartPlacement();
 			marker.GetComponent<Marker>().movedWhileMapClosed = true;
 			movedCount++;
-			//markerMovedWhileClosed = true;
 
 			MapPin mapMarker = MakeMapMarker().GetComponent<MapPin>();
 			mapMarker.GetComponent<TapToPlace>().StartPlacement();
@@ -136,8 +132,6 @@ public class MarkerManager : MonoBehaviour {
 			mapMarker.SetBeingPlaced(false);
 
 			mapMarkers.Add(mapMarker);
-		} else {
-			Debug.Log("No name entered");
 		}
 	}
 
@@ -152,6 +146,9 @@ public class MarkerManager : MonoBehaviour {
 		instance.GetComponent<SolverHandler>().RightInteractor = rightRay;
 
 		instance.GetComponent<Marker>().markerName = inputName.text;
+		if (inputName.text.Equals("")) {
+			instance.GetComponent<Marker>().markerName = markers.Count.ToString();
+		}
 		instance.GetComponent<Marker>().markerDescription = "";
 		instance.GetComponent<Marker>().manager = this;
 		instance.GetComponent<Marker>().index = totalMarkers;
@@ -178,6 +175,7 @@ public class MarkerManager : MonoBehaviour {
 		GameObject instance = MakeMapMarker();
 
 		instance.GetComponent<MapPin>().worldMarker = CreateLocalMarker().GetComponent<Marker>();
+		instance.GetComponent<MapPin>().worldMarker.markerName = markers.Count.ToString();
 		instance.GetComponent<MapPin>().worldMarker.GetComponent<TapToPlace>().StartPlacement();
 
 		mapMarkers.Add(instance.GetComponent<MapPin>());
@@ -218,7 +216,6 @@ public class MarkerManager : MonoBehaviour {
 
 	public void PopulateGroupViewer(GameObject selectorButton, int index) {
 		if (index < selectedGroup.mapMarkers.Count) {
-			//selectorButton.GetComponentInChildren<TextMeshProUGUI>().text = selectedGroup.mapMarkers[index].worldMarker.markerName;
 			selectorButton.transform.GetChild(2).GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = selectedGroup.mapMarkers[index].worldMarker.markerName;
 			selectorButton.GetComponentInChildren<FontIconSelector>().CurrentIconName = selectedGroup.mapMarkers[index].worldMarker.currentIconName;
 			selectorButton.GetComponent<MarkerSelectorButton>().markerManager = this;
