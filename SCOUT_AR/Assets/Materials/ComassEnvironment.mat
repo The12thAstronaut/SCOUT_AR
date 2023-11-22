@@ -86,7 +86,7 @@ Material:
     - _StencilReference: 1
     - _StencilWriteMask: 255
     - _UVSec: 0
-    - _WireThickness: 50
+    - _WireThickness: 10
     - _ZOffsetFactor: 0
     - _ZOffsetUnits: 0
     - _ZTest: 4

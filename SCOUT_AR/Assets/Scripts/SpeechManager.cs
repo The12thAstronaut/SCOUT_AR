@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using System.Threading.Tasks;
 
 public class SpeechManager : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class SpeechManager : MonoBehaviour
     void Start()
     {
 		keywordRecognitionSubsystem = XRSubsystemHelpers.GetFirstRunningSubsystem<KeywordRecognitionSubsystem>();
+        keywordRecognitionSubsystem.Start();
 
 		if (keywordRecognitionSubsystem != null) {
             foreach (KeywordCommand command in voiceCommands) {
@@ -23,6 +25,7 @@ public class SpeechManager : MonoBehaviour
 				}
             }
 		}
+		//keywordRecognitionSubsystem.Stop();
 	}
 
     // Update is called once per frame
@@ -32,11 +35,17 @@ public class SpeechManager : MonoBehaviour
     }
 
     public void StartPhraseRecognition() {
-        keywordRecognitionSubsystem.Start();
+		//await Task.Delay(2000);
+        //keywordRecognitionSubsystem.Start();
     }
 
 	public void StopPhraseRecognition() {
-		keywordRecognitionSubsystem.Stop();
+        //XRSubsystemHelpers.KeywordRecognitionSubsystem.Stop();
+        //XRSubsystemHelpers.GetFirstRunningSubsystem<KeywordRecognitionSubsystem>().Stop();
+        //keywordRecognitionSubsystem.Stop();
+        /*foreach (KeywordRecognitionSubsystem recog in XRSubsystemHelpers.GetAllRunningSubsystems<KeywordRecognitionSubsystem>()) {
+            recog.Stop();
+        }*/
 	}
 }
 

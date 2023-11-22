@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 #if WINDOWS_UWP
 using Windows.Storage;
@@ -15,7 +16,10 @@ public class Procedure
 	public int totalSteps { get; private set; }
 	public List<ProcedureStep> steps;
 
-	public Procedure(string filePath) {
+	private ProcedureManager procedureManager;
+
+	public Procedure(string filePath, ProcedureManager manager) {
+		procedureManager = manager;
 
 		string[] info = filePath.Substring(filePath.LastIndexOf('\\') + 1).Split('_');
 		info[info.Length - 1] = info[info.Length - 1].Remove(info[info.Length - 1].Length - 4);
@@ -31,7 +35,6 @@ public class Procedure
 
 		steps = new List<ProcedureStep>();
 
-
 		LoadProcedure(filePath);
 	}
 
@@ -42,23 +45,28 @@ public class Procedure
 
 		var stream = await sampleFile.OpenAsync(FileAccessMode.Read);
 
+		procedureManager.temp.text += 1;
 		using (var inputStream = stream.GetInputStreamAt(0)) {
+			procedureManager.temp.text += 2;
 			using (var dataReader = new Windows.Storage.Streams.DataReader(inputStream)) {
-				//dataReader.UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding.Utf8;
-                //dataReader.ByteOrder = Windows.Storage.Streams.ByteOrder.LittleEndian;
+				procedureManager.temp.text += 3;
+				dataReader.UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding.Utf8;
+                dataReader.ByteOrder = Windows.Storage.Streams.ByteOrder.LittleEndian;
+				uint numBytesLoaded = await dataReader.LoadAsync((uint)stream.Size);
+				string text = dataReader.ReadString(numBytesLoaded);
 
-				await dataReader.LoadAsync((uint)stream.Size);
+				/*await dataReader.LoadAsync((uint)stream.Size);*/
 
-				List<string> fileLines = new List<string>();
+				List<string> fileLines = text.Split('\n').ToList();
 
-				int i = 0;
 				int currentStep = 0;
-
-				while (dataReader.UnconsumedBufferLength > 0)
+				procedureManager.temp.text += 4;
+				for (int i = 0; i < fileLines.Count; i++)
                 {
-                    uint bytesToRead = dataReader.ReadUInt32();
-                    fileLines.Add(dataReader.ReadString(bytesToRead));
-
+					//procedureManager.temp.text += i;
+                    //uint bytesToRead = dataReader.ReadUInt32();
+                    //fileLines.Add(dataReader.ReadString(bytesToRead));
+					procedureManager.temp.text += i;
 					int tabLevel = 0;
 					foreach (Char c in fileLines[i]) {
 						if (c == '\t') tabLevel++;

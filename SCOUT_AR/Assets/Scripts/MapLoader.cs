@@ -223,9 +223,9 @@ public class MapLoader : MonoBehaviour {
 		worldPosition = transform.GetChild(0).GetChild(0).GetChild(1).InverseTransformPoint(hit.point);
 		//meshRenderers[meshRenderers.Count - 1].transform.localPosition -= parentTransform.GetChild(1).InverseTransformPoint(transform.position) - worldPosition;
 
-		GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-		cube.transform.position = transform.GetChild(0).GetChild(0).GetChild(1).TransformPoint(worldPosition);
-		cube.transform.localScale *= 0.01f;
+		//GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+		//cube.transform.position = transform.GetChild(0).GetChild(0).GetChild(1).TransformPoint(worldPosition);
+		//cube.transform.localScale *= 0.01f;
 
 		generated = true;
 	}

@@ -14,8 +14,6 @@ using Microsoft.MixedReality.Toolkit.Subsystems;
 using Microsoft.MixedReality.Toolkit;
 
 
-
-
 #if WINDOWS_UWP
 using Windows.Storage;
 #endif
@@ -78,13 +76,15 @@ public class ProcedureManager : MonoBehaviour
 		numProcedures = Directory.GetFiles(path).Length / 2;
 
 		foreach (string file in files) {
-			procedures.Add(new Procedure(file));
+			temp.text = file;
+			procedures.Add(new Procedure(file, this));
 		}
 #endif
 #if WINDOWS_UWP
 		StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("Procedures", CreationCollisionOption.OpenIfExists);
 		
 		IReadOnlyList<IStorageItem> itemsInFolder = await storageFolder.GetItemsAsync();
+		Console.Write(itemsInFolder.Count);
 
 		numProcedures = itemsInFolder.Count;
 
@@ -93,7 +93,8 @@ public class ProcedureManager : MonoBehaviour
 			if(item.IsOfType(StorageItemTypes.Folder)) {
 				numProcedures--;
 			} else {
-				procedures.Add(new Procedure(item.Name));
+				temp.text = item.Name;
+				procedures.Add(new Procedure(item.Name, this));
 				temp.text = item.Name + procedures[procedures.Count - 1].procedureName + procedures[procedures.Count - 1].steps[0].text;
 			}
 		}

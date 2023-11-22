@@ -685,11 +685,16 @@ PlayerSettings:
     WindowsStoreApps:
       VideosLibrary: True
       Location: True
-      GazeInput: True
       Bluetooth: True
-      SpatialPerception: True
+      PrivateNetworkClientServer: True
+      InternetClientServer: True
       PicturesLibrary: True
       WebCam: True
+      GazeInput: True
+      PhoneCall: False
+      SpatialPerception: True
+      Proximity: True
+      InternetClient: True
       Microphone: True
   metroTargetDeviceFamilies: {}
   metroFTAName: 
