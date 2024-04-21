@@ -7,6 +7,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.XR.ARFoundation;
 
 public class SettingsManager : MonoBehaviour
@@ -107,6 +108,10 @@ public class SettingsManager : MonoBehaviour
 		foreach (GameObject obj in terrain) {
 			obj.transform.GetComponent<MeshRenderer>().enabled = false;
 		}
+	}
+
+	public void GoToMainMenu() {
+		SceneManager.LoadScene("Start Scene", LoadSceneMode.Single);
 	}
 }
 

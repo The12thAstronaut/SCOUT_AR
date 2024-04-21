@@ -74,7 +74,7 @@ public class ProcedureManager : MonoBehaviour
 		string[] files = Directory.GetFiles(path, "*.txt");
 
 		numProcedures = Directory.GetFiles(path).Length / 2;
-
+		temp.text += numProcedures;
 		foreach (string file in files) {
 			temp.text = file;
 			procedures.Add(new Procedure(file, this));
@@ -93,7 +93,7 @@ public class ProcedureManager : MonoBehaviour
 			if(item.IsOfType(StorageItemTypes.Folder)) {
 				numProcedures--;
 			} else {
-				temp.text = item.Name;
+				temp.text += item.Name;
 				procedures.Add(new Procedure(item.Name, this));
 				temp.text = item.Name + procedures[procedures.Count - 1].procedureName + procedures[procedures.Count - 1].steps[0].text;
 			}

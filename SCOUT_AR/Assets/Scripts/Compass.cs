@@ -49,6 +49,8 @@ public class Compass : MonoBehaviour
 	void Start() {
 		lineDrawers = new LineRenderer[numRings];
 		DrawCompass();
+		InvokeRepeating("FindSolarDirection", 0, 30);
+		InvokeRepeating("UpdateNearEnvironment", 1, 4);
 	}
 
 	void Update() {
@@ -104,10 +106,7 @@ public class Compass : MonoBehaviour
 			DrawCompassRing(lineDrawers[i], radius * (i + 1) / numRings);
 		}
 		DrawCardinalDirections();
-		InvokeRepeating("FindSolarDirection", 0, 10);
 		DrawMarkings();
-
-		InvokeRepeating("UpdateNearEnvironment", 4, 10);
 	}
 
 	void DrawCompassRing(LineRenderer lineDrawer, float segmentRadius) {

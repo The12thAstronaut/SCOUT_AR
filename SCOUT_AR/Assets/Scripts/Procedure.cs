@@ -32,6 +32,7 @@ public class Procedure
 			procedureName += info[i] + " ";
 		}
 		procedureName.TrimEnd();
+		procedureManager.temp.text += procedureName;
 
 		steps = new List<ProcedureStep>();
 
@@ -80,8 +81,6 @@ public class Procedure
 					} else if (tabLevel == 2) {
 						steps[currentStep - 1].substeps[steps[currentStep - 1].substeps.Count - 1].substeps.Add(new ProcedureStep(fileLines[i].Trim()));
 					}
-
-					i++;
                 }
 			}
 		}
