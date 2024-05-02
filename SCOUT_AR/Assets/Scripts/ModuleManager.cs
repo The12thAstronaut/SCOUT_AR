@@ -14,11 +14,11 @@ public static class ModuleManager// : MonoBehaviour
 		Full_Nav
 	}
 
-	private static bool navigationActive = false;
-	private static bool vitalsActive = false;
-	private static bool telemetryActive = false;
-	private static bool proceduresActive = false;
-	private static bool logsActive = false;
+	private static bool navigationActive = true;
+	private static bool vitalsActive = true;
+	private static bool telemetryActive = true;
+	private static bool proceduresActive = true;
+	private static bool logsActive = true;
 	private static bool compassActive = false;
 	private static bool hologramsActive = false;
 	private static bool mapActive = false;

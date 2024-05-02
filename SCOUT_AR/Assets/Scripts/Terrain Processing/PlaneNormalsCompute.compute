@@ -1,0 +1,33 @@
+#pragma kernel CSMain
+
+StructuredBuffer<float3> Vertices;
+StructuredBuffer<int> Triangles;
+RWStructuredBuffer<float3> Normals;
+uint numTriangles;
+
+float3 calculateNormal(float3 posA, float3 posB, float3 posC)
+{
+    posA = normalize(posA);
+    posB = normalize(posB);
+    posC = normalize(posC);
+    
+    float3 ab = normalize(posA - posB);
+    float3 ac = normalize(posA - posC);
+    
+    float3 triNormal = normalize(cross(ab, ac));
+
+    return triNormal;
+}
+
+[numthreads(1024,1,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= numTriangles)
+    {
+        return;
+    }
+    
+    float3 normal = calculateNormal(Vertices[Triangles[id.x * 3]], Vertices[Triangles[id.x * 3 + 1]], Vertices[Triangles[id.x * 3 + 2]]);
+
+    Normals[id.x] = normal;
+}

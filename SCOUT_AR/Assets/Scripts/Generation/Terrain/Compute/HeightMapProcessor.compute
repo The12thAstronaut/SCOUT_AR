@@ -1,0 +1,36 @@
+// Takes raw height map [0, 1] and calculates actual world heights.
+// Saves result in texture.
+
+#pragma kernel AssignVertexHeights
+
+Texture2D<float> HeightMap;
+SamplerState height_linear_clamp_sampler;
+float2 size;
+float heightFactor;
+
+float getHeight(float2 uv)
+{
+    return HeightMap.SampleLevel(height_linear_clamp_sampler, uv, 0).r;
+}
+
+// ---- Assign vertex heights ----
+RWStructuredBuffer<float3> Vertices;
+RWStructuredBuffer<float> Heights;
+uint numVertices;
+
+// Convert 2D vertices (longitude/latitude coordinates) into 3D vertices (points on sphere)
+[numthreads(1024, 1, 1)]
+void AssignVertexHeights(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= numVertices)
+    {
+        return;
+    }
+	
+    float3 planePos = Vertices[id.x];
+    float2 texCoord = float2(planePos.x / size.x, planePos.z / size.y);
+    //float2 texCoord = float2(planePos.x, planePos.z);
+    float height = getHeight(texCoord);
+    Heights[id.x] = height;
+    Vertices[id.x] = Vertices[id.x] + float3(0, heightFactor, 0) * height;
+}
