@@ -10,7 +10,7 @@ namespace TerrainGeneration {
 
 		public Vector2 size = new Vector2(1, 1);
 		public float heightFactor = 1f;
-		private float[] heights { get; }
+		public float[] heights { private set; get; }
 
 		[HideInInspector]
 		public SimpleMeshData meshData;
@@ -83,7 +83,7 @@ namespace TerrainGeneration {
 			// Run the compute shader to assign heights, and then fetch the results
 			ComputeHelper.Dispatch(vertexCompute, vertexBuffer.count, kernelIndex: assignVertexHeightsKernel);
 			Vector3[] vertices = ComputeHelper.ReadDataFromBuffer<Vector3>(vertexBuffer, isAppendBuffer: false);
-			float[] heights = ComputeHelper.ReadDataFromBuffer<float>(heightsBuffer, isAppendBuffer: false);
+			heights = ComputeHelper.ReadDataFromBuffer<float>(heightsBuffer, isAppendBuffer: false);
 
 			ComputeHelper.Release(vertexBuffer);
 			totalVertexCount = vertices.Length;
@@ -112,7 +112,15 @@ namespace TerrainGeneration {
 			mesh.filter.mesh.uv = uvs;
 			mesh.filter.mesh.RecalculateBounds();
 			mesh.filter.mesh.RecalculateNormals();
-			
+
+			Debug.Log(heights[0]);
+			Debug.Log(heights[1]);
+			Debug.Log(heights[2]);
+			Debug.Log(heights[3]);
+			Debug.Log(heights[4]);
+			Debug.Log(heights[5]);
+			Debug.Log(heights[6]);
+
 		}
 
 		public override void Save() {
