@@ -15,7 +15,7 @@ float getHeight(float2 uv)
 
 float calculateSmoothHeight(float2 uv)
 {
-    float2 offset = float2(1, 1) / 3200 * 4.5;
+    float2 offset = float2(1, 1) / 3200 * 6;
     float h0 = getHeight(uv);
 
     if (h0 < 0.01)
@@ -54,7 +54,6 @@ void AssignVertexHeights(uint3 id : SV_DispatchThreadID)
 	
     float3 planePos = Vertices[id.x];
     float2 texCoord = float2(planePos.x / size.x, planePos.z / size.y);
-    //float2 texCoord = float2(planePos.x, planePos.z);
     float height = calculateSmoothHeight(texCoord);
     Heights[id.x] = height;
     Vertices[id.x] = Vertices[id.x] + float3(0, heightFactor, 0) * height;

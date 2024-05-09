@@ -89,17 +89,16 @@ namespace TerrainGeneration {
 			totalVertexCount = vertices.Length;
 
 			meshData = new SimpleMeshData(vertices, meshData.triangles);
-			
 
-			SpawnMesh(meshData, 0);
+			SpawnMesh(meshData);
 
-			Debug.Log($"Generation Complete.");
+			//Debug.Log($"Generation Complete.");
 			NotifyGenerationComplete();
 
 			yield return null;
 		}
 
-		void SpawnMesh(SimpleMeshData spawnMesh, int meshIndex) {
+		void SpawnMesh(SimpleMeshData spawnMesh) {
 			RenderObject mesh = MeshHelper.CreateRendererObject(spawnMesh.name, spawnMesh, parent: meshParent, material: meshMaterial);
 			mesh.gameObject.transform.localScale = Vector3.one;
 			
@@ -110,16 +109,9 @@ namespace TerrainGeneration {
 			}
 
 			mesh.filter.mesh.uv = uvs;
+			mesh.filter.mesh.RecalculateTangents();
 			mesh.filter.mesh.RecalculateBounds();
 			mesh.filter.mesh.RecalculateNormals();
-
-			Debug.Log(heights[0]);
-			Debug.Log(heights[1]);
-			Debug.Log(heights[2]);
-			Debug.Log(heights[3]);
-			Debug.Log(heights[4]);
-			Debug.Log(heights[5]);
-			Debug.Log(heights[6]);
 
 		}
 
